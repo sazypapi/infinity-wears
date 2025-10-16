@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -22,11 +22,13 @@ function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
+
   // NORMAL SIGNUP
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -44,18 +46,18 @@ function SignUpPage() {
       }
 
       if (!data?.session) {
-        // setError(
-        //   `Welcome! Please check your email for a verification link to complete your sign-up. If you've signed up before but haven't verified, we've re-sent the link. If your account is already verified, you can simply sign in.`
-        // );
-
         router.push("/signup/verification");
         return;
       }
 
       router.push("/user-data");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Unexpected signUp error", err);
-      setError("Unexpected error — try again.");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unexpected error — try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -70,19 +72,16 @@ function SignUpPage() {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-    if (error) console.log("Goolge sign in error: " + error.message);
+    if (error) console.log("Google sign-in error: " + error.message);
     setGoogleLoading(false);
   };
+
   return (
     <div
       className="w-full h-[90vh] flex justify-center items-center repeat-0 bg-cover bg-center"
       style={{ backgroundImage: "url('/images/authbg.jpg')" }}
     >
-      <Card
-        className="w-[90%] sm:w-[70%] lg:w-[30%] h-[fit] bg-black/50 backdrop-blur-sm backdrop-saturate-150
-        border-t border-white/20
-        shadow-2xl rounded  smp-10"
-      >
+      <Card className="w-[90%] sm:w-[70%] lg:w-[30%] h-fit bg-black/50 backdrop-blur-sm backdrop-saturate-150 border-t border-white/20 shadow-2xl rounded smp-10">
         <CardHeader>
           <CardTitle>Create your account</CardTitle>
         </CardHeader>
@@ -116,9 +115,6 @@ function SignUpPage() {
             </div>
           </CardContent>
           <CardFooter className="flex-col mt-5 gap-2">
-            {/* <Button type="submit" className="w-full">
-              Create Account
-            </Button> */}
             <SubmitButton text="Create Account" loading={loading} />
             <SubmitButton
               text="Sign Up with Google"
@@ -128,9 +124,9 @@ function SignUpPage() {
               align="self-stretch"
             />
             <h3 className="mt-5 text-xs">
-              Already have an account,{" "}
+              Already have an account?{" "}
               <Link href="/signin" className="underline">
-                signin
+                Sign in
               </Link>
             </h3>
           </CardFooter>

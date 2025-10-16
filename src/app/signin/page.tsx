@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn } from "@/lib/auth";
 import { supabase } from "@/lib/supabaseClient";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -94,7 +93,7 @@ function SignInPage() {
               Sign in with Google
             </Button>
             <h3 className="mt-5 text-xs">
-              Don't have an account,{" "}
+              Don&apos;t have an account,{" "}
               <Link href="/signup" className="underline">
                 create account
               </Link>

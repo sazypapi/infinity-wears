@@ -7,24 +7,32 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import type { EmblaCarouselType } from "embla-carousel";
 import { carouselImages } from "../../utils/carouselImages";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 function HomeCarousel() {
-  const [api, setApi] = useState<any>(null);
+  // ✅ Matches shadcn/ui Carousel's expected type
+  const [api, setApi] = useState<EmblaCarouselType | undefined>(undefined);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
   useEffect(() => {
     if (!api) return;
 
-    setScrollSnaps(api.scrollSnapList());
-    setSelectedIndex(api.selectedScrollSnap());
+    const snapList = api.scrollSnapList();
+    const selected = api.selectedScrollSnap();
+
+    setScrollSnaps(snapList);
+    setSelectedIndex(selected);
 
     const onSelect = () => setSelectedIndex(api.selectedScrollSnap());
     api.on("select", onSelect);
-    return () => api.off("select", onSelect);
+
+    return () => {
+      api.off("select", onSelect);
+    };
   }, [api]);
 
   return (
@@ -38,20 +46,20 @@ function HomeCarousel() {
         setApi={setApi}
         className="w-full"
       >
-        <CarouselContent className="">
+        <CarouselContent>
           {carouselImages.map((item) => (
             <CarouselItem key={item.img}>
               <div
-                className="relative h-[90vh] w-full bg-cover bg-center "
+                className="relative h-[90vh] w-full bg-cover bg-center"
                 style={{ backgroundImage: `url(${item.img})` }}
               >
-                <div className="absolute inset-0 bg-black/30"></div>
+                <div className="absolute inset-0 bg-black/30" />
                 <div className="relative z-10 flex items-center justify-center h-full">
                   <Button
                     asChild
                     className="mt-[30vh] rounded-none bg-transparent border-white text-white border-2 shadow-lg hover:bg-black hover:border-black transition duration-500"
                   >
-                    <Link href="" className="">
+                    <Link href="#">
                       <h1 className="text-xl">
                         Explore our {item.color} collection
                       </h1>
@@ -69,7 +77,7 @@ function HomeCarousel() {
         {scrollSnaps.map((_, index) => (
           <button
             key={index}
-            onClick={() => api && api.scrollTo(index)}
+            onClick={() => api?.scrollTo(index)}
             className={`w-3 h-3 rounded-full transition-all ${
               index === selectedIndex
                 ? "bg-white scale-110"

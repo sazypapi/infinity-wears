@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Montserrat } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
-import Containers from "../../components/global/Containers";
 import Navbar from "../../components/Navbar/Navbar";
-import Footer from "../../components/Footer";
+// import Footer from "../../components/Footer";
 import Providers from "./Providers";
 import BottomNav from "../../components/global/BottomNav";
 import { Toaster } from "@/components/ui/sonner";

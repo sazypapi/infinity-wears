@@ -22,8 +22,9 @@ function Verification() {
           <br />
           <h3>
             {" "}
-            If you've signed up before but haven't verified, we've re-sent the
-            link. <br /> If your account is already verified, you can simply{" "}
+            If you&apos;ve signed up before but haven&apos;t verified,
+            we&apos;ve re-sent the link. <br /> If your account is already
+            verified, you can simply{" "}
             <Link href="/signin" className="underline">
               signin
             </Link>{" "}

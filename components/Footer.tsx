@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Mail, Phone } from "lucide-react";
 import Containers from "./global/Containers";
 import { FaInstagram, FaWhatsapp } from "react-icons/fa";
-import { Separator } from "./ui/separator";
+import { Separator } from "@/components/ui/separator";
 function Footer() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {

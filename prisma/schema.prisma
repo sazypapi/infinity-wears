@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  id             String        @id @default(uuid())
+  name           String
+  material       String
+  slug           String        @unique
+  description    String
+  price          Float
+  discount       Float?
+  coverImage     String
+  images         String[]
+  inStock        Boolean       @default(true)
+  sizes          String[]
+  colors         String[]
+  seoTags        String[]
+  seoTitle       String
+  seoDescription String
+  status         ProductStatus @default(ACTIVE)
+  collectionId   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  quantity       Int
+  collection     Collection?   @relation(fields: [collectionId], references: [id])
+}
+
+model Collection {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+}
+
+enum ProductStatus {
+  ACTIVE
+  DRAFT
+  INACTIVE
+}

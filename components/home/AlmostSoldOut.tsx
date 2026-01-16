@@ -1,42 +1,21 @@
 import React from "react";
-import { getNewReleases } from "../../utils/actions";
+import { getAlmostSoldOut, getNewReleases } from "../../utils/actions";
 import Image from "next/image";
 import { formatCurrency } from "../../utils/format";
 import HoverSwapImage from "../global/HoverImageSwap";
 import { FeaturedProducts } from "./FeaturedProducts";
-async function NewIn() {
-  const latestProducts = await getNewReleases();
-  function getHoverImages(coverImage: string, images: string[]): string[] {
-    if (!images || images.length === 0) {
-      return [coverImage];
-    }
-
-    // Remove coverImage if it exists in images
-    const filtered = images.filter((img) => img !== coverImage);
-
-    // Shuffle
-    const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-
-    // Pick up to 2
-    const picked = shuffled.slice(0, 2);
-
-    return [coverImage, ...picked];
-  }
-
+async function AlmostSoldOut() {
+  const almostSoldOut = await getAlmostSoldOut();
   return (
     <>
       <h2 className="text-2xl sm:text-4xl text-center text-neutral-700">
-        New In
+        Hurry!
       </h2>
       <h6 className="text-xs sm:text-sm text-center text-neutral-400">
-        Explore our latest releases
+        These pieces are almost sold out!!
       </h6>
-      <div className="w-full gap-15 grid-cols-2 mt-5 lg:grid-cols-4 justify-items-center items-center text-center hidden sm:grid">
-        {latestProducts.map((product) => {
-          const hoverImages = getHoverImages(
-            product.coverImage,
-            product.images
-          );
+      <div className="w-full py-5 gap-15 grid-cols-2 lg:grid-cols-4 justify-items-center items-center text-center hidden sm:grid">
+        {almostSoldOut.map((product) => {
           return (
             <div
               key={product.id}
@@ -65,10 +44,10 @@ async function NewIn() {
         })}
       </div>
       <div className="flex items-center pt-12 justify-center justify-items-center sm:hidden">
-        <FeaturedProducts items={latestProducts} />
+        <FeaturedProducts items={almostSoldOut} />
       </div>
     </>
   );
 }
 
-export default NewIn;
+export default AlmostSoldOut;

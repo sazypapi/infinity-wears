@@ -607,3 +607,17 @@ export const createCollection = async (
     return renderError(error);
   }
 };
+export const getNewReleases = async () => {
+  const latestProducts = await db.product.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 4,
+  });
+  return latestProducts;
+};
+export const getAlmostSoldOut = async () => {
+  const almostSoldOut = await db.product.findMany({
+    orderBy: { quantity: "asc" },
+    take: 8,
+  });
+  return almostSoldOut;
+};

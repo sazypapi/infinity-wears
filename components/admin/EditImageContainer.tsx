@@ -1,10 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Product } from "@/generated/prisma";
-import React from "react";
 import { FaImage } from "react-icons/fa";
 import EditSingleImage from "./EditSingleImage";
-import FormContainer from "../form/FormContainer";
-import { SubmitButton } from "../form/Buttons";
+
 import EditMultipleImage from "./EditMultipleImage";
 
 function EditImageContainer({ product }: { product: Product }) {

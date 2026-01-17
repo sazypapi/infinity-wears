@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/generated/prisma";
-import React, { useState } from "react";
+import { useState } from "react";
 import { SubmitButton } from "../form/Buttons";
 import Image from "next/image";
 import FormContainer from "../form/FormContainer";

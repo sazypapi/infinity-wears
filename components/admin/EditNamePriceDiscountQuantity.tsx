@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { Product } from "@/generated/prisma";
-import React, { useState } from "react";
+import { useState } from "react";
 import PriceInput from "../form/PriceInput";
 import FormInput from "../form/FormInput";
 import { Label } from "@/components/ui/label";

@@ -1,5 +1,4 @@
 import { Collection, Product } from "@/generated/prisma";
-import React from "react";
 
 function StatusCollectionQuantityInStock({
   product,

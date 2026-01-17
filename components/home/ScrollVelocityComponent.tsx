@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import ScrollVelocity from "@/components/ScrollVelocity";
 function ScrollVelocityComponent() {
   return (

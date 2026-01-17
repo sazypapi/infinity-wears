@@ -1,8 +1,7 @@
 import React from "react";
-import { getAlmostSoldOut, getNewReleases } from "../../utils/actions";
+import { getAlmostSoldOut } from "../../utils/actions";
 import Image from "next/image";
 import { formatCurrency } from "../../utils/format";
-import HoverSwapImage from "../global/HoverImageSwap";
 import { FeaturedProducts } from "./FeaturedProducts";
 async function AlmostSoldOut() {
   const almostSoldOut = await getAlmostSoldOut();

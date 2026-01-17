@@ -1,5 +1,4 @@
 import { Product } from "@/generated/prisma";
-import React from "react";
 
 function Descriptions({ product }: { product: Product }) {
   return (

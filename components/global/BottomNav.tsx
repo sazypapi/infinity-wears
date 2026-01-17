@@ -1,8 +1,6 @@
-import React from "react";
 import { BsShop } from "react-icons/bs";
 import { RiShoppingCart2Line } from "react-icons/ri";
 import { IoMdSearch } from "react-icons/io";
-import { LucideUser } from "lucide-react";
 import UserIcon from "../Navbar/UserIcon";
 function BottomNav() {
   return (

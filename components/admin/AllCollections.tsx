@@ -1,24 +1,9 @@
-import { editCollectionName, getAllCollections } from "../../utils/actions";
+import { getAllCollections } from "../../utils/actions";
 import Containers from "../global/Containers";
 import { PiEmptyBold } from "react-icons/pi";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { FiEdit } from "react-icons/fi";
-import { AiFillDelete } from "react-icons/ai";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import FormContainer from "../form/FormContainer";
-import { SubmitButton } from "../form/Buttons";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import EditCollectionName from "./EditCollectionName";
 import DeleteCollection from "./DeleteCollection";
 import CreateCollectionPopOver from "./CreateCollectionPopOver";

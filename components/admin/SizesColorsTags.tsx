@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Product } from "@/generated/prisma";
-import React from "react";
 
 function SizesColorsTags({ product }: { product: Product }) {
   return (

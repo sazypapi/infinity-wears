@@ -1,5 +1,4 @@
 import { Product } from "@/generated/prisma";
-import React from "react";
 
 function ViewImages({ product }: { product: Product }) {
   return (

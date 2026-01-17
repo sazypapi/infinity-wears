@@ -2,7 +2,6 @@ import React from "react";
 import { getNewReleases } from "../../utils/actions";
 import Image from "next/image";
 import { formatCurrency } from "../../utils/format";
-import HoverSwapImage from "../global/HoverImageSwap";
 import { FeaturedProducts } from "./FeaturedProducts";
 async function NewIn() {
   const latestProducts = await getNewReleases();

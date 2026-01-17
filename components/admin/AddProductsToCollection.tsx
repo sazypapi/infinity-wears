@@ -1,12 +1,11 @@
 "use client";
 import { Product } from "@/generated/prisma";
-import React, { useState } from "react";
-import { addToCollection, getSelectedProducts } from "../../utils/actions";
+import { useState } from "react";
+import { addToCollection } from "../../utils/actions";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Containers from "../global/Containers";
 import { PiEmptyBold } from "react-icons/pi";
-import { IoMdAddCircleOutline } from "react-icons/io";
 import FormContainer from "../form/FormContainer";
 import { SubmitButton } from "../form/Buttons";
 import Link from "next/link";

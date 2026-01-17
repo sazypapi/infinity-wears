@@ -11,14 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import FormContainer from "../form/FormContainer";
 import { SubmitButton } from "../form/Buttons";
-import { Label } from "@/components/ui/label";
-import { FiEdit } from "react-icons/fi";
 
-import { Input } from "@/components/ui/input";
-import { deleteCollection, editCollectionName } from "../../utils/actions";
+import { deleteCollection } from "../../utils/actions";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import Link from "next/link";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { AiFillDelete } from "react-icons/ai";
 function DeleteCollection({ collection }: { collection: Collection }) {

@@ -1,4 +1,3 @@
-import React from "react";
 import Containers from "../../../../components/global/Containers";
 import { Skeleton } from "@/components/ui/skeleton";
 

@@ -8,17 +8,23 @@ import {
 } from "@/components/ui/carousel";
 import type { EmblaCarouselType } from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { Product } from "@/generated/prisma";
+import { ColorVariant, Prisma, Product } from "@/generated/prisma";
 import Image from "next/image";
 import { formatCurrency } from "../../utils/format";
+import Link from "next/link";
+import AlmostSoldOut from "./AlmostSoldOut";
 
+type ProductWithVariants = Prisma.ProductGetPayload<{
+  include: { variants: true };
+}>;
 interface SkeletonCarouselProps {
-  items: Product[];
+  items: ProductWithVariants[];
   autoplayDelay?: number;
 }
 
 export function FeaturedProducts({
   items,
+
   autoplayDelay = 4000,
 }: SkeletonCarouselProps) {
   const [api, setApi] = useState<EmblaCarouselType | undefined>(undefined);
@@ -47,29 +53,32 @@ export function FeaturedProducts({
         className="w-full"
       >
         <CarouselContent>
-          {items.map((product) => (
-            <CarouselItem
-              key={product.id}
-              className="basis-1/2 justify-center w-fit flex flex-col items-center"
-            >
-              <div className="w-36 h-42 sm:w-60 sm:h-72 rounded-lg relative overflow-hidden">
-                <Image
-                  src={product.coverImage}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                  fill
-                />
-              </div>
-              <div className="w-36 sm:w-60 mt-2">
-                <p className="text-gray-500 text-sm text-center truncate ">
-                  {product.name}
-                </p>
-                <p className="text-gray-800 text-xs text-center truncate ">
-                  {formatCurrency(product.price)}
-                </p>
-              </div>
-            </CarouselItem>
-          ))}
+          {items.map((product) => {
+            const firstVariant = product.variants[0];
+
+            return (
+              <Link href={`/products/${product.slug}`} key={product.id}>
+                <CarouselItem className="basis-1/3 justify-center w-fit flex flex-col items-center">
+                  <div className="w-36 h-42 sm:w-60 sm:h-72 rounded-lg relative overflow-hidden">
+                    <Image
+                      src={firstVariant.coverImage}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      fill
+                    />
+                  </div>
+                  <div className="w-36 sm:w-60 mt-2">
+                    <p className="text-gray-500 text-sm text-center truncate ">
+                      {product.name}
+                    </p>
+                    <p className="text-gray-800 text-xs text-center truncate ">
+                      {formatCurrency(firstVariant.price)}
+                    </p>
+                  </div>
+                </CarouselItem>
+              </Link>
+            );
+          })}
         </CarouselContent>
       </Carousel>
     </div>

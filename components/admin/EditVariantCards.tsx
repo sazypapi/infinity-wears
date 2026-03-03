@@ -1,0 +1,137 @@
+"use client";
+import { ColorVariant } from "@/generated/prisma";
+import React, { useMemo, useState } from "react";
+import { toast } from "sonner";
+import AdminProductVariantsHeader from "./AdminProductVariantsHeader";
+import { Card, CardContent } from "@/components/ui/card";
+import EditBottomRowInputFieldsVariantCard from "./EditBottomRowInputFieldsVariantCard";
+import EditVariantColor from "./EditVariantColor";
+import EditVariantCoverImageUploader from "./EditVariantCoverImageUploader";
+import FormContainer from "../form/FormContainer";
+import { Button } from "@/components/ui/button";
+import { SubmitButton } from "../form/Buttons";
+import { editVariants } from "../../utils/actions";
+type VariantForm = {
+  id: string;
+  colorName: string;
+  colorHex: string;
+  coverImage: string;
+  price: number | undefined;
+  discount?: number | undefined | null;
+  inStock: boolean;
+  sizes: string[];
+};
+
+function EditVariantCards({
+  productVariants,
+  productId,
+}: {
+  productVariants: ColorVariant[];
+  productId: string;
+}) {
+  const formattedForm: VariantForm[] = productVariants.map((variant) => ({
+    id: variant.id,
+    colorName: variant.colorName,
+    colorHex: variant.colorHex,
+    coverImage: variant.coverImage,
+    price: variant.price,
+    discount: variant.discount,
+    inStock: variant.inStock,
+    sizes: variant.sizes,
+  }));
+  const [variants, setVariants] = useState<VariantForm[]>(formattedForm);
+  const variantsJson = useMemo(() => JSON.stringify(variants), [variants]);
+
+  const addVariant = () => {
+    setVariants((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        colorName: "",
+        colorHex: "#000000",
+        coverImage: "",
+        price: undefined,
+        discount: undefined,
+        inStock: false,
+        sizes: [],
+      },
+    ]);
+  };
+  const removeVariant = (id: string) => {
+    if (variants.length === 1) {
+      toast("You must have at least 1 variant");
+    } else {
+      setVariants((prev) => prev.filter((variant) => variant.id !== id));
+    }
+  };
+  const updateVariant = <K extends keyof VariantForm>(
+    id: string,
+    field: keyof VariantForm,
+    value: any,
+  ) => {
+    setVariants((prev) =>
+      prev.map((variant) =>
+        variant.id === id ? { ...variant, [field]: value } : variant,
+      ),
+    );
+  };
+  return (
+    <Card className="w-full bg-white border-2 border-gray-200 px-5">
+      <FormContainer action={editVariants}>
+        <input type="hidden" name="variants" value={variantsJson} />
+        <input type="hidden" name="id" value={productId} />
+
+        <div className="mb-3">
+          <AdminProductVariantsHeader />
+        </div>
+        {variants.map((variant) => (
+          <Card
+            key={variant.id}
+            className="w-full bg-white border-2 p-5 border-gray-200 mb-5"
+          >
+            <EditBottomRowInputFieldsVariantCard
+              discount={variant.discount}
+              inStock={variant.inStock}
+              index={variant.id}
+              onChange={updateVariant}
+              price={variant.price}
+              sizes={variant.sizes}
+            />
+            <EditVariantColor
+              colorHex={variant.colorHex}
+              colorName={variant.colorName}
+              index={variant.id}
+              onChange={updateVariant}
+            />
+            <EditVariantCoverImageUploader
+              coverImage={variant.coverImage}
+              index={variant.id}
+              onChange={updateVariant}
+            />
+            <div className="w-full flex justify-end gap-2">
+              <Button
+                onClick={() => removeVariant(variant.id)}
+                className="text-red-500 bg-transparent shadow-lg hover:bg-red-500 hover:text-white border-2 border-red-500 transition duration-500 "
+                type="button"
+              >
+                Remove
+              </Button>
+              <Button
+                onClick={addVariant}
+                className="text-neutral-950 bg-transparent shadow-lg hover:bg-black hover:text-white border-2 border-black transition duration-500 "
+                type="button"
+              >
+                + Add New Variant
+              </Button>
+            </div>
+          </Card>
+        ))}
+        <div className="p-3 w-full flex justify-end">
+          <SubmitButton text="Edit Variant" loadingText="Editing Variants..." />
+        </div>
+      </FormContainer>
+    </Card>
+  );
+}
+
+export default EditVariantCards;

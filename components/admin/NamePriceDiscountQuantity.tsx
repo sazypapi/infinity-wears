@@ -1,11 +1,19 @@
 "use client";
 import { useState } from "react";
 import FormInput from "../form/FormInput";
-import PriceInput from "../form/PriceInput";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import StatusSelect from "./StatusSelect";
 
-function NamePriceDiscountQuantity() {
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+function NamePriceDiscountQuantity({ value }: { value?: string }) {
   const [name, setName] = useState("");
 
   const slug = name
@@ -14,7 +22,7 @@ function NamePriceDiscountQuantity() {
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-");
   return (
-    <div className="sm:grid sm:gap-4 sm:justify-between flex flex-col gap-2 sm:grid-cols-2 mb-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-10 mb-4 sm:mb-5">
       <div>
         <Label className="capitalize mb-2" htmlFor="name">
           Product Name{" "}
@@ -31,19 +39,33 @@ function NamePriceDiscountQuantity() {
         />
         <input type="hidden" name="slug" value={slug} />
       </div>
-      <div className="flex justify-between gap-2 w-full sm:flex-row flex-col">
-        <div className="sm:flex sm:flex-1/2">
-          <PriceInput />
-        </div>
 
-        <div className="sm:flex sm:flex-1/2">
-          <FormInput
-            name="quantity"
-            label="Quantity"
-            type="number"
-            placeholder="quantity"
-          />
-        </div>
+      <div>
+        <FormInput
+          name="quantity"
+          label="Quantity"
+          type="number"
+          placeholder="quantity"
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <Label className="mb-2">Category</Label>
+        <Select required name="category" defaultValue={value || ""}>
+          <SelectTrigger className="border-2 w-full border-gray-300">
+            <SelectValue placeholder="select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="TSHIRTS">T-Shirts</SelectItem>
+              <SelectItem value="JEANS">Jeans</SelectItem>
+              <SelectItem value="DRESSES">Dresses</SelectItem>
+              <SelectItem value="JACKETS">Jackets</SelectItem>
+              <SelectItem value="ACTIVEWEAR">Activewear</SelectItem>
+              <SelectItem value="SWEATSHIRT">Sweatshirt</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

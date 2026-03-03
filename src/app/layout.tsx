@@ -7,6 +7,7 @@ import Footer from "../../components/footer/Footer";
 import BottomNav from "../../components/global/BottomNav";
 import { Toaster } from "@/components/ui/sonner";
 import Providers from "./Providers";
+import BottomNavWrapper from "../../components/global/BottomNavWrapper";
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
@@ -34,8 +35,8 @@ export default function RootLayout({
             <Navbar />
             <main className=" bg-white text-black">{children}</main>
             <Footer />
-            <div className="sm:hidden">
-              <BottomNav />
+            <div className="lg:hidden">
+              <BottomNavWrapper />
             </div>
             <Toaster />
           </Providers>

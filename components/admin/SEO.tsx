@@ -1,18 +1,21 @@
 "use client";
 import FormInput from "../form/FormInput";
 import TextArea from "../form/TextArea";
+import GenderSelect from "./GenderSelect";
 import SeoTags from "./SeoTags";
 
 function SEO() {
   return (
-    <div className="flex flex-col gap-4 mt-4">
-      <div className="flex flex-col sm:grid sm:gap-10 sm:grid-cols-2  justify-between">
+    <div className="flex flex-col gap-4 mt-4 sm:mt-2">
+      <div className="grid grid-cols-1 gap-4 sm:mt-3 sm:grid-cols-3 sm:gap-10 mb-0">
         <div>
           <FormInput name="seoTitle" type="text" label="SEO Title" />
         </div>
         <div>
           <SeoTags />
-          <div className="flex gap-2 mt-2 flex-wrap"></div>
+        </div>
+        <div>
+          <GenderSelect />
         </div>
       </div>
       <div>

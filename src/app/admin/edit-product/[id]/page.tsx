@@ -19,7 +19,7 @@ async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
   const { product, getCollection } = await getSingleProduct(id);
   const allCollections = await getAllCollections();
   const collectionsMap: string[] = allCollections.map(
-    (collection) => collection.name
+    (collection) => collection.name,
   );
   const collectionName = getCollection?.name;
   if (!product) {
@@ -34,7 +34,7 @@ async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
     );
   }
   return (
-    <Containers className="py-5 sm:mt-15">
+    <Containers className="py-5 sm:mt-15 px-2">
       <Breadcrumb className="mb-5">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -68,6 +68,7 @@ async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
         product={product}
         getCollection={getCollection}
         collectionName={collectionName}
+        variants={product.variants}
       />
     </Containers>
   );

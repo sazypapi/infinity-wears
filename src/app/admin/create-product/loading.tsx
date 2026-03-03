@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function CreateProductloading() {
   return (
-    <Containers className="py-10 sm:mt-10">
+    <Containers className="py-10 sm:mt-10 px-2">
       <div className="flex flex-col justify-start">
         <Skeleton className="w-60 h-5 mb-5" />
 

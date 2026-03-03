@@ -22,7 +22,7 @@ function FormInput({
 }: FormInputProps) {
   const [value, setValue] = useState(defaultValue || "");
   return (
-    <div className="mb-2">
+    <div>
       <Label className="capitalize mb-2" htmlFor={name}>
         {label || name}
       </Label>

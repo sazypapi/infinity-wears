@@ -12,7 +12,7 @@ function AdminSelects() {
   const [colors, setColors] = useState<string[]>([]);
 
   return (
-    <div className="flex sm:grid flex-col sm:grid-cols-2 sm:gap-10 w-full sm:my-5">
+    <div className="flex sm:grid flex-col gap-4 sm:grid-cols-2 sm:gap-10 w-full sm:my-5">
       <div>
         <Label className="mb-2">Sizes</Label>
         <Select

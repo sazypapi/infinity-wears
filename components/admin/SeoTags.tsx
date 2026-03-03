@@ -24,9 +24,6 @@ function SeoTags({ product }: { product?: Product }) {
           isMulti
           options={predefinedTags.map((tag) => ({ value: tag, label: tag }))}
           value={tags.map((tag) => ({ value: tag, label: tag }))}
-          onChange={(selected) =>
-            setTags(selected ? selected.map((item) => item.value) : [])
-          }
           placeholder="Select or create tags..."
           styles={{
             control: (baseStyles, state) => ({
@@ -35,6 +32,9 @@ function SeoTags({ product }: { product?: Product }) {
               borderRadius: "7px",
               boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
             }),
+          }}
+          onChange={(selected) => {
+            setTags(selected.map((option) => option.value));
           }}
           required
         />

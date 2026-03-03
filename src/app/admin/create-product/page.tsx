@@ -13,10 +13,10 @@ import {
 async function CreateProduct() {
   const allCollections = await getAllCollections();
   const collectionsMap: string[] = allCollections.map(
-    (collection) => collection.name
+    (collection) => collection.name,
   );
   return (
-    <Containers className="py-10 sm:mt-10">
+    <Containers className="py-10 px-2 sm:mt-10">
       <Breadcrumb className="mb-5">
         <BreadcrumbList>
           <BreadcrumbItem>

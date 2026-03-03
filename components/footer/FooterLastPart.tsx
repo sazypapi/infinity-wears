@@ -5,10 +5,10 @@ function FooterLastPart() {
   return (
     <div className="sm:flex sm:justify-between sm:items-center grid grid-cols-1 justify-items-center items-center py-5 border-b-2 w-full border-neutral-100 mb-4 px-4 sm:px-0">
       <div className="sm:flex sm:flex-1/3 gap-10 sm:flex-col">
-        <h6 className="text-sm text-center mb-4 sm:mb-0">
+        <h6 className="text-sm text-center mb-4 sm:text-left text-white sm:mb-0">
           Operating hours: Monday – Saturday (10am - 8pm) Sunday (12pm - 8pm)
         </h6>
-        <p className="flex items-center justify-center text-center mb-5 sm:mb-0">
+        <p className="flex text-white items-center justify-center sm:justify-start sm:text-left text-center mb-5 sm:mb-0">
           <IoLocationOutline /> Literally Nowhere
         </p>
         <iframe
@@ -22,12 +22,22 @@ function FooterLastPart() {
         ></iframe>
       </div>
       <div className="my-10 sm:mt-0 flex flex-1/3 flex-col gap-5 text-center sm:text-right">
-        <h5>Quick Links</h5>
-        <Link href="/">Home</Link>
-        <Link href="/">Home</Link>
-        <Link href="/">Home</Link>
-        <Link href="/">Home</Link>
-        <Link href="/">Home</Link>
+        <h5 className="text-white">Quick Links</h5>
+        <Link href="/" className="text-white">
+          Home
+        </Link>
+        <Link href="/" className="text-white">
+          Home
+        </Link>
+        <Link href="/" className="text-white">
+          Home
+        </Link>
+        <Link href="/" className="text-white">
+          Home
+        </Link>
+        <Link href="/" className="text-white">
+          Home
+        </Link>
       </div>
     </div>
   );

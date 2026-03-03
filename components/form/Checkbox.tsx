@@ -19,7 +19,7 @@ function CheckboxInput({
     setInStock(!inStock);
   };
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex align-middle items-center space-x-2">
       {/* <input type="hidden" name={name} value={inStock ? "true" : "false"} /> */}
       <Checkbox
         id={name}
@@ -30,7 +30,7 @@ function CheckboxInput({
       />
       <label
         htmlFor={name}
-        className="text-sm leading-none capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        className="text-sm leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
       >
         {label}
       </label>

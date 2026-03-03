@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useEdgeStore } from "@/lib/edgestore";
 import * as React from "react";
 
-function EditSingleUploader({ defaultUrl }: { defaultUrl: string }) {
+function EditSingleUploader() {
   const [file, setFile] = React.useState<File | null>(null);
   const [filePreview, setFilePreview] = React.useState<string | null>(null);
   const [isUploading, setIsUploading] = React.useState(false);

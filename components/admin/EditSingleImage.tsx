@@ -30,7 +30,7 @@ function EditSingleImage({ product }: { product: Product }) {
         </Button>
         {showUpdate ? (
           <>
-            <EditSingleUploader defaultUrl={product.coverImage} />
+            <EditSingleUploader />
             <div className="p-3 w-full flex justify-end">
               <SubmitButton text="Update cover image" loadingText="Updating" />
             </div>

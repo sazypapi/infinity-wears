@@ -4,9 +4,9 @@ import { IoMdSearch } from "react-icons/io";
 import UserIcon from "../Navbar/UserIcon";
 function BottomNav() {
   return (
-    <div className="flex justify-center w-full items-center">
+    <div className="flex justify-center w-full items-center z-50">
       <div
-        className="fixed bottom-[1vh] w-[90%] px-5 py-4 h-[9vh]
+        className="fixed bottom-[1vh] w-[90%] px-5 py-4 h-15
       flex justify-between items-center
         bg-black/30 backdrop-blur-md backdrop-saturate-150
         border-t

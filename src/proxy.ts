@@ -5,6 +5,7 @@ const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/userdata(.*)",
   "/admin(.*)",
+  "/cart(.*)",
 ]);
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);

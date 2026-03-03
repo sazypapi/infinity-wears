@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { Product } from "@/generated/prisma";
+import { ColorVariant, Product } from "@/generated/prisma";
 import EditNamePriceDiscountQuantity from "./EditNamePriceDiscountQuantity";
 import TextArea from "../form/TextArea";
 import EditQuantityAvailableMaterialDiscount from "./EditQuantityAvailableMaterialDiscount";
@@ -16,10 +16,12 @@ function EditProductDetails({
   product,
   existingCollections,
   collectionName,
+  variants,
 }: {
   product: Product;
   existingCollections: string[];
   collectionName: string | undefined;
+  variants: ColorVariant[];
 }) {
   return (
     <FormContainer action={editProductDetails}>
@@ -33,19 +35,16 @@ function EditProductDetails({
             name="description"
             defaultValue={product.description}
           />
-          {/* QUANTITY AVAILABLE MATERIAL SLUG */}
-
-          <div className="mb-3 mt-5 sm:grid sm:grid-cols-4 sm:align-baseline flex flex-col gap-10 justify-between align-middle">
-            <EditQuantityAvailableMaterialDiscount product={product} />
-          </div>
-          <div className="flex justify-between align-middle items-center gap-4">
-            <EditAdminSelects product={product} />
-          </div>
-          <EditSEO product={product} />
+          {/* GENDER SEOs  */}
+          <EditQuantityAvailableMaterialDiscount product={product} />
           <EditCollections
             collectionName={collectionName}
             existingCollections={existingCollections}
+            product={product}
           />
+          {/* <div className="flex justify-between align-middle items-center gap-4">
+            <EditAdminSelects product={product} />
+          </div> */}
         </CardContent>
         <div className="p-3 w-full flex justify-end">
           <SubmitButton text="Edit Product" loadingText="Editing Product" />

@@ -30,7 +30,7 @@ async function ViewProductPage({
     );
   }
   return (
-    <Containers className="py-10 sm:py-15 sm:mt-14">
+    <Containers className="py-10 px-2 sm:py-15 sm:mt-14">
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -50,7 +50,11 @@ async function ViewProductPage({
         </BreadcrumbList>
       </Breadcrumb>
       <ViewproductsHeader slug={product.slug} id={product.id} />
-      <ViewProductBody product={product} getCollection={getCollection} />
+      <ViewProductBody
+        product={product}
+        getCollection={getCollection}
+        variants={product.variants}
+      />
     </Containers>
   );
 }

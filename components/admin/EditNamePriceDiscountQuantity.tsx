@@ -2,9 +2,16 @@
 import { Input } from "@/components/ui/input";
 import { Product } from "@/generated/prisma";
 import { useState } from "react";
-import PriceInput from "../form/PriceInput";
 import FormInput from "../form/FormInput";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
   const [name, setName] = useState(product.name);
@@ -14,7 +21,7 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-");
   return (
-    <div className="sm:grid sm:gap-4 sm:justify-between flex flex-col gap-2 sm:grid-cols-2 mb-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-10 mb-4 sm:mb-5">
       <div>
         <Label className="capitalize mb-2" htmlFor="name">
           Product Name{" "}
@@ -25,26 +32,39 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
           name="name"
           type="text"
           className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300"
-          defaultValue={name}
+          value={name}
           placeholder="Product Name"
           required
         />
         <input type="hidden" name="slug" value={slug} />
       </div>
-      <div className="flex justify-between gap-2 w-full sm:flex-row flex-col">
-        <div className="sm:flex sm:flex-1/2">
-          <PriceInput value={product.price} />
-        </div>
 
-        <div className="sm:flex sm:flex-1/2">
-          <FormInput
-            name="quantity"
-            label="Quantity"
-            type="number"
-            placeholder="quantity"
-            defaultValue={product.quantity.toString()}
-          />
-        </div>
+      <div>
+        <FormInput
+          name="quantity"
+          label="Quantity"
+          type="number"
+          placeholder="quantity"
+          defaultValue={product.quantity.toString()}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        <Label className="mb-2">Category</Label>
+        <Select required name="category" defaultValue={product.category || ""}>
+          <SelectTrigger className="border-2 w-full border-gray-300">
+            <SelectValue placeholder="select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="TSHIRTS">T-Shirts</SelectItem>
+              <SelectItem value="JEANS">Jeans</SelectItem>
+              <SelectItem value="DRESSES">Dresses</SelectItem>
+              <SelectItem value="JACKETS">Jackets</SelectItem>
+              <SelectItem value="ACTIVEWEAR">Activewear</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

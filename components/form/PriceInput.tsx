@@ -8,7 +8,7 @@ const name = "price";
 function PriceInput({ value }: { value?: number }) {
   const [price, setprice] = useState(value?.toString() || "");
   return (
-    <div className="mb-2 ">
+    <div>
       <Label htmlFor={name} className="capitalize mb-2">
         Price (&#8358;)
       </Label>

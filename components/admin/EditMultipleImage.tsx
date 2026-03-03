@@ -65,7 +65,7 @@ function EditMultipleImage({ product }: { product: Product }) {
             onClick={() => setShowUpdate(!showUpdate)}
             type="button"
           >
-            Update Images
+            Add Images
           </Button>
         </div>
         {showUpdate ? (
@@ -75,16 +75,13 @@ function EditMultipleImage({ product }: { product: Product }) {
               Hold ctrl to select multiple images on pc
             </p>
             <EditMultipleUploader product={product} />
-            <div className="p-3 w-full flex justify-end">
-              <SubmitButton
-                text="Update product images"
-                loadingText="Updating"
-              />
-            </div>
           </>
         ) : (
           ""
         )}
+        <div className="p-3 w-full flex justify-end">
+          <SubmitButton text="Update product images" loadingText="Updating" />
+        </div>
       </div>
     </FormContainer>
   );

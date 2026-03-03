@@ -5,11 +5,6 @@ import { useState } from "react";
 import Select from "react-select";
 
 function EditAdminSelects({ product }: { product: Product }) {
-  const availableSizes = ["XS", "S", "M", "L", "XL"];
-  const [sizes, setSizes] = useState<string[]>(product.sizes);
-
-  const availableColors = ["Black", "White", "Red", "Blue", "Green", "Brown"];
-  const [colors, setColors] = useState<string[]>(product.colors);
   return (
     <div className="flex sm:grid flex-col sm:grid-cols-2 sm:gap-10 w-full sm:my-5">
       <div>

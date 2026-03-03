@@ -13,9 +13,9 @@ function Menu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex align-middle items-center">
+        <button className="flex align-middle items-center border-none focus:outline-none">
           <RiMenu5Fill className="w-8 h-8" />
-        </Button>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" alignOffset={0} className="w-40">
         {links.map((link) => {

@@ -34,7 +34,7 @@ async function AllProducts() {
                 >
                   <div className="sm:w-16 sm:h-16 h-12 w-12 relative">
                     <Image
-                      src={product.coverImage}
+                      src={product.variants[0].coverImage}
                       fill
                       className="object-cover shadow-lg rounded-lg border"
                       alt={product.name}
@@ -44,7 +44,7 @@ async function AllProducts() {
                     {product.name}
                   </h2>
                   <h2 className="text-gray-800 text-sm hidden sm:inline-block w-30 text-left">
-                    {formatCurrency(product.price)}
+                    {formatCurrency(product.variants[0].price)}
                   </h2>
                   {product.quantity > 0 ? (
                     <h2 className="text-gray-800 text-sm hidden sm:inline-block text-left w-35">

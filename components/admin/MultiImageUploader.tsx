@@ -93,6 +93,7 @@ export default function MultiImageUploader({
               variant="default"
               onClick={handleUpload}
               disabled={isUploading || files.length === 0}
+              className="bg-white text-black hover:text-white hover:bg-black transition duration-500 border-2 border-black"
             >
               {isUploading ? "Uploading..." : "Upload"}
             </Button>

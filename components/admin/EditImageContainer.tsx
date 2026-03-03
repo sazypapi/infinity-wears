@@ -20,7 +20,6 @@ function EditImageContainer({ product }: { product: Product }) {
         </CardTitle>
       </CardHeader>
       <CardContent className="text-black">
-        <EditSingleImage product={product} />
         <EditMultipleImage product={product} />
       </CardContent>
     </Card>

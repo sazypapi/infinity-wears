@@ -36,7 +36,7 @@ async function ViewCollectionProducts({
     );
   }
   return (
-    <Containers className="py-10 sm:py-15 sm:mt-14">
+    <Containers className="py-10 px-2 sm:py-15 sm:mt-14">
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>

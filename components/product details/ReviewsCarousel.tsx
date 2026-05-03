@@ -9,7 +9,7 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 import type { EmblaCarouselType } from "embla-carousel";
 import { Button } from "@/components/ui/button";
-import { reviews } from "../../utils/reviews";
+
 import {
   Card,
   CardContent,
@@ -19,8 +19,9 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import Rating from "./Ratings";
+import { Review } from "@/generated/prisma";
 
-function ReviewsCarousel() {
+function ReviewsCarousel({ reviews }: { reviews: Review[] }) {
   const [api, setApi] = useState<EmblaCarouselType | undefined>(undefined);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
@@ -54,13 +55,13 @@ function ReviewsCarousel() {
       >
         <CarouselContent>
           {reviews.map((review, index) => (
-            <CarouselItem key={index}>
+            <CarouselItem key={review.id}>
               <Card className="bg-white border-2 border-gray-200 pt-3 mt-3">
                 <CardHeader>
                   <CardTitle className="flex align-middle text-black items-center justify-between">
-                    {review.name}
+                    {review.authorName}
                     <Image
-                      src={review.img}
+                      src={review.authorImageUrl}
                       height={30}
                       width={30}
                       className="rounded-full"
@@ -69,7 +70,7 @@ function ReviewsCarousel() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-xs text-black">
-                  {review.comment}
+                  {review.description}
                 </CardContent>
                 <CardFooter>
                   <Rating rating={review.rating} />

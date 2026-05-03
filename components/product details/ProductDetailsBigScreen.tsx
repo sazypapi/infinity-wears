@@ -9,9 +9,12 @@ import ProductDetailsDetailsBox from "./ProductDetailsDetailsBox";
 import { SubmitButton } from "../form/Buttons";
 import FormContainer from "../form/FormContainer";
 import { addToCartAction } from "../../utils/actions";
+import { SignInButton, useUser } from "@clerk/nextjs";
+
 type ProductWithVariants = Prisma.ProductGetPayload<{
   include: { variants: true };
 }>;
+
 type Props = {
   productDetails: ProductWithVariants;
   onVariantChange?: (variantId: string) => void;
@@ -23,27 +26,44 @@ function ProductDetailsBigScreen({
   onVariantChange,
   currentId,
 }: Props) {
+  const { isSignedIn } = useUser();
   const variants: ColorVariant[] = productDetails.variants;
   const variantIds = variants.map((variant) => variant.id);
   const [variantId, setVariantId] = useState(variantIds[0]);
+
   useEffect(() => {
     if (onVariantChange) {
       onVariantChange(variantId);
     }
   }, [variantId]);
+
   const currentVariant = variants.find((variant) => variant.id === variantId);
   const allSizes = Array.from(
     new Set(variants.flatMap((variant) => variant.sizes)),
   );
 
-  const sizes: string[] = currentVariant!.sizes;
   const [size, setSize] = useState(currentVariant!.sizes[0]);
+
   useEffect(() => {
     if (currentVariant) {
       setSize(currentVariant.sizes[0]);
     }
   }, [variantId]);
-  const classNameSelect = "bg-black text-white";
+
+  const handleSizeClick = (clickedSize: string) => {
+    if (currentVariant?.sizes.includes(clickedSize)) {
+      setSize(clickedSize);
+    } else {
+      const variantWithSize = variants.find(
+        (v) => v.sizes.includes(clickedSize) && v.inStock,
+      );
+      if (variantWithSize) {
+        setVariantId(variantWithSize.id);
+        setSize(clickedSize);
+      }
+    }
+  };
+
   const variantClassNameSelect = "border-black";
   let isDiscount = false;
   const [amount, setAmount] = useState(1);
@@ -51,13 +71,22 @@ function ProductDetailsBigScreen({
   if (currentVariant?.discount != null && currentVariant.discount > 0) {
     isDiscount = true;
   }
-  const formatStatus = (status: string) =>
-    status.charAt(0) + status.slice(1).toLowerCase();
+
   return (
     <div className="flex flex-col">
       <div className="w-[60%]">
         <h4 className="text-sm text-neutral-400">infinity wears</h4>
-        <h1 className="text-2xl">{productDetails.name}</h1>
+
+        {/* NAME + STOCK STATUS */}
+        {currentVariant?.inStock ? (
+          <h1 className="text-2xl">{productDetails.name}</h1>
+        ) : (
+          <h1 className="text-2xl">
+            {productDetails.name}{" "}
+            <span className="text-red-500 text-base">Out of stock</span>
+          </h1>
+        )}
+
         {/* PRICE */}
         <div className="flex flex-row gap-2">
           <h2
@@ -82,23 +111,21 @@ function ProductDetailsBigScreen({
             )}
           </h2>
         </div>
+
         {/* COLOR */}
         <div className="grid gap-3 grid-cols-6 mt-3">
           {variants.map((variantItem) => {
             const isVariant = variantItem.id === variantId;
-            const isAvailable = variantItem.inStock;
+            // const isAvailable = variantItem.inStock;
 
             return (
               <button
                 key={variantItem.id}
-                disabled={!isAvailable}
-                onClick={() => isAvailable && setVariantId(variantItem.id)}
+                // disabled={!isAvailable}
+                onClick={() => setVariantId(variantItem.id)}
                 className={cn(
-                  "p-2 flex justify-center items-center border-2 transition duration-500",
-                  isVariant && isAvailable ? variantClassNameSelect : "",
-                  !isAvailable
-                    ? "border-neutral-200 opacity-40 cursor-not-allowed"
-                    : "border-neutral-300 hover:border-black",
+                  "p-2 flex justify-center items-center border-2 transition duration-500 border-neutral-300 hover:border-black",
+                  isVariant ? variantClassNameSelect : "",
                 )}
                 type="button"
               >
@@ -110,25 +137,35 @@ function ProductDetailsBigScreen({
             );
           })}
         </div>
+
         {/* SIZE */}
-        <h4 className="text-sm mt-7 text-neutral-600">Size: {size}</h4>
+        <div className="mt-7">
+          {currentVariant?.inStock ? (
+            <h4 className="text-sm text-neutral-600">Size: {size}</h4>
+          ) : (
+            ""
+          )}
+        </div>
         <div className="grid gap-3 grid-cols-5">
           {allSizes.map((currentSize) => {
             const isSizeSelected = currentSize === size;
             const isAvailable = currentVariant?.sizes.includes(currentSize);
+            const existsInAnyVariant = variants.some(
+              (v) => v.sizes.includes(currentSize) && v.inStock,
+            );
 
             return (
               <button
                 key={currentSize}
-                disabled={!isAvailable}
+                disabled={!existsInAnyVariant}
                 type="button"
-                onClick={() => isAvailable && setSize(currentSize)}
+                onClick={() => handleSizeClick(currentSize)}
                 className={cn(
                   "w-full h-10 flex items-center justify-center border-2 transition duration-200",
                   isSizeSelected && isAvailable
                     ? "bg-black text-white border-black"
                     : "",
-                  !isAvailable
+                  !existsInAnyVariant
                     ? "bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed line-through"
                     : "hover:bg-black hover:text-white border-black",
                 )}
@@ -139,11 +176,11 @@ function ProductDetailsBigScreen({
           })}
         </div>
       </div>
+
       <div className="w-full mt-10">
         {/* ADD TO CART */}
-
         <div className="w-[90%] flex flex-row gap-3">
-          <div className="flex flex-row align-middle items-center justify-start gap-3 flex-1/4 ">
+          <div className="flex flex-row align-middle items-center justify-start gap-3 flex-1/4">
             <Button
               className="bg-transparent rounded-none flex justify-center items-center p-0 w-12 h-10 border-2 border-black text-2xl hover:border-black hover:bg-black hover:text-white transition duration-500 text-black"
               onClick={() => {
@@ -166,6 +203,7 @@ function ProductDetailsBigScreen({
               +
             </Button>
           </div>
+
           <FormContainer action={addToCartAction}>
             <input type="hidden" name="productId" value={productDetails.id} />
             <input type="hidden" name="variantId" value={variantId} />
@@ -176,24 +214,40 @@ function ProductDetailsBigScreen({
               name="discount"
               value={currentVariant!.discount ? currentVariant!.discount : 0}
             />
-
             <input type="hidden" name="size" value={size} />
             <input
               type="hidden"
               name="color"
               value={currentVariant!.colorName}
             />
-
-            <SubmitButton
-              className="bg-transparent text-black rounded-none p-0 w-80 h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500"
-              text="Add to Cart"
-              loadingText="Adding to Cart"
-            />
+            {isSignedIn ? (
+              currentVariant?.inStock ? (
+                <SubmitButton
+                  className="bg-transparent text-black rounded-none p-0 w-80 h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500"
+                  text="Add to Cart"
+                  loadingText="Adding to Cart"
+                />
+              ) : (
+                <Button
+                  type="button"
+                  disabled
+                  className="bg-transparent text-black rounded-none p-0 w-80 h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500"
+                >
+                  Out of stock
+                </Button>
+              )
+            ) : (
+              <Button
+                asChild
+                type="button"
+                className="bg-transparent text-black rounded-none p-0 w-80 h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500"
+              >
+                <SignInButton mode="modal">Add to Cart</SignInButton>
+              </Button>
+            )}
           </FormContainer>
-          {/* <Button className="bg-transparent text-black rounded-none p-0 w-80 h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500">
-            Add to Cart
-          </Button> */}
         </div>
+
         {/* DETAILS BOX */}
         <ProductDetailsDetailsBox productDetails={productDetails} />
       </div>

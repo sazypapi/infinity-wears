@@ -7,8 +7,18 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { Prisma } from "@/generated/prisma";
 import Link from "next/link";
-function CollectionsDropdown() {
+type collectionLinks = Prisma.CollectionLinkGetPayload<{
+  include: {
+    collection: true;
+  };
+}>;
+function CollectionsDropdown({
+  collectionLinks,
+}: {
+  collectionLinks: collectionLinks[];
+}) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -23,21 +33,18 @@ function CollectionsDropdown() {
           >
             <ul className="grid w-[200px] gap-4">
               <li>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="text-xs">
-                    Components
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="text-xs">
-                    Documentation
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="text-xs">
-                    Blocks
-                  </Link>
-                </NavigationMenuLink>
+                {collectionLinks.map((link) => {
+                  return (
+                    <NavigationMenuLink asChild key={link.id}>
+                      <Link
+                        href={`/collections/${link.collectionName}`}
+                        className="text-xs capitalize"
+                      >
+                        {link.collectionName}
+                      </Link>
+                    </NavigationMenuLink>
+                  );
+                })}
               </li>
             </ul>
           </NavigationMenuContent>

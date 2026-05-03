@@ -1,24 +1,16 @@
 "use client";
 import { SubmitButton } from "../form/Buttons";
-import FormInput from "../form/FormInput";
-import {
-  createCollection,
-  createReview,
-  updateCartItems,
-} from "../../utils/actions";
+import { updateCartItems } from "../../utils/actions";
 import FormContainer from "../form/FormContainer";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { ColorVariant, Prisma, Product } from "@/generated/prisma";
-import ProductDetailsImagesBigScreen from "../product details/ProductDetailsImagesBigScreen";
+import { Prisma } from "@/generated/prisma";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CartImagesBigScreen from "./CartBigDetailsImages";
 import { useState } from "react";

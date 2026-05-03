@@ -22,7 +22,8 @@ export const formatDate = (date: Date) => {
 
 export const formatDateMonthAndYear = (date: Date) => {
   return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    year: "numeric",
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
   }).format(date);
 };

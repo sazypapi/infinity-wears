@@ -5,7 +5,6 @@ import TextArea from "../form/TextArea";
 import GenderSelect from "./GenderSelect";
 import SeoTags from "./SeoTags";
 
-import { useState } from "react";
 function EditQuantityAvailableMaterialDiscount({
   product,
 }: {

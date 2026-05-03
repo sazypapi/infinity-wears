@@ -9,9 +9,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import type { EmblaCarouselType } from "embla-carousel";
-import { mobileCarouselImages } from "../../utils/carouselImages";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 type ProductWithVariants = Prisma.ProductGetPayload<{
   include: { variants: true };

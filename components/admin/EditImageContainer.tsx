@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Product } from "@/generated/prisma";
 import { FaImage } from "react-icons/fa";
-import EditSingleImage from "./EditSingleImage";
 
 import EditMultipleImage from "./EditMultipleImage";
 

@@ -8,13 +8,12 @@ import {
 import { RiMenu5Fill } from "react-icons/ri";
 import { links } from "../../utils/links";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 function Menu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex align-middle items-center border-none focus:outline-none">
-          <RiMenu5Fill className="w-8 h-8" />
+          <RiMenu5Fill className="w-8 h-8 text-white" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" alignOffset={0} className="w-40">

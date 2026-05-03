@@ -4,9 +4,14 @@ import { Mail, Phone } from "lucide-react";
 import Containers from "../global/Containers";
 import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 import FooterLogo from "./FooterLogo";
-// import FooterMidRange from "./FooterMidRange";
 import FooterLastPart from "./FooterLastPart";
-function Footer() {
+import { Prisma } from "@/generated/prisma";
+type collectionLinks = Prisma.CollectionLinkGetPayload<{
+  include: {
+    collection: true;
+  };
+}>;
+function Footer({ collectionLinks }: { collectionLinks: collectionLinks[] }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -26,7 +31,7 @@ function Footer() {
       <div className="relative z-10 flex flex-col items-center justify-between w-full gap-6">
         <FooterLogo />
         {/* <FooterMidRange /> */}
-        <FooterLastPart />
+        <FooterLastPart collectionLinks={collectionLinks} />
 
         <h4 className="text-sm text-center text-white">
           Zedek&apos;s Media 2025 <br />

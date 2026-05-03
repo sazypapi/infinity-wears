@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { Sketch } from "@uiw/react-color";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";

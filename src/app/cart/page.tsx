@@ -1,6 +1,10 @@
 import Containers from "../../../components/global/Containers";
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { fetchOrCreateCart, updateCart } from "../../../utils/actions";
+import {
+  fetchOrCreateCart,
+  isAddressAndPhone,
+  updateCart,
+} from "../../../utils/actions";
 import { redirect } from "next/navigation";
 import { PiEmptyBold } from "react-icons/pi";
 import Footer from "../../../components/footer/Footer";
@@ -14,6 +18,8 @@ async function CartPage() {
   const { userId } = await auth();
   const user = await currentUser();
   if (!userId) redirect("/");
+  const userHasAddressAndPhone = await isAddressAndPhone();
+
   const previousCart = await fetchOrCreateCart({ userId });
   const { cartItems, currentCart } = await updateCart(previousCart);
   if (cartItems.length === 0) {
@@ -29,7 +35,6 @@ async function CartPage() {
             </Button>
           </div>
         </Containers>
-        <Footer />
       </>
     );
   }
@@ -37,10 +42,18 @@ async function CartPage() {
     <Containers className="lg:mt-15 py-5 px-2">
       <Header name={user?.firstName || ""} />
       <div className="hidden lg:flex">
-        <BigScreenCart cartItems={cartItems} currentCart={currentCart} />
+        <BigScreenCart
+          cartItems={cartItems}
+          currentCart={currentCart}
+          userHasAddressAndPhone={userHasAddressAndPhone}
+        />
       </div>
       <div className="flex lg:hidden">
-        <SmallScreenCart cartItems={cartItems} currentCart={currentCart} />
+        <SmallScreenCart
+          cartItems={cartItems}
+          currentCart={currentCart}
+          userHasAddressAndPhone={userHasAddressAndPhone}
+        />
       </div>
     </Containers>
   );

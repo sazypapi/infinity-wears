@@ -8,11 +8,15 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import type { EmblaCarouselType } from "embla-carousel";
-import { mobileCarouselImages } from "../../utils/carouselImages";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { HomeCarousel } from "@/generated/prisma";
 
-function MobileHomeCarousel() {
+function MobileHomeCarousel({
+  carouselItems,
+}: {
+  carouselItems: HomeCarousel[];
+}) {
   // ✅ Use correct type: matches shadcn/ui Carousel expectations
   const [api, setApi] = useState<EmblaCarouselType | undefined>(undefined);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -47,24 +51,22 @@ function MobileHomeCarousel() {
         className="w-full"
       >
         <CarouselContent>
-          {mobileCarouselImages.map((item) => (
-            <CarouselItem key={item.img}>
+          {carouselItems.map((item) => (
+            <CarouselItem key={item.id}>
               <div
-                className="relative h-[90vh] w-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${item.img})` }}
+                className="relative h-[80vh] w-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${item.mobileImage})` }}
               >
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="relative z-10 flex items-center justify-center h-full">
-                  <Button
-                    asChild
-                    className="mt-[10vh] rounded-none bg-transparent border-white text-white border-2 shadow-lg hover:bg-black hover:border-black transition duration-500"
-                  >
-                    <Link href="#">
-                      <h1 className="text-xl">
-                        Explore our {item.color} collection
-                      </h1>
-                    </Link>
-                  </Button>
+                  <Link href={item.link}>
+                    <Button
+                      asChild
+                      className="mt-[10vh] rounded-none bg-transparent border-white text-white border-2 shadow-lg hover:bg-black hover:border-black transition duration-500"
+                    >
+                      <h1 className="text-xl">{item.text}</h1>
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </CarouselItem>

@@ -30,7 +30,7 @@ export function SubmitButton({
       disabled={pending}
       className={cn(
         "capitalize bg-white text-black hover:bg-black hover:text-white transition-all duration-300 border-2 border-black",
-        className
+        className,
       )}
       size={size}
     >
@@ -92,8 +92,7 @@ export const CardSubmitButton = ({ isFavorite }: { isFavorite: boolean }) => {
     <Button
       type="submit"
       size="icon"
-      variant="outline"
-      className="p-2 cursor-pointer"
+      className="p-2 cursor-pointer text-black bg-transparent backdrop-blur-sm hover:border-2 rounded-full hover:text-red-500 hover:bg-transparent"
     >
       {pending ? (
         <ReloadIcon className="animate-spin" />

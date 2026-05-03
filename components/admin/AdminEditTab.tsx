@@ -5,13 +5,11 @@ import EditImageContainer from "./EditImageContainer";
 import EditVariantCards from "./EditVariantCards";
 function AdminEditTab({
   product,
-  getCollection,
   collectionName,
   existingCollections,
   variants,
 }: {
   product: Product;
-  getCollection: Collection | null;
   collectionName: string | undefined;
   existingCollections: string[];
   variants: ColorVariant[];

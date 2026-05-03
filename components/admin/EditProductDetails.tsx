@@ -4,8 +4,6 @@ import { ColorVariant, Product } from "@/generated/prisma";
 import EditNamePriceDiscountQuantity from "./EditNamePriceDiscountQuantity";
 import TextArea from "../form/TextArea";
 import EditQuantityAvailableMaterialDiscount from "./EditQuantityAvailableMaterialDiscount";
-import EditAdminSelects from "./EditAdminSelects";
-import EditSEO from "./EditSEO";
 import EditCollections from "./EditCollections";
 import FormContainer from "../form/FormContainer";
 import { editProductDetails } from "../../utils/actions";

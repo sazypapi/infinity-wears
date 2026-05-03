@@ -1,4 +1,3 @@
-import Link from "next/link";
 import CreateProductCard from "../../../../components/admin/CreateProductCard";
 import Containers from "../../../../components/global/Containers";
 import { getAllCollections } from "../../../../utils/actions";
@@ -16,7 +15,7 @@ async function CreateProduct() {
     (collection) => collection.name,
   );
   return (
-    <Containers className="py-10 px-2 sm:mt-10">
+    <Containers className="py-5 px-2">
       <Breadcrumb className="mb-5">
         <BreadcrumbList>
           <BreadcrumbItem>

@@ -14,15 +14,16 @@ import { SubmitButton } from "../form/Buttons";
 
 import { deleteCollection } from "../../utils/actions";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { AiFillDelete } from "react-icons/ai";
 function DeleteCollection({ collection }: { collection: Collection }) {
-  const [name, setName] = useState(collection.name);
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="icon-lg" type="button" className="bg-transparent">
+        <Button
+          type="button"
+          className="bg-transparent border-none hover:bg-transparent text-black hover:cursor-pointer"
+        >
           <AiFillDelete />
         </Button>
       </DialogTrigger>

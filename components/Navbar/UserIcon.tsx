@@ -18,13 +18,20 @@ import Link from "next/link";
 import { toast } from "sonner";
 import Image from "next/image";
 
-function UserIcon() {
-  const { user, isSignedIn } = useUser();
+function UserIcon({ isAdmin }: { isAdmin: boolean }) {
+  const { user, isSignedIn, isLoaded } = useUser();
   const { signOut } = useClerk();
   const toastLogout = async () => {
     await signOut();
     toast("Succesfully Logged Out");
   };
+  if (!isLoaded) {
+    return (
+      <div className="flex align-middle items-center">
+        <LuUser className="h-7 w-7 bg-primary text-gray-300 rounded-full" />
+      </div>
+    );
+  }
   if (isSignedIn && user) {
     const profileImage = user.imageUrl;
     return (
@@ -45,6 +52,20 @@ function UserIcon() {
           )}
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <Link href="/dashboard/account">
+            <DropdownMenuItem>My Account</DropdownMenuItem>
+          </Link>
+          <Link href="/dashboard/orders">
+            <DropdownMenuItem>Orders</DropdownMenuItem>
+          </Link>
+          <Link href="/dashboard/wishlist">
+            <DropdownMenuItem>Wishlist</DropdownMenuItem>
+          </Link>
+          {isAdmin && (
+            <Link href="/admin">
+              <DropdownMenuItem>Admin Dashboard</DropdownMenuItem>
+            </Link>
+          )}
           <Link href="/" className="w-full" onClick={toastLogout}>
             <SignOutButton>
               <DropdownMenuItem>Logout</DropdownMenuItem>

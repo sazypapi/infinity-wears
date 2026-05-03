@@ -1,12 +1,12 @@
-import React from "react";
 import { getAlmostSoldOut } from "../../utils/actions";
 import Image from "next/image";
 import { formatCurrency } from "../../utils/format";
 import { FeaturedProducts } from "./FeaturedProducts";
 import Link from "next/link";
+import FavoriteToggleButton from "../shop/FavoriteToggleButton";
 async function AlmostSoldOut() {
   const almostSoldOut = await getAlmostSoldOut();
-
+  if (almostSoldOut.length === 0) return null;
   return (
     <>
       <h2 className="text-2xl sm:text-4xl text-center text-neutral-700">
@@ -19,33 +19,42 @@ async function AlmostSoldOut() {
         {almostSoldOut.map((product) => {
           const firstVariant = product.variants[0];
           return (
-            <Link href={`/products/${product.slug}`} key={product.id}>
-              <div className="justify-center w-fit flex flex-col group items-center">
-                {/* /*IMAGE  */}
-                <div className="w-36 h-48 sm:w-60 sm:h-72 rounded-lg group-hover:scale-110 transition-transform duration-500 relative overflow-hidden">
-                  <Image
-                    src={firstVariant.coverImage}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    fill
-                  />
-                  {/* <HoverSwapImage images={hoverImages} alt={product.name} /> */}
+            <article key={product.id} className="group relative ">
+              <Link href={`/products/${product.slug}`}>
+                <div className="justify-center w-fit flex flex-col group items-center">
+                  {/* /*IMAGE  */}
+                  <div className="w-36 h-48 sm:w-60 sm:h-72 rounded-lg group-hover:scale-110 transition-transform duration-500 relative overflow-hidden">
+                    <Image
+                      src={firstVariant.coverImage}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      fill
+                    />
+                    {/* <HoverSwapImage images={hoverImages} alt={product.name} /> */}
+                  </div>
+                  <div className="w-36 sm:w-60 mt-4">
+                    <p className="text-gray-500 text-sm text-center truncate ">
+                      {product.name}
+                    </p>
+                    <p className="text-gray-800 text-xs text-center truncate ">
+                      {formatCurrency(firstVariant.price)}
+                    </p>
+                  </div>
                 </div>
-                <div className="w-36 sm:w-60 mt-4">
-                  <p className="text-gray-500 text-sm text-center truncate ">
-                    {product.name}
-                  </p>
-                  <p className="text-gray-800 text-xs text-center truncate ">
-                    {formatCurrency(firstVariant.price)}
-                  </p>
-                </div>
+              </Link>
+              <div className="absolute top-0 left-0 z-20">
+                <FavoriteToggleButton productId={product.id} />
               </div>
-            </Link>
+            </article>
           );
         })}
       </div>
       <div className="flex items-center pt-12 justify-center justify-items-center sm:hidden">
-        <FeaturedProducts items={almostSoldOut} />
+        <FeaturedProducts items={almostSoldOut}>
+          {almostSoldOut.map((product) => (
+            <FavoriteToggleButton key={product.id} productId={product.id} />
+          ))}
+        </FeaturedProducts>
       </div>
     </>
   );

@@ -86,7 +86,7 @@ export default function MultiImageUploader({
               multiple
               accept="image/*"
               onChange={(e) => handleFileSelection(e.target.files)}
-              className="border-2 border-gray-300 shadow p-2 rounded-2xl w-full"
+              className="border-2 border-gray-300 shadow p-2 rounded-md text-base w-full"
             />
 
             <Button

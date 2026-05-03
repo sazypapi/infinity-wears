@@ -34,7 +34,7 @@ async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
     );
   }
   return (
-    <Containers className="py-5 sm:mt-15 px-2">
+    <Containers className="py-5 px-2">
       <Breadcrumb className="mb-5">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -66,7 +66,6 @@ async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
       <AdminEditTab
         existingCollections={collectionsMap}
         product={product}
-        getCollection={getCollection}
         collectionName={collectionName}
         variants={product.variants}
       />

@@ -18,19 +18,26 @@ import Rating from "./Ratings";
 import { FaStar } from "react-icons/fa";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
-import { reviews } from "../../utils/reviews";
-function SingpleProductRatingReview() {
-  const oneStar = 4;
-  const twoStar = 6;
-  const threeStar = 12;
-  const fourStar = 25;
-  const fiveStar = 53;
-
-  const totalRating = oneStar + twoStar + threeStar + fourStar + fiveStar;
-
-  const averageRating =
-    (1 * oneStar + 2 * twoStar + 3 * threeStar + 4 * fourStar + 5 * fiveStar) /
-    totalRating;
+import { Review } from "@/generated/prisma";
+function SingpleProductRatingReview({
+  oneStar,
+  threeStar,
+  twoStar,
+  fourStar,
+  fiveStar,
+  totalRating,
+  averageRating,
+  reviews,
+}: {
+  oneStar: number;
+  twoStar: number;
+  threeStar: number;
+  fourStar: number;
+  fiveStar: number;
+  totalRating: number;
+  averageRating: number;
+  reviews: Review[];
+}) {
   return (
     <>
       <div className="grid grid-cols-5 justify-between align-middle items-center">
@@ -91,13 +98,13 @@ function SingpleProductRatingReview() {
             <CarouselContent>
               {reviews.map((review) => {
                 return (
-                  <CarouselItem key={review.name}>
+                  <CarouselItem key={review.id}>
                     <Card className="bg-white border-2 border-gray-200 ">
                       <CardHeader>
                         <CardTitle className="flex align-middle text-black items-center justify-between">
-                          {review.name}
+                          {review.authorName}
                           <Image
-                            src={review.img}
+                            src={review.authorImageUrl}
                             height={30}
                             width={30}
                             className="rounded-full"
@@ -106,7 +113,7 @@ function SingpleProductRatingReview() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="text-xs text-black">
-                        {review.comment}
+                        {review.description}
                       </CardContent>
                       <CardFooter>
                         <Rating rating={review.rating} />{" "}

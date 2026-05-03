@@ -1,21 +1,40 @@
 "use server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import {
+  adminUpdateOrderAndDeliveryStatusSchema,
+  collectionLinkSchema,
+  createCarouselsSchema,
+  createCustomOrderSchema,
+  createCustomPieceSchema,
+  createOrEditAddressBook,
+  createOrUpdateAdminNoteSchema,
   createProductSchema,
   createReviewSchema,
+  customPieceSchema,
   editProductDetailsSchema,
   editVariantsSchema,
+  updateCustomOrderRequestSchema,
 } from "./schemas";
-import { string, ZodError } from "zod";
+import z, { ZodError } from "zod";
 import { db } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { backendClient } from "@/lib/edgestore-server";
-import { log } from "console";
-import { Cart, Prisma, ProductStatus } from "@/generated/prisma";
+import {
+  Cart,
+  Category,
+  Gender,
+  OrderItem,
+  Prisma,
+  ProductStatus,
+} from "@/generated/prisma";
 import { revalidatePath } from "next/cache";
-import { parse } from "path";
 import { id } from "zod/v4/locales";
-// import db from "@/utils/db";
+export const checkIsAdmin = async () => {
+  const { sessionClaims } = await auth();
+  if (sessionClaims?.metadata?.role !== "admin") {
+    throw new Error("Unauthorized");
+  }
+};
 const getAuthUser = async () => {
   const user = await currentUser();
   if (!user) {
@@ -37,86 +56,6 @@ const renderError = (error: unknown): { message: string } => {
     message: error instanceof Error ? error.message : "an error occured",
   };
 };
-
-// export const createProduct = async (
-//   prevState: any,
-//   formData: FormData
-// ): Promise<{ message: string }> => {
-//   try {
-//     const rawData = Object.fromEntries(formData);
-//     const validatedFields = createProductSchema.parse(rawData);
-
-//     // Confirm cover image upload
-//     await backendClient.publicFiles.confirmUpload({
-//       url: validatedFields.coverImage,
-//     });
-
-//     // Confirm gallery uploads
-//     await Promise.all(
-//       validatedFields.images.map((imageUrl) =>
-//         backendClient.publicFiles.confirmUpload({ url: imageUrl })
-//       )
-//     );
-
-//     let collectionId: string | null = null;
-
-//     // -------------------------------
-//     // COLLECTION HANDLING
-//     // -------------------------------
-//     if (validatedFields.collectionId === null) {
-//       collectionId = null;
-//     } else {
-//       const normalized = validatedFields.collectionId.toLowerCase().trim();
-
-//       // find existing
-//       let collection = await db.collection.findFirst({
-//         where: {
-//           name: {
-//             equals: normalized,
-//           },
-//         },
-//       });
-
-//       // create if not exists
-//       if (!collection) {
-//         const slug = normalized
-//           .replace(/[^a-z0-9\s-]/g, "")
-//           .replace(/\s+/g, "-");
-
-//         collection = await db.collection.create({
-//           data: {
-//             name: normalized,
-//             slug,
-//           },
-//         });
-//       }
-
-//       collectionId = collection.id;
-//     }
-
-//     // -------------------------------
-//     // CREATE PRODUCT
-//     // -------------------------------
-//     console.log("collectionId being used for product:", collectionId);
-
-//     await db.product.create({
-//       data: {
-//         ...validatedFields,
-//         collectionId: collectionId,
-//       },
-//     });
-
-//     redirect("/admin");
-//   } catch (error) {
-//     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-//       if (error.code === "P2002") {
-//         return { message: "Slug already exists" };
-//       }
-//     }
-//     return renderError(error);
-//   }
-// };
-
 export const createProduct = async (
   prevState: any,
   formData: FormData,
@@ -241,7 +180,11 @@ export const createProduct = async (
 export const getAllProducts = async () => {
   const allProducts = await db.product.findMany({
     include: {
-      variants: { take: 1 },
+      variants: true,
+      collection: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
   return allProducts;
@@ -250,6 +193,9 @@ export const getAllCollections = async () => {
   const allCollections = await db.collection.findMany({
     include: {
       products: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 
@@ -536,25 +482,27 @@ export const deleteProduct = async (
       where: { id: productId },
     });
     if (!currentProduct) return { message: "Product not found" };
-
+    const findAllVariants = await db.colorVariant.findMany({
+      where: { productId: productId },
+    });
     await db.product.delete({ where: { id: productId } });
     await Promise.all(
       currentProduct.images.map((image) =>
         backendClient.publicFiles.deleteFile({ url: image }),
       ),
     );
-    const findAllVariants = await db.colorVariant.findMany({
-      where: { productId: productId },
-    });
-    await db.colorVariant.deleteMany({
-      where: {
-        productId: productId,
-      },
-    });
+
     await Promise.all(
-      findAllVariants.map((variant) =>
-        backendClient.publicFiles.deleteFile({ url: variant.coverImage }),
-      ),
+      findAllVariants.map(async (variant) => {
+        const isVariantOrdered = await db.orderItem.findFirst({
+          where: { imageUrl: variant.coverImage },
+        });
+        if (!isVariantOrdered) {
+          await backendClient.publicFiles.deleteFile({
+            url: variant.coverImage,
+          });
+        }
+      }),
     );
   } catch (error) {
     return renderError(error);
@@ -622,7 +570,13 @@ export const deleteCollection = async (
 export const getSingleCollection = async (id: string) => {
   const collection = await db.collection.findUnique({
     where: { id },
-    include: { products: true },
+    include: {
+      products: {
+        include: {
+          variants: true,
+        },
+      },
+    },
   });
   return collection;
 };
@@ -630,10 +584,13 @@ export const removeFromCollection = async (
   prevState: any,
   formData: FormData,
 ): Promise<{ message: string }> => {
+  let collectionId;
   try {
     const rawData = Object.fromEntries(formData);
-    const collectionId = formData.get("id")?.toString();
-    if (!collectionId) return { message: "No such Collection" };
+    collectionId = formData.get("id")?.toString();
+    if (!collectionId)
+      return { message: "There was an error updating the collection" };
+
     let removedIds: string[] = [];
     if (typeof rawData.removedIds === "string") {
       try {
@@ -642,23 +599,22 @@ export const removeFromCollection = async (
         removedIds = [];
       }
     }
-    if (removedIds.length === 0) {
-      return { message: "No products to remove" };
-    }
 
-    await db.product.updateMany({
-      where: {
-        id: { in: removedIds },
-      },
-      data: {
-        collectionId: null,
-      },
-    });
-    revalidatePath(`/admin/view-collection-products/${id}`);
-    return { message: "Products removed from collection" };
+    if (removedIds.length === 0) {
+      await db.product.updateMany({
+        where: { collectionId },
+        data: { collectionId: null },
+      });
+    } else {
+      await db.product.updateMany({
+        where: { id: { in: removedIds } },
+        data: { collectionId: null },
+      });
+    }
   } catch (error) {
     return renderError(error);
   }
+  redirect(`/admin/view-collection-products/${collectionId}`);
 };
 export const addToCollection = async (
   prevState: any,
@@ -689,7 +645,7 @@ export const addToCollection = async (
       },
     });
     revalidatePath(`/admin/view-collection-products/${id}`);
-    return { message: "Products added to collection" };
+    return { message: "Product(s) added to collection" };
   } catch (error) {
     return renderError(error);
   }
@@ -698,6 +654,9 @@ export const getSelectedProducts = async (id: string) => {
   const collection = await db.product.findMany({
     where: {
       OR: [{ collectionId: { not: id } }, { collectionId: null }],
+    },
+    include: {
+      variants: true,
     },
   });
   return collection;
@@ -739,6 +698,11 @@ export const getNewReleases = async () => {
     take: 4,
     where: {
       status: "ACTIVE",
+      variants: {
+        some: {
+          inStock: true,
+        },
+      },
     },
     include: {
       variants: true,
@@ -752,12 +716,26 @@ export const getAlmostSoldOut = async () => {
     take: 8,
     where: {
       status: "ACTIVE",
+      quantity: { gt: 0 },
+      variants: {
+        some: {
+          inStock: true,
+        },
+      },
     },
     include: {
       variants: true,
     },
   });
   return almostSoldOut;
+};
+export const getLatestCollectionLink = async () => {
+  const latestCollectionLink = await db.collectionLink.findFirst({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return latestCollectionLink;
 };
 export const getSingleProductDetails = async (slug: string) => {
   const productDetails = await db.product.findUnique({
@@ -781,6 +759,11 @@ export const getYouMayAlsoLike = async (slug: string) => {
       category: product.category,
       status: ProductStatus.ACTIVE,
       id: { not: product.id },
+      variants: {
+        some: {
+          inStock: true,
+        },
+      },
     },
     include: {
       variants: true,
@@ -836,6 +819,7 @@ export const createReview = async (
   formData: FormData,
 ): Promise<{ message: string }> => {
   let currentProduct;
+  let pathName;
   function shortenText(text: string, maxLength = 10): string {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength);
@@ -844,6 +828,8 @@ export const createReview = async (
   try {
     const rawData = Object.fromEntries(formData);
     const productId = typeof rawData.id === "string" ? rawData.id : "";
+    pathName = typeof rawData.pathName === "string" ? rawData.pathName : "";
+
     if (!productId) {
       return { message: "Invalid request. Missing ID." };
     }
@@ -856,10 +842,17 @@ export const createReview = async (
     const clerkId = user.id;
     const authorName = user.firstName;
     const authorImageUrl = user.imageUrl;
+    const hasPurchased = await db.orderItem.findFirst({
+      where: { productId, order: { clerkId } },
+    });
+    if (!hasPurchased) {
+      return { message: "You can only review products you have purchased." };
+    }
     currentProduct = await db.product.findUnique({ where: { id: productId } });
     const alreadyReviewed = await db.review.findFirst({
       where: {
-        AND: [{ productId: productId }, { clerkId: clerkId }],
+        productId,
+        clerkId,
       },
     });
     if (alreadyReviewed) {
@@ -875,13 +868,16 @@ export const createReview = async (
         productId,
       },
     });
-    revalidatePath(`/product/${currentProduct!.slug}`);
+    // revalidatePath(`/product/${currentProduct!.slug}`);
 
-    return { message: "Review Created" };
+    // return { message: "Review Created" };
   } catch (error) {
     return renderError(error);
   }
-  redirect(`/product/${currentProduct!.slug}`);
+  if (pathName === "/dashboard/pending-reviews") {
+    redirect("/dashboard/reviews");
+  }
+  redirect(`${pathName}`);
 };
 export const fetchOrCreateCart = async ({
   userId,
@@ -1033,7 +1029,10 @@ const includeProductClause = {
     },
   },
 };
-export const addToCartAction = async (prevState: any, formData: FormData) => {
+export const addToCartAction = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
   const user = await getAuthUser();
   if (!user) {
     return { message: "You must be logged in to add to cart" };
@@ -1048,6 +1047,14 @@ export const addToCartAction = async (prevState: any, formData: FormData) => {
 
     const amount = Number(formData.get("amount"));
     await fetchProduct(productId);
+    const isVariantInStock = await db.colorVariant.findUnique({
+      where: {
+        id: variantId,
+      },
+    });
+    if (!isVariantInStock?.inStock) {
+      return { message: "Product is Out of stock" };
+    }
     const cart = await fetchOrCreateCart({ userId: user.id });
     await updateOrCreateCartItem({
       cartId: cart.id,
@@ -1100,7 +1107,6 @@ export const deleteCartItem = async (
 ): Promise<{ message: string }> => {
   try {
     const productId = formData.get("id") as string;
-    console.log("Deleting ID:", id);
     const isProduct = await db.cartItem.findFirst({
       where: {
         id: productId,
@@ -1160,4 +1166,1144 @@ export const updateCartItems = async (
     return renderError(error);
   }
   redirect("/cart");
+};
+export const getAllProductsForShop = async (filters: any) => {
+  const { size, color, gender, category, material, sort, search } = filters;
+
+  const [allProducts, allProductsCount] = await Promise.all([
+    db.product.findMany({
+      where: {
+        category: category || undefined,
+        gender: gender || undefined,
+        material: material || undefined,
+        ...(search && {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+            { seoTitle: { contains: search, mode: "insensitive" } },
+            { seoDescription: { contains: search, mode: "insensitive" } },
+            { seoTags: { has: search } },
+            {
+              variants: {
+                some: {
+                  colorName: { contains: search, mode: "insensitive" },
+                },
+              },
+            },
+          ],
+        }),
+        variants: {
+          some: {
+            ...(size && { sizes: { has: size } }),
+            ...(color && { colorName: color }),
+          },
+        },
+      },
+      include: { variants: true },
+      orderBy:
+        sort === "bestselling"
+          ? { sold: "desc" }
+          : sort === "newest"
+            ? { createdAt: "desc" }
+            : undefined,
+    }),
+    db.product.count(),
+  ]);
+
+  const sortedProducts = allProducts.sort((a, b) => {
+    const aMinPrice = Math.min(...a.variants.map((v) => v.price));
+    const bMinPrice = Math.min(...b.variants.map((v) => v.price));
+    if (sort === "price_asc") return aMinPrice - bMinPrice;
+    if (sort === "price_desc") return bMinPrice - aMinPrice;
+    const aInStock = a.variants.some((v) => v.inStock) ? 1 : 0;
+    const bInStock = b.variants.some((v) => v.inStock) ? 1 : 0;
+    return bInStock - aInStock;
+  });
+
+  return { sortedProducts, allProductsCount };
+};
+export const getProductRatings = async (id: string) => {
+  const isProductExist = await db.product.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  if (!isProductExist) {
+    return { error: "Product doesn't exist" };
+  }
+  const reviews = await db.review.findMany({
+    where: {
+      productId: id,
+    },
+  });
+  const oneStar = reviews.filter((r) => r.rating === 1).length;
+  const twoStar = reviews.filter((r) => r.rating === 2).length;
+  const threeStar = reviews.filter((r) => r.rating === 3).length;
+  const fourStar = reviews.filter((r) => r.rating === 4).length;
+  const fiveStar = reviews.filter((r) => r.rating === 5).length;
+  const totalRating = reviews.length;
+  const averageRating =
+    reviews.reduce((acc, r) => acc + r.rating, 0) / totalRating;
+  return {
+    oneStar,
+    threeStar,
+    twoStar,
+    fourStar,
+    fiveStar,
+    totalRating,
+    averageRating,
+  };
+};
+export const getProductReviews = async (id: string) => {
+  const isProductExist = await db.product.findUnique({
+    where: {
+      id: id,
+    },
+  });
+  if (!isProductExist) {
+    return { error: "Product doesn't exist" };
+  }
+  const reviews = await db.review.findMany({
+    where: {
+      productId: id,
+    },
+    orderBy: {
+      rating: "desc",
+    },
+    take: 3,
+  });
+  return reviews;
+};
+export const getAllProductReviews = async (slug: string) => {
+  const product = await db.product.findFirst({
+    where: {
+      slug,
+    },
+  });
+  if (!product) {
+    redirect("/");
+  }
+  const allReviews = await db.review.findMany({
+    where: {
+      productId: product.id,
+    },
+  });
+  return { allReviews, product };
+};
+export const getAllOrders = async () => {
+  const user = await currentUser();
+  if (!user) {
+    redirect("/");
+  }
+  const allOrders = await db.order.findMany({
+    where: {
+      clerkId: user.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      orderItems: true,
+    },
+  });
+  const allOrderedItems: OrderItem[] = allOrders.flatMap(
+    (order) => order.orderItems,
+  );
+  return { allOrderedItems, allOrders };
+};
+export const createOrGetUser = async () => {
+  const user = await currentUser();
+  if (!user) redirect("/");
+
+  const userProfile = await db.userProfile.upsert({
+    where: { clerkId: user.id },
+    update: {},
+    create: { clerkId: user.id },
+  });
+
+  return userProfile;
+};
+export const createAddress = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      redirect("/");
+    }
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = createOrEditAddressBook.parse(rawData);
+    await db.userProfile.update({
+      where: {
+        clerkId: user.id,
+      },
+      data: {
+        address: validatedFields.address,
+        phone: validatedFields.phone,
+      },
+    });
+    // return { message: "" };
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/dashboard/account");
+};
+export const getOrder = async (id: string) => {
+  const user = await currentUser();
+  if (!user) redirect("/");
+  const order = await db.order.findFirst({
+    where: {
+      id,
+
+      clerkId: user.id,
+    },
+    include: {
+      orderItems: true,
+    },
+  });
+  if (!order) {
+    redirect("/dashboard/orders");
+  }
+  return order;
+};
+export const isProductExists = async (id: string) => {
+  const isProductExisting = await db.product.findUnique({
+    where: {
+      id,
+    },
+  });
+  return isProductExisting;
+};
+export const toggleFavoriteAction = async (prevState: {
+  productId: string;
+  favoriteId: string | null;
+  pathName: string;
+}) => {
+  const user = await getAuthUser();
+  const { productId, favoriteId, pathName } = prevState;
+  try {
+    if (favoriteId) {
+      await db.wishlist.delete({
+        where: {
+          id: favoriteId,
+        },
+      });
+    } else {
+      const wishlistCount = await db.wishlist.count({
+        where: { clerkId: user.id },
+      });
+      if (wishlistCount >= 50) {
+        return { message: "Wishlist is full (20 items max)" };
+      }
+      await db.wishlist.create({
+        data: {
+          productId,
+          clerkId: user.id,
+        },
+      });
+    }
+    revalidatePath(pathName);
+    return {
+      message: favoriteId ? "removed from wishlist" : "added to wishlist",
+    };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+export const fetchFavoriteId = async ({ productId }: { productId: string }) => {
+  const user = await getAuthUser();
+  const favorite = await db.wishlist.findFirst({
+    where: {
+      productId,
+      clerkId: user.id,
+    },
+    select: {
+      id: true,
+    },
+  });
+  return favorite?.id || null;
+};
+export const getWishlist = async () => {
+  const user = await getAuthUser();
+  const wishlist = await db.wishlist.findMany({
+    where: {
+      clerkId: user.id,
+    },
+    include: {
+      product: {
+        include: { variants: true },
+      },
+    },
+  });
+  return wishlist;
+};
+export const removeFromWishlist = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const productId = formData.get("productId")?.toString();
+    const isProduct = await db.product.findFirst({
+      where: {
+        id: productId,
+      },
+    });
+    if (!isProduct) {
+      return { message: "Product doesn't exist" };
+    }
+    const user = await currentUser();
+    await db.wishlist.deleteMany({
+      where: {
+        clerkId: user?.id,
+        productId: productId,
+      },
+    });
+    revalidatePath("/dashboard/wishlist");
+    return { message: "Wishlist updated successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+export const getPendingReviews = async () => {
+  const user = await currentUser();
+  const orderedItems = await db.orderItem.findMany({
+    where: {
+      order: {
+        clerkId: user?.id,
+      },
+      productId: { not: null },
+    },
+    include: {
+      order: true,
+    },
+    distinct: ["productId"],
+  });
+  const reviews = await db.review.findMany({
+    where: {
+      clerkId: user?.id,
+    },
+  });
+  const pendingReviews = orderedItems.filter(
+    (item) => !reviews.some((review) => review.productId === item.productId),
+  );
+  console.log("orderedItems", orderedItems);
+  console.log("reviews", reviews);
+  console.log("pendingReviews", pendingReviews);
+  return pendingReviews;
+};
+export const getAllUsersReviews = async () => {
+  const user = await currentUser();
+  if (!user) {
+    redirect("/");
+  }
+  const allReviews = await db.review.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+    where: {
+      clerkId: user.id,
+    },
+    include: {
+      product: {
+        include: {
+          variants: true,
+        },
+      },
+    },
+  });
+  return allReviews;
+};
+export const editReview = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const rawData = Object.fromEntries(formData);
+    const productId = typeof rawData.id === "string" ? rawData.id : "";
+    const reviewId =
+      typeof rawData.reviewId === "string" ? rawData.reviewId : "";
+    const isReview = await db.review.findFirst({
+      where: {
+        id: reviewId,
+      },
+    });
+    if (!isReview) {
+      return { message: "There was an error, try again" };
+    }
+    if (!productId) {
+      return { message: "Invalid request. Missing ID." };
+    }
+    const validatedFields = createReviewSchema.parse(rawData);
+    await db.review.update({
+      where: {
+        id: reviewId,
+      },
+      data: {
+        description: validatedFields.description,
+        rating: validatedFields.rating,
+      },
+    });
+    // return { message: "Review Created" };
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/dashboard/reviews");
+};
+export const deleteReview = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const rawData = Object.fromEntries(formData);
+    const reviewId =
+      typeof rawData.reviewId === "string" ? rawData.reviewId : "";
+    const isReview = await db.review.findFirst({
+      where: {
+        id: reviewId,
+      },
+    });
+    if (!isReview) {
+      return { message: "There was an error, try again" };
+    }
+    await db.review.delete({
+      where: {
+        id: reviewId,
+      },
+    });
+    // return{message:""}
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/dashboard/reviews");
+};
+export const getAdminAllOrders = async () => {
+  const allOrders = await db.order.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      orderItems: true,
+    },
+  });
+  return allOrders;
+};
+export const getAdminSingleOrder = async (id: string) => {
+  const order = await db.order.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      orderItems: true,
+    },
+  });
+
+  return order;
+};
+export const adminUpdateOrderAndDeliveryStatus = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const rawData = Object.fromEntries(formData);
+    const id = formData.get("id")?.toString();
+    const isOrderExists = await db.order.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!isOrderExists) {
+      return { message: "Order doesn't exist" };
+    }
+    const validatedFields =
+      adminUpdateOrderAndDeliveryStatusSchema.parse(rawData);
+    await db.order.update({
+      where: {
+        id: id,
+      },
+      data: {
+        ...validatedFields,
+      },
+    });
+    revalidatePath(`/admin/order-details/${id}`);
+    revalidatePath(`/dashboard/orders/${id}`);
+    return { message: "Order updated successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+export const isAddressAndPhone = async () => {
+  const user = await currentUser();
+  const userHasAddressAndPhone = await db.userProfile.findFirst({
+    where: {
+      clerkId: user?.id,
+      AND: [
+        { address: { not: null } },
+        { address: { not: "" } },
+        { phone: { not: null } },
+        { phone: { not: "" } },
+      ],
+    },
+  });
+  return userHasAddressAndPhone;
+};
+export const getHomeCarouselImages = async () => {
+  const carousels = await db.homeCarousel.findMany({});
+  return carousels;
+};
+export const createCarouselImages = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const raw = formData.get("carousels");
+
+    let carousels;
+    try {
+      carousels = JSON.parse(raw as string);
+    } catch {
+      return { message: "Invalid carousel data" };
+    }
+    const validatedFields = z.array(createCarouselsSchema).parse(carousels);
+    const allCarousels = await db.homeCarousel.findMany({});
+    if (allCarousels.length >= 4) {
+      return { message: "You can't create more carousels" };
+    } else if (validatedFields.length + allCarousels.length > 4) {
+      return {
+        message: `Max 4 carousels allowed. Remove ${validatedFields.length + allCarousels.length - 4} carousel(s).`,
+      };
+    }
+    const allLinks = validatedFields.find((carousel) => carousel.link);
+    const editedValidatedFields = validatedFields.map((field) => ({
+      link: field.link,
+      text: field.text,
+      image: field.image,
+    }));
+
+    await db.homeCarousel.createMany({
+      data: editedValidatedFields,
+    });
+    await Promise.all(
+      validatedFields.map((carousel) =>
+        backendClient.publicFiles.confirmUpload({ url: carousel.image }),
+      ),
+    );
+    // revalidatePath("/admin");
+    // return { message: "it got here" };
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/admin");
+};
+export const updateCarouselItems = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const raw = formData.get("carousels");
+    let carousels;
+    try {
+      carousels = JSON.parse(raw as string);
+    } catch {
+      return { message: "Invalid carousel data" };
+    }
+    const validatedFields = z.array(createCarouselsSchema).parse(carousels);
+    const allCarousels = await db.homeCarousel.findMany({});
+    const carouselsToDelete = allCarousels.filter(
+      (carousel) => !validatedFields.some((field) => field.id === carousel.id),
+    );
+    if (carouselsToDelete.length > 0) {
+      await Promise.all(
+        carouselsToDelete.map((carousel) =>
+          db.homeCarousel.delete({
+            where: {
+              id: carousel.id,
+            },
+          }),
+        ),
+      );
+      await Promise.all(
+        carouselsToDelete.map((carousel) =>
+          backendClient.publicFiles.deleteFile({ url: carousel.image }),
+        ),
+      );
+      await Promise.all(
+        carouselsToDelete.map((carousel) =>
+          backendClient.publicFiles.deleteFile({ url: carousel.mobileImage }),
+        ),
+      );
+    }
+
+    const existingIds = new Set(allCarousels.map((c) => c.id));
+    const existingCarousels = validatedFields.filter((field) =>
+      existingIds.has(field.id),
+    );
+    const existingLinkChecks = await Promise.all(
+      existingCarousels.map((carousel) =>
+        checkInternalLinkExists(carousel.link),
+      ),
+    );
+    const invalidExisting = existingCarousels.find(
+      (_, i) => !existingLinkChecks[i],
+    );
+    if (invalidExisting) {
+      return { message: `The link "${invalidExisting.link}" doesn't exist` };
+    }
+    if (existingCarousels.length > 0) {
+      await Promise.all(
+        existingCarousels.map(async (carousel) => {
+          const isImageSame = await db.homeCarousel.findUnique({
+            where: {
+              id: carousel.id,
+            },
+          });
+          await db.homeCarousel.update({
+            where: { id: carousel.id },
+            data: {
+              image: carousel.image,
+              text: carousel.text,
+              link: carousel.link,
+              mobileImage: carousel.mobileImage,
+            },
+          });
+          console.log(existingCarousels);
+
+          if (isImageSame && isImageSame.image !== carousel.image) {
+            await backendClient.publicFiles.confirmUpload({
+              url: carousel.image,
+            });
+            await backendClient.publicFiles.deleteFile({
+              url: isImageSame.image,
+            });
+          }
+          if (isImageSame && isImageSame.mobileImage !== carousel.mobileImage) {
+            await backendClient.publicFiles.confirmUpload({
+              url: carousel.mobileImage,
+            });
+            await backendClient.publicFiles.deleteFile({
+              url: isImageSame.mobileImage,
+            });
+          }
+        }),
+      );
+    }
+    const newCarousels = validatedFields.filter(
+      (field) => !existingIds.has(field.id),
+    );
+    const newLinkChecks = await Promise.all(
+      newCarousels.map((carousel) => checkInternalLinkExists(carousel.link)),
+    );
+    const invalidNew = newCarousels.find((_, i) => !newLinkChecks[i]);
+    if (invalidNew) {
+      return { message: `The link "${invalidNew.link}" doesn't exist` };
+    }
+    if (newCarousels.length > 0) {
+      await Promise.all(
+        newCarousels.map((carousel) =>
+          db.homeCarousel.create({
+            data: {
+              link: carousel.link,
+              image: carousel.image,
+              text: carousel.text,
+              mobileImage: carousel.mobileImage,
+            },
+          }),
+        ),
+      );
+      await Promise.all(
+        newCarousels.map((carousel) =>
+          backendClient.publicFiles.confirmUpload({ url: carousel.image }),
+        ),
+      );
+      await Promise.all(
+        newCarousels.map((carousel) =>
+          backendClient.publicFiles.confirmUpload({
+            url: carousel.mobileImage,
+          }),
+        ),
+      );
+    }
+
+    // return { message: "" };
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/admin/edit-carousel-items");
+};
+export const getAllCollectionLinks = async () => {
+  const collectionLinks = await db.collectionLink.findMany({
+    where: {
+      collection: {
+        products: {
+          some: {},
+        },
+      },
+    },
+    include: {
+      collection: true,
+    },
+  });
+  return collectionLinks;
+};
+export const getAllCollectionsForLinksWithCollectionLinks = async () => {
+  const collections = await db.collection.findMany({
+    where: {
+      products: {
+        some: {},
+      },
+    },
+    include: {
+      collectionLinks: true,
+    },
+  });
+  return collections;
+};
+export const checkInternalLinkExists = async (path: string) => {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const response = await fetch(`${baseUrl}${path}`, { method: "HEAD" });
+    return response.ok;
+  } catch {
+    return false;
+  }
+};
+export const createOrUpdateCollectionLinks = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const raw = formData.get("collectionLinks");
+    let collectionLinks;
+    try {
+      collectionLinks = JSON.parse(raw as string);
+    } catch {
+      return { message: "Invalid collection link data" };
+    }
+
+    const validatedFields =
+      collectionLinks.length === 0
+        ? []
+        : z.array(collectionLinkSchema).parse(collectionLinks);
+
+    const allCollectionLinks = await db.collectionLink.findMany({});
+
+    const linksToDelete = allCollectionLinks.filter(
+      (collection) =>
+        !validatedFields.some((field) => collection.id === field.id),
+    );
+
+    if (linksToDelete.length > 0) {
+      await Promise.all(
+        linksToDelete.map((link) =>
+          db.collectionLink.delete({ where: { id: link.id } }),
+        ),
+      );
+      await Promise.all(
+        linksToDelete.map((link) =>
+          backendClient.publicFiles.deleteFile({ url: link.image }),
+        ),
+      );
+    }
+
+    const linksThatExist = validatedFields.filter((field) =>
+      allCollectionLinks.map((link) => link.id).some((id) => field.id === id),
+    );
+
+    if (linksThatExist.length > 0) {
+      const duplicateCollection = linksThatExist.find((link) =>
+        allCollectionLinks.some(
+          (existing) =>
+            existing.collectionName === link.collectionName &&
+            existing.id !== link.id,
+        ),
+      );
+
+      if (duplicateCollection) {
+        return {
+          message: `A link already exists for ${duplicateCollection.collectionName}`,
+        };
+      }
+      await Promise.all(
+        linksThatExist.map(async (link) => {
+          const isImageSame = await db.collectionLink.findUnique({
+            where: { id: link.id },
+          });
+          await db.collectionLink.update({
+            where: { id: link.id },
+            data: {
+              collectionName: link.collectionName,
+              heading: link.heading,
+              image: link.image,
+              subHeading: link.subHeading,
+            },
+          });
+          if (isImageSame && isImageSame.image !== link.image) {
+            await backendClient.publicFiles.confirmUpload({ url: link.image });
+            await backendClient.publicFiles.deleteFile({
+              url: isImageSame.image,
+            });
+          }
+        }),
+      );
+    }
+
+    const newLinks = validatedFields.filter(
+      (field) =>
+        !allCollectionLinks
+          .map((link) => link.id)
+          .some((id) => field.id === id),
+    );
+
+    if (newLinks.length > 0) {
+      await Promise.all(
+        newLinks.map((link) =>
+          db.collectionLink.create({
+            data: {
+              heading: link.heading,
+              image: link.image,
+              subHeading: link.subHeading,
+              collectionName: link.collectionName,
+            },
+          }),
+        ),
+      );
+      await Promise.all(
+        newLinks.map((link) =>
+          backendClient.publicFiles.confirmUpload({ url: link.image }),
+        ),
+      );
+    }
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/admin/edit-collection-links");
+};
+export const getSingleCollectionLinkProducts = async (
+  filters: {
+    size?: string;
+    color?: string;
+    gender?: Gender;
+    category?: Category;
+    material?: string;
+    sort?: string;
+  },
+  collectionName: string,
+) => {
+  const { size, color, gender, category, material, sort } = filters;
+
+  const productsFromCollectionLink = await db.collectionLink.findFirst({
+    where: { collectionName },
+    include: {
+      collection: {
+        include: {
+          _count: {
+            select: { products: true },
+          },
+          products: {
+            where: {
+              ...(category && { category }),
+              ...(gender && { gender }),
+              ...(material && { material }),
+              variants: {
+                some: {
+                  ...(size && { sizes: { has: size } }),
+                  ...(color && { colorName: color }),
+                },
+              },
+            },
+            include: { variants: true },
+            orderBy:
+              sort === "bestselling"
+                ? { sold: "desc" }
+                : sort === "newest"
+                  ? { createdAt: "desc" }
+                  : undefined,
+          },
+        },
+      },
+    },
+  });
+  if (!productsFromCollectionLink) return null;
+
+  const products = productsFromCollectionLink?.collection?.products ?? [];
+
+  const sortedProducts =
+    sort === "price_asc" || sort === "price_desc"
+      ? [...products].sort((a, b) => {
+          const aMin = Math.min(...a.variants.map((v) => v.price));
+          const bMin = Math.min(...b.variants.map((v) => v.price));
+          return sort === "price_asc" ? aMin - bMin : bMin - aMin;
+        })
+      : products;
+
+  return {
+    ...productsFromCollectionLink,
+    collection: {
+      ...productsFromCollectionLink?.collection,
+      products: sortedProducts,
+    },
+  };
+};
+export const getCustomPieceBg = async () => {
+  const customPieceBg = await db.customPiece.findFirst({});
+  return customPieceBg;
+};
+export const upsertCustomPieceBg = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const image = formData.get("image") as string;
+    const mobileImage = formData.get("mobileImage") as string;
+
+    const result = customPieceSchema.parse({ image, mobileImage });
+
+    const existing = await db.customPiece.findFirst();
+    if (existing) {
+      await db.customPiece.update({
+        where: { id: existing.id },
+        data: { ...result },
+      });
+      if (existing.image !== result.image) {
+        await backendClient.publicFiles.confirmUpload({ url: result.image });
+        await backendClient.publicFiles.deleteFile({ url: existing.image });
+      }
+      if (existing.mobileImage !== result.mobileImage) {
+        await backendClient.publicFiles.confirmUpload({
+          url: result.mobileImage,
+        });
+        await backendClient.publicFiles.deleteFile({
+          url: existing.mobileImage,
+        });
+      }
+    } else {
+      await db.customPiece.create({
+        data: { ...result },
+      });
+      await backendClient.publicFiles.confirmUpload({ url: result.image });
+      await backendClient.publicFiles.confirmUpload({
+        url: result.mobileImage,
+      });
+    }
+
+    revalidatePath("/");
+    // return { message: "Custom Piece Background updated successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/admin/edit-custompiece-background");
+};
+export const createCreateCustomPiece = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = createCustomPieceSchema.parse(rawData);
+    const user = await getAuthUser();
+    if (!user) {
+      return { message: "You must be logged in to create a custom order" };
+    }
+    await db.customPieceRequest.create({
+      data: {
+        ...validatedFields,
+        userId: user.id,
+      },
+    });
+    await Promise.all(
+      validatedFields.sampleImages.map((image) =>
+        backendClient.publicFiles.confirmUpload({ url: image }),
+      ),
+    );
+    // return { message: "" };
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/dashboard/custom-orders");
+};
+export const getUsersCustomOrders = async () => {
+  const user = await getAuthUser();
+  const usersCustomOrders = await db.customPieceRequest.findMany({
+    where: {
+      userId: user.id,
+    },
+    include: { customOrder: true },
+  });
+  return usersCustomOrders;
+};
+export const getSingleCustomOrder = async (id: string) => {
+  const order = await db.customPieceRequest.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      customOrder: true,
+    },
+  });
+  return order;
+};
+export const getAllCustomOrders = async () => {
+  const allCustomOrders = await db.customPieceRequest.findMany({
+    include: { customOrder: true },
+  });
+  return allCustomOrders;
+};
+export const getAdminSingleCustomOrder = async (id: string) => {
+  const order = await db.customPieceRequest.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      customOrder: true,
+      user: true,
+    },
+  });
+  return order;
+};
+export const createCustomOrder = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  let orderId;
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = createCustomOrderSchema.parse(rawData);
+    const isOrderExists = await db.customPieceRequest.findUnique({
+      where: {
+        id: validatedFields.requestId,
+      },
+      include: {
+        customOrder: true,
+      },
+    });
+    if (!isOrderExists) {
+      return { message: "The Custom Order Request was not found" };
+    }
+
+    if (isOrderExists.customOrder) {
+      return { message: "An order already exists for this Request" };
+    }
+    await db.customOrder.create({
+      data: {
+        ...validatedFields,
+        userId: isOrderExists.userId,
+      },
+    });
+    orderId = isOrderExists.id;
+    // return { message: "" };
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect(`/admin/custom-orders/${orderId}`);
+};
+export const editCustomOrder = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  let requestId: string;
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = createCustomOrderSchema.parse(rawData);
+    requestId = validatedFields.requestId;
+    const isOrderExists = await db.customPieceRequest.findUnique({
+      where: {
+        id: requestId,
+      },
+      include: {
+        customOrder: true,
+      },
+    });
+    if (!isOrderExists) {
+      return { message: "The Custom Order Request was not found" };
+    }
+    if (!isOrderExists.customOrder) {
+      return { message: "No custom order has been created for this request" };
+    }
+
+    await db.customOrder.update({
+      where: {
+        id: isOrderExists.customOrder.id,
+      },
+      data: {
+        agreedPrice: validatedFields.agreedPrice,
+        status: validatedFields.status,
+      },
+    });
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect(`/admin/custom-orders/${requestId!}`);
+};
+export const updateCustomOrderRequestStatus = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  let orderId;
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = updateCustomOrderRequestSchema.parse(rawData);
+    const isOrderExists = await db.customPieceRequest.findUnique({
+      where: {
+        id: validatedFields.id,
+      },
+      include: {
+        customOrder: true,
+      },
+    });
+    if (!isOrderExists) {
+      return { message: "This Custom order wasn't found" };
+    }
+    orderId = validatedFields.id;
+    if (
+      (validatedFields.status === "ACCEPTED" ||
+        validatedFields.status === "DONE") &&
+      !isOrderExists.customOrder
+    ) {
+      return {
+        message: `To change status to ${validatedFields.status}, create the order `,
+      };
+    }
+    await db.customPieceRequest.update({
+      where: {
+        id: validatedFields.id,
+      },
+      data: {
+        status: validatedFields.status,
+      },
+    });
+    // return { message: "" };
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect(`/admin/custom-orders/${orderId}`);
+};
+export const createOrUpdateAdminNote = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  let orderId;
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = createOrUpdateAdminNoteSchema.parse(rawData);
+    const isOrderExists = await db.customPieceRequest.findUnique({
+      where: {
+        id: validatedFields.id,
+      },
+    });
+    if (!isOrderExists) {
+      return { message: "This Custom order wasn't found" };
+    }
+    orderId = validatedFields.id;
+    await db.customPieceRequest.update({
+      where: {
+        id: validatedFields.id,
+      },
+      data: {
+        adminNote: validatedFields.adminNote,
+      },
+    });
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect(`/admin/custom-orders/${orderId}`);
 };

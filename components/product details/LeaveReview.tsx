@@ -1,23 +1,25 @@
+"use client";
 import { SubmitButton } from "../form/Buttons";
-import FormInput from "../form/FormInput";
-import { createCollection, createReview } from "../../utils/actions";
+import { createReview } from "../../utils/actions";
 import FormContainer from "../form/FormContainer";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import StarRating from "./StarRating";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import { SignInButton, useUser } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 function LeaveReview({ productId }: { productId: string }) {
+  const { isSignedIn } = useUser();
   const [description, setDescription] = useState("");
+  const pathName = usePathname();
   return (
     <>
       <Dialog>
@@ -25,9 +27,18 @@ function LeaveReview({ productId }: { productId: string }) {
           asChild
           className="flex justify-center align-middle items-center"
         >
-          <Button className="text-black shadow-lghover:bg-black hover:text-white border-2 border-black transition duration-500 bg-transparent">
-            Leave Review
-          </Button>
+          {isSignedIn ? (
+            <Button className="text-black shadow-lghover:bg-black text-xs hover:text-white border-2 border-black transition duration-500 bg-transparent py-1 px-2">
+              Leave Review
+            </Button>
+          ) : (
+            <Button
+              asChild
+              className="text-black shadow-lghover:bg-black hover:text-white border-2 border-black transition duration-500 bg-transparent"
+            >
+              <SignInButton>Leave Review</SignInButton>
+            </Button>
+          )}
         </DialogTrigger>
         <DialogContent
           className="sm:max-w-[425px]   bg-black/30 backdrop-blur-sm backdrop-saturate-150
@@ -55,6 +66,7 @@ function LeaveReview({ productId }: { productId: string }) {
               {/* </DialogDescription> */}
             </DialogHeader>
             <input type="hidden" name="id" value={productId} />
+            <input type="hidden" name="pathName" value={pathName} />
             <DialogFooter>
               <SubmitButton
                 text="Leave Review"

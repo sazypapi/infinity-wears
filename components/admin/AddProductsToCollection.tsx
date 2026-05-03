@@ -1,32 +1,53 @@
 "use client";
-import { Product } from "@/generated/prisma";
+import { Prisma, Product } from "@/generated/prisma";
 import { useState } from "react";
 import { addToCollection } from "../../utils/actions";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import Containers from "../global/Containers";
-import { PiEmptyBold } from "react-icons/pi";
 import FormContainer from "../form/FormContainer";
 import { SubmitButton } from "../form/Buttons";
 import Link from "next/link";
 import { FaPlusCircle } from "react-icons/fa";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { RxValueNone } from "react-icons/rx";
+type products = Prisma.ProductGetPayload<{
+  include: {
+    variants: true;
+  };
+}>;
 function AddProductsToCollection({
   products,
   id,
 }: {
-  products: Product[];
+  products: products[];
   id: string;
 }) {
   const allProductsLength = products.length;
   if (allProductsLength <= 0) {
     return (
-      <Containers className="h-40 sm:mt-14 flex align-middle items-center justify-center">
-        <div>
-          <h1 className="flex items-center justify-center align-middle text-neutral-500 text-3xl">
-            <PiEmptyBold /> No products available to add to collection
-          </h1>
-        </div>
-      </Containers>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <RxValueNone />
+          </EmptyMedia>
+          <EmptyTitle>No product to add</EmptyTitle>
+          <EmptyDescription>
+            No product is available to be added
+          </EmptyDescription>
+          <EmptyContent className="flex-row justify-center gap-2">
+            <Button className="bg-white text-black border-2 border-black hover:text-white hover:bg-black transition duration-500">
+              <Link href="/admin/create-product">Create Product</Link>
+            </Button>
+          </EmptyContent>
+        </EmptyHeader>
+      </Empty>
     );
   }
   const [currentProducts, setCurrentProducts] = useState<Product[]>([]);
@@ -50,14 +71,14 @@ function AddProductsToCollection({
         <div className="grid sm:grid-cols-5 grid-cols-2 gap-5 border-2">
           {products.map((product) => {
             const isSelected = currentProducts?.some(
-              (p) => p.id === product.id
+              (p) => p.id === product.id,
             );
             return (
               <div key={product.id} className="justify-start relative w-fit">
                 {/* /*IMAGE  */}
                 <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg relative overflow-hidden shadow-sm border-2">
                   <Image
-                    src={product.coverImage}
+                    src={product.variants[0].coverImage}
                     alt={product.name}
                     className="w-full h-full object-cover"
                     fill

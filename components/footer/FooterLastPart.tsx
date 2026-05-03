@@ -1,7 +1,28 @@
+import { Prisma } from "@/generated/prisma";
 import Link from "next/link";
 import { IoLocationOutline } from "react-icons/io5";
 
-function FooterLastPart() {
+type collectionLinks = Prisma.CollectionLinkGetPayload<{
+  include: {
+    collection: true;
+  };
+}>;
+
+function FooterLastPart({
+  collectionLinks = [],
+}: {
+  collectionLinks: collectionLinks[];
+}) {
+  const quickLinks = [
+    { label: "Home", href: "/" },
+    { label: "About", href: "/about" },
+    { label: "Shop", href: "/shop" },
+    { label: "Custom Order", href: "/create-customorder" },
+    { label: "Dashboard", href: "/dashboard" },
+    ...(collectionLinks.length > 0
+      ? [{ label: "Collections", href: "/collections" }]
+      : []),
+  ];
   return (
     <div className="sm:flex sm:justify-between sm:items-center grid grid-cols-1 justify-items-center items-center py-5 border-b-2 w-full border-neutral-100 mb-4 px-4 sm:px-0">
       <div className="sm:flex sm:flex-1/3 gap-10 sm:flex-col">
@@ -21,23 +42,17 @@ function FooterLastPart() {
           referrerPolicy="no-referrer-when-downgrade"
         ></iframe>
       </div>
-      <div className="my-10 sm:mt-0 flex flex-1/3 flex-col gap-5 text-center sm:text-right">
-        <h5 className="text-white">Quick Links</h5>
-        <Link href="/" className="text-white">
-          Home
-        </Link>
-        <Link href="/" className="text-white">
-          Home
-        </Link>
-        <Link href="/" className="text-white">
-          Home
-        </Link>
-        <Link href="/" className="text-white">
-          Home
-        </Link>
-        <Link href="/" className="text-white">
-          Home
-        </Link>
+      <div className="my-10 sm:mt-0 flex flex-1/3 flex-col sm:justify-center gap-5 text-center sm:text-right">
+        <h5 className="text-white text-[10px] sm:text-xs">Quick Links</h5>
+        {quickLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="text-white hover:underline transition duration-500 text-xs sm:text-base"
+          >
+            {link.label}
+          </Link>
+        ))}
       </div>
     </div>
   );

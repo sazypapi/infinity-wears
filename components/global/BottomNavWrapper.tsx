@@ -1,14 +1,10 @@
-// components/BottomNavWrapper.tsx
+// BottomNavWrapper.tsx
 "use client";
-
 import { usePathname } from "next/navigation";
 import BottomNav from "./BottomNav";
 
-export default function BottomNavWrapper() {
+export default function BottomNavWrapper({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
-
-  // hide on cart page
   if (pathname === "/cart") return null;
-
-  return <BottomNav />;
+  return <BottomNav isAdmin={isAdmin} />;
 }

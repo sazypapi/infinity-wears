@@ -25,7 +25,10 @@ function EditCollectionName({ collection }: { collection: Collection }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="icon-lg" type="button" className="bg-transparent">
+        <Button
+          type="button"
+          className="bg-transparent border-none hover:bg-transparent text-black hover:cursor-pointer"
+        >
           <FiEdit />
         </Button>
       </DialogTrigger>
@@ -50,7 +53,7 @@ function EditCollectionName({ collection }: { collection: Collection }) {
                 />
               </div>
             </div>
-            <DialogDescription className="text-sm">
+            <DialogDescription className="text-sm text-neutral-300">
               To add/remove products from collection, click on{" "}
               <Link
                 href={`/admin/view-collection-products/${collection.id}`}
@@ -68,7 +71,7 @@ function EditCollectionName({ collection }: { collection: Collection }) {
               </Button>
             </DialogClose>
             <SubmitButton
-              className="bg-transparent text-black hover:bg-black hover:text-white border-black"
+              className="bg-transparent text-white hover:bg-white hover:text-black border-white duration-500 transition"
               text="Edit Name"
             />
           </DialogFooter>

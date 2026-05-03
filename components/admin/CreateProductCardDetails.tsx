@@ -2,8 +2,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 
 import TextArea from "../form/TextArea";
-
-import StatusSelect from "./StatusSelect";
 import NamePriceDiscountQuantity from "./NamePriceDiscountQuantity";
 import AdminCardHeader from "./AdminCardHeader";
 import SEO from "./SEO";

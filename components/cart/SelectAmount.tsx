@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -17,6 +17,9 @@ type SelectCartItemAmountProps = {
 
 function SelectCartItemAmount({ amount, id }: SelectCartItemAmountProps) {
   const [currentAmount, setCurrentAmount] = useState(amount);
+  useEffect(() => {
+    setCurrentAmount(amount);
+  }, [amount]);
   const [isLoading, setIsLoading] = useState(false);
   const handleAmountChange = async (value: number) => {
     setIsLoading(true);
@@ -32,13 +35,13 @@ function SelectCartItemAmount({ amount, id }: SelectCartItemAmountProps) {
   };
 
   return (
-    <div className="flex justify-start flex-col align-middle items-center w-20">
+    <div className="flex justify-start flex-col align-middle items-center w-fit sm:w-20">
       <Select
         value={currentAmount.toString()}
         onValueChange={(value) => handleAmountChange(Number(value))}
         disabled={isLoading}
       >
-        <SelectTrigger className="w-[100px]">
+        <SelectTrigger className="sm:w-[100px] w-fit border-2 border-neutral-300 px-2">
           <SelectValue />
         </SelectTrigger>
 

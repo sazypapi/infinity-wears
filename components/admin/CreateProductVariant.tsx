@@ -69,6 +69,7 @@ function CreateProductVariant({
   const removeVariant = (id: string) => {
     if (variants.length === 1) {
       toast("You must have at least 1 variant");
+      return;
     } else {
       setVariants((prev) => prev.filter((variant) => variant.id !== id));
     }
@@ -107,14 +108,14 @@ function CreateProductVariant({
           <div className="w-full flex justify-end gap-2">
             <Button
               onClick={() => removeVariant(variant.id)}
-              className="text-red-500 bg-transparent shadow-lg hover:bg-red-500 hover:text-white border-2 border-red-500 transition duration-500 "
+              className="text-red-500 bg-transparent hover:bg-red-500 hover:text-white border-2 border-red-500 transition duration-500 "
               type="button"
             >
               Remove
             </Button>
             <Button
               onClick={addVariant}
-              className="text-neutral-950 bg-transparent shadow-lg hover:bg-black hover:text-white border-2 border-black transition duration-500 "
+              className="text-neutral-950 bg-transparent hover:bg-black hover:text-white border-2 border-black transition duration-500 "
               type="button"
             >
               + Add New Variant

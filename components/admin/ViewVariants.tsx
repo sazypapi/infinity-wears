@@ -1,6 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { ColorVariant, Product } from "@/generated/prisma";
-import React from "react";
+import { Card } from "@/components/ui/card";
+import { ColorVariant } from "@/generated/prisma";
 import { formatCurrency } from "../../utils/format";
 import { Button } from "@/components/ui/button";
 
@@ -59,7 +58,7 @@ function ViewVariants({ variants }: { variants: ColorVariant[] }) {
                   return (
                     <Button
                       key={index}
-                      className="border-2 mr-3 border-neutral-500 bg-transparent text-neutral-500"
+                      className="border-2 mr-3 border-neutral-500 bg-transparent text-neutral-500 hover:bg-white hover:text-neutral-500 hover:border-neutral-500"
                     >
                       {size}
                     </Button>

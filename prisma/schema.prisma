@@ -7,29 +7,7 @@ datasource db {
   provider = "postgresql"
 }
 
-// model Product {
-//   id             String        @id @default(uuid())
-//   name           String
-//   material       String
-//   slug           String        @unique
-//   description    String
-//   price          Float
-//   discount       Float?
-//   coverImage     String
-//   images         String[]
-//   inStock        Boolean       @default(true)
-//   sizes          String[]
-//   colors         String[]
-//   seoTags        String[]
-//   seoTitle       String
-//   seoDescription String
-//   status         ProductStatus @default(ACTIVE)
-//   collectionId   String?
-//   createdAt      DateTime      @default(now())
-//   updatedAt      DateTime      @updatedAt
-//   quantity       Int
-//   collection     Collection?   @relation(fields: [collectionId], references: [id])
-// }
+
 model Product {
   id             String         @id @default(uuid())
   name           String
@@ -51,6 +29,9 @@ review Review[]
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   cartItem CartItem[]
+  sold  Int @default(0)
+ recentlyViewed RecentlyViewed[]
+  wishlist Wishlist[]
 }
 
 model ColorVariant {
@@ -81,6 +62,8 @@ model Collection {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   products  Product[]
+
+  collectionLinks CollectionLink[]
 }
 model Review {
   id        String   @id @default(uuid())
@@ -124,7 +107,126 @@ model CartItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+model Order {
+  id        String       @id @default(cuid())
+  clerkId   String
+  totalAmount Int
+  reference String
+  status    OrderStatus       // e.g., 'PAID', 'PENDING'
+  createdAt DateTime     @default(now())
+  orderItems OrderItem[]
+  updatedAt DateTime @default(now()) @updatedAt
+  deliveryStatus DeliveryStatus @default(PROCESSING)  // ← add this
+}
 
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String?
+  name      String
+  size      String?
+  price     Int
+  imageUrl  String?
+  quantity  Int
+  order Order @relation(fields: [orderId],references: [id], onDelete: Cascade)
+}
+model Wishlist {
+  id        String   @id @default(uuid())
+  clerkId  String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model RecentlyViewed {
+  id        String   @id @default(uuid())
+  clerkId   String
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  viewedAt  DateTime @default(now())
+
+  @@unique([clerkId, productId]) // prevents duplicate entries per user
+  @@index([clerkId])
+}
+model HomeCarousel{
+  id String @id @default(uuid())
+  image String
+  text String
+    mobileImage String
+  link String
+}
+model CollectionLink {
+  id           String     @id @default(uuid())
+  image        String
+  heading      String
+  subHeading String
+  collectionName String     @unique
+  collection   Collection @relation(fields: [collectionName], references: [name], onDelete: Cascade)
+    createdAt DateTime @default(now())
+}
+model UserProfile {
+  id          String   @id @default(uuid())
+  clerkId     String   @unique
+  phone       String?
+  address     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  customOrders CustomOrder[]
+
+  customPieceRequests CustomPieceRequest[]
+}
+model CustomPiece{
+  id          String   @id @default(uuid())
+  image        String
+    mobileImage String
+
+}
+model CustomPieceRequest {
+  id            String    @id @default(cuid())
+  userId        String
+  user          UserProfile      @relation(fields: [userId], references: [clerkId])
+  garmentType   GarmentType
+  description   String
+  sampleImages  String[]
+  phoneNumber   String
+  status        CustomRequestStatus @default(PENDING)
+  adminNote     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  customOrder   CustomOrder?
+}
+
+model CustomOrder {
+  id            String    @id @default(cuid())
+  userId        String
+  user          UserProfile      @relation(fields: [userId], references: [clerkId])
+  requestId     String    @unique
+  request       CustomPieceRequest @relation(fields: [requestId], references: [id])
+  agreedPrice   Float
+  status        CustomOrderStatus  @default(IN_PRODUCTION)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+enum GarmentType {
+  SHIRT
+  TROUSER
+  DRESS
+  JACKET
+  SWEATSHIRT
+}
+enum CustomRequestStatus {
+  PENDING
+  SEEN
+  ACCEPTED
+  REJECTED
+  DONE
+}
+enum CustomOrderStatus {
+  IN_PRODUCTION
+  READY
+  DELIVERED
+}
 enum ProductStatus {
   ACTIVE
   DRAFT
@@ -144,3 +246,18 @@ enum Category {
   SWEATSHIRT
 }
 
+enum OrderStatus {
+  PENDING
+  PROCESSED
+  FINISHED
+  PAID
+  FAILED
+  CANCELLED
+}
+enum DeliveryStatus {
+  PROCESSING
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  RETURNED
+}

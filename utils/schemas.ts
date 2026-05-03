@@ -250,3 +250,142 @@ export const createReviewSchema = z.object({
     },
   ),
 });
+export const createOrEditAddressBook = z.object({
+  address: z
+    .string()
+    .min(8, { message: "Address should be at least 8 characters" })
+    .max(200, { message: "Address should be less than 200 characters" }),
+  phone: z
+    .string()
+    .regex(/^\d{11}$/, { message: "Phone number must be 11 digits" }),
+});
+export const adminUpdateOrderAndDeliveryStatusSchema = z.object({
+  status: z.enum([
+    "PENDING",
+    "PROCESSED",
+    "FINISHED",
+    "PAID",
+    "FAILED",
+    "CANCELLED",
+  ]),
+  deliveryStatus: z.enum([
+    "PROCESSING",
+    "SHIPPED",
+    "OUT_FOR_DELIVERY",
+    "DELIVERED",
+    "RETURNED",
+  ]),
+});
+export const createCarouselsSchema = z.object({
+  id: z.string().min(1, { message: "Id cannot be empty" }),
+  text: z
+    .string()
+    .refine((val) => val.trim().split(/\s+/).length >= 2, {
+      message: "Text must be at least 2 words",
+    })
+    .refine((val) => val.trim().split(/\s+/).length <= 4, {
+      message: "Text must be no more than 4 words",
+    }),
+  link: z
+    .string()
+    .min(1, { message: "Link cannot be empty" })
+    .startsWith("/", { message: "Link must start with /" })
+    .regex(/^\/[a-zA-Z0-9\-_/]*$/, {
+      message:
+        "Link can only contain letters, numbers, hyphens, underscores, and forward slashes",
+    }),
+  image: z.string().min(1, { message: "Wait for image to finish uploading" }),
+  mobileImage: z
+    .string()
+    .min(1, { message: "Wait for mobile image to finish uploading" }),
+});
+export const collectionLinkSchema = z.object({
+  id: z.string().min(1, { message: "Id cannot be empty" }),
+  heading: z
+    .string()
+    .refine((val) => val.trim().split(/\s+/).length >= 2, {
+      message: "Heading must be at least 2 words",
+    })
+    .refine((val) => val.trim().split(/\s+/).length <= 4, {
+      message: "Heading must be no more than 4 words",
+    }),
+  subHeading: z
+    .string()
+    .refine((val) => val.trim().split(/\s+/).length >= 2, {
+      message: "Sub heading must be at least 2 words",
+    })
+    .refine((val) => val.trim().split(/\s+/).length <= 10, {
+      message: "Sub heading must be no more than 10 words",
+    }),
+  collectionName: z.string().min(1, { message: "Please select a collection" }),
+  image: z.string().min(1, { message: "Wait for image to finish uploading" }),
+});
+export const customPieceSchema = z.object({
+  image: z.string().min(1, { message: "Wait for image to finish uploading" }),
+  mobileImage: z
+    .string()
+    .min(1, { message: "Wait for mobile image to finish uploading" }),
+});
+export const createCustomPieceSchema = z.object({
+  sampleImages: z.preprocess(
+    (val) => {
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return [];
+        }
+      }
+      return val;
+    },
+    z.array(z.string()).min(1, { message: "At least one image is required" }),
+  ),
+  phoneNumber: z
+    .string()
+    .regex(/^\d{11}$/, { message: "Phone number must be 11 digits" }),
+  description: z.string().refine(
+    (description) => {
+      const wordCount = description.split(" ").length;
+      return wordCount >= 10 && wordCount <= 1000;
+    },
+    {
+      message: "description must be between 10 and 1000 words.",
+    },
+  ),
+  garmentType: z.enum(["SHIRT", "TROUSER", "DRESS", "JACKET", "SWEATSHIRT"]),
+});
+export const createCustomOrderSchema = z.object({
+  requestId: z.string().min(1, { message: "Id cannot be empty" }),
+  agreedPrice: z.coerce
+    .number()
+    .min(1000, { message: "Agreed price must be at least ₦1,000" }),
+  status: z.enum(["IN_PRODUCTION", "READY", "DELIVERED"], {
+    message: "Please select a valid status",
+  }),
+});
+export const editCustomOrderSchema = z.object({
+  requestId: z.string().min(1, { message: "Id cannot be empty" }),
+  agreedPrice: z.coerce
+    .number()
+    .min(1000, { message: "Agreed price must be at least ₦1,000" }),
+  status: z.enum(["IN_PRODUCTION", "READY", "DELIVERED"], {
+    message: "Please select a valid status",
+  }),
+});
+export const updateCustomOrderRequestSchema = z.object({
+  id: z.string().min(1, { message: "Id cannot be empty" }),
+  status: z.enum(["PENDING", "SEEN", "ACCEPTED", "REJECTED", "DONE"]),
+});
+export const createOrUpdateAdminNoteSchema = z.object({
+  id: z.string().min(1, { message: "Id cannot be empty" }),
+
+  adminNote: z.string().refine(
+    (description) => {
+      const wordCount = description.split(" ").length;
+      return wordCount >= 2 && wordCount <= 500;
+    },
+    {
+      message: "Admin Note must be between 2 and 500 words.",
+    },
+  ),
+});

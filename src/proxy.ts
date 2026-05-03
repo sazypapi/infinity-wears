@@ -1,17 +1,23 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 const isProtectedRoute = createRouteMatcher([
   "/dashboard(.*)",
   "/userdata(.*)",
   "/admin(.*)",
   "/cart(.*)",
+  "/create-custompiece(.*)",
 ]);
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  // Protect all specified routes (requires authentication)
+  // Set pathname header
+  const headers = new Headers(req.headers);
+  headers.set("x-pathname", req.nextUrl.pathname);
+  const response = NextResponse.next({ request: { headers } });
+
+  // Protect all specified routes
   if (isProtectedRoute(req)) {
     await auth.protect();
   }
@@ -21,12 +27,13 @@ export default clerkMiddleware(async (auth, req) => {
     const { sessionClaims } = await auth();
     const userRole = (sessionClaims?.metadata as { role?: string })?.role;
 
-    // Redirect non-admin users away from admin routes
     if (userRole !== "admin" && userRole !== "moderator") {
       const url = new URL("/", req.url);
       return NextResponse.redirect(url);
     }
   }
+
+  return response;
 });
 
 export const config = {

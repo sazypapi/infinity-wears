@@ -1,9 +1,7 @@
-import { Cart, Prisma } from "@/generated/prisma";
-import CheckoutPopOver from "./CheckoutPopOver";
+import { Cart, Prisma, UserProfile } from "@/generated/prisma";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import SmallScreenCartItems from "./SmallScreenCartItems";
 import SmallScreenCartTotals from "./SmallScreenCartTotals";
-import Header from "./Header";
 
 type CartItemWithProductAndVariant = Prisma.CartItemGetPayload<{
   include: {
@@ -18,9 +16,11 @@ type CartItemWithProductAndVariant = Prisma.CartItemGetPayload<{
 function SmallScreenCart({
   cartItems,
   currentCart,
+  userHasAddressAndPhone,
 }: {
   cartItems: CartItemWithProductAndVariant[];
   currentCart: Cart;
+  userHasAddressAndPhone: UserProfile | null;
 }) {
   const length = cartItems.length;
   return (
@@ -34,6 +34,7 @@ function SmallScreenCart({
                   item={item}
                   index={index}
                   length={length}
+                  key={index}
                 />
               );
             })}
@@ -42,7 +43,10 @@ function SmallScreenCart({
         </ScrollArea>
       </div>
       <div className="border-2 rounded-md border-neutral-200 shadow-2xs">
-        <SmallScreenCartTotals currentCart={currentCart} />
+        <SmallScreenCartTotals
+          userHasAddressAndPhone={userHasAddressAndPhone}
+          currentCart={currentCart}
+        />
       </div>
     </div>
   );

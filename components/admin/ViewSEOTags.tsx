@@ -11,7 +11,7 @@ function ViewSEOTags({ product }: { product: Product }) {
             return (
               <Button
                 key={tag}
-                className="border-2 mr-3 border-neutral-500 bg-transparent text-neutral-500"
+                className="border-2 mr-3 border-neutral-500 bg-transparent text-neutral-500 hover:bg-white hover:text-neutral-500 hover:border-neutral-500"
               >
                 {tag}
               </Button>

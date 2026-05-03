@@ -6,7 +6,6 @@ import Containers from "../../../../../components/global/Containers";
 import RemoveProductsFromCollection from "../../../../../components/admin/RemoveProductsFromCollection";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PiEmptyBold } from "react-icons/pi";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,6 +15,16 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import AddProductsToCollection from "../../../../../components/admin/AddProductsToCollection";
+import CreateCollectionPopOver from "../../../../../components/admin/CreateCollectionPopOver";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { RxValueNone } from "react-icons/rx";
 async function ViewCollectionProducts({
   params,
 }: {
@@ -26,17 +35,24 @@ async function ViewCollectionProducts({
   const allCollections = await getSelectedProducts(id);
   if (!collection) {
     return (
-      <Containers className="h-40 sm:mt-14 flex align-middle items-center justify-center">
-        <div>
-          <h1 className="flex items-center justify-center align-middle text-neutral-500 text-3xl">
-            <PiEmptyBold /> Collection not found
-          </h1>
-        </div>
-      </Containers>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <RxValueNone />
+          </EmptyMedia>
+          <EmptyTitle>Error fetching collection</EmptyTitle>
+          <EmptyDescription>
+            We didn't find the collection you were looking for
+          </EmptyDescription>
+          <EmptyContent className="flex-row justify-center gap-2">
+            <CreateCollectionPopOver component="No Product" />
+          </EmptyContent>
+        </EmptyHeader>
+      </Empty>
     );
   }
   return (
-    <Containers className="py-10 px-2 sm:py-15 sm:mt-14">
+    <Containers className="py-5 px-2">
       <Breadcrumb className="mb-4">
         <BreadcrumbList>
           <BreadcrumbItem>

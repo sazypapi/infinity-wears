@@ -1,4 +1,4 @@
-import { ColorVariant, Prisma } from "@/generated/prisma";
+import { Prisma } from "@/generated/prisma";
 import Image from "next/image";
 
 type ProductWithVariants = Prisma.ProductGetPayload<{

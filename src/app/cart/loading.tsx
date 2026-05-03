@@ -1,7 +1,5 @@
-import React from "react";
 import Containers from "../../../components/global/Containers";
 import { Skeleton } from "@/components/ui/skeleton";
-import Footer from "../../../components/footer/Footer";
 
 function loading() {
   return (
@@ -17,8 +15,11 @@ function loading() {
           </div>
         </div>
       </Containers>
-      <div className="flex lg:hidden"></div>
-      <Footer />
+      <Containers className="px-2 py-5 flex justify-start lg:hidden flex-col w-full gap-10">
+        <Skeleton className="h-8 w-40" />
+        <Skeleton className="h-90 w-full" />
+        <Skeleton className="h-60 w-full" />
+      </Containers>
     </div>
   );
 }

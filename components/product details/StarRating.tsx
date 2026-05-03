@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 
-function StarRating() {
-  const [rating, setRating] = useState(0);
+function StarRating({ reviewRating }: { reviewRating?: number }) {
+  const [rating, setRating] = useState(reviewRating ?? 0);
   const [hover, setHover] = useState(0);
   return (
     <div className="flex space-x-1">

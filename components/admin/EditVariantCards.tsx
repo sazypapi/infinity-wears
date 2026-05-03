@@ -1,14 +1,13 @@
 "use client";
 import { ColorVariant } from "@/generated/prisma";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import AdminProductVariantsHeader from "./AdminProductVariantsHeader";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import EditBottomRowInputFieldsVariantCard from "./EditBottomRowInputFieldsVariantCard";
 import EditVariantColor from "./EditVariantColor";
 import EditVariantCoverImageUploader from "./EditVariantCoverImageUploader";
 import FormContainer from "../form/FormContainer";
-import { Button } from "@/components/ui/button";
 import { SubmitButton } from "../form/Buttons";
 import { editVariants } from "../../utils/actions";
 type VariantForm = {
@@ -84,7 +83,7 @@ function EditVariantCards({
         <div className="mb-3">
           <AdminProductVariantsHeader />
         </div>
-        {variants.map((variant) => (
+        {variants.map((variant, index) => (
           <Card
             key={variant.id}
             className="w-full bg-white border-2 p-5 border-gray-200 mb-5"
@@ -108,7 +107,7 @@ function EditVariantCards({
               index={variant.id}
               onChange={updateVariant}
             />
-            <div className="w-full flex justify-end gap-2">
+            {/* <div className="w-full flex justify-end gap-2">
               <Button
                 onClick={() => removeVariant(variant.id)}
                 className="text-red-500 bg-transparent shadow-lg hover:bg-red-500 hover:text-white border-2 border-red-500 transition duration-500 "
@@ -123,6 +122,24 @@ function EditVariantCards({
               >
                 + Add New Variant
               </Button>
+            </div> */}
+            <div className="w-full flex justify-end gap-2 mt-2">
+              <button
+                onClick={() => removeVariant(variant.id)}
+                className="text-red-500 bg-transparent px-2 py-1 text-xs hover:bg-red-500 hover:text-white border-2 border-red-500 transition duration-500 rounded-md"
+                type="button"
+              >
+                Remove
+              </button>
+              {index === variants.length - 1 && (
+                <button
+                  onClick={addVariant}
+                  className="text-neutral-950 bg-transparent px-2 py-1 hover:bg-black text-xs hover:text-white border-2 border-black transition duration-500 rounded-md"
+                  type="button"
+                >
+                  + Add New Variant
+                </button>
+              )}
             </div>
           </Card>
         ))}

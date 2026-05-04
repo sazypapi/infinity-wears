@@ -13,7 +13,7 @@ import { IconType } from "react-icons/lib";
 import { CiBoxes } from "react-icons/ci";
 import { FaRegAddressCard } from "react-icons/fa";
 export const links: Navlink[] = [
-  { href: "/new-in", label: "New In" },
+  { href: "/new-in", label: "All Products" },
   { href: "/reviews", label: "Reviews" },
   { href: "/about", label: "About" },
 ];

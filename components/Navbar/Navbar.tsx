@@ -28,7 +28,7 @@ function Navbar({
           <Logo />
 
           <div className="flex items-center gap-5">
-            <Menu />
+            <Menu collectionLinks={collectionLinks} />
           </div>
         </div>
       </nav>

@@ -1678,6 +1678,7 @@ export const createCarouselImages = async (
       link: field.link,
       text: field.text,
       image: field.image,
+      mobileImage: field.mobileImage,
     }));
 
     await db.homeCarousel.createMany({
@@ -1688,8 +1689,13 @@ export const createCarouselImages = async (
         backendClient.publicFiles.confirmUpload({ url: carousel.image }),
       ),
     );
+    await Promise.all(
+      validatedFields.map((carousel) =>
+        backendClient.publicFiles.confirmUpload({ url: carousel.mobileImage }),
+      ),
+    );
     // revalidatePath("/admin");
-    // return { message: "it got here" };
+    // return { message: "" };
   } catch (error) {
     return renderError(error);
   }

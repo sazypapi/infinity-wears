@@ -6,9 +6,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { RiMenu5Fill } from "react-icons/ri";
-import { links } from "../../utils/links";
 import Link from "next/link";
-function Menu() {
+import { Prisma } from "@/generated/prisma";
+
+type collectionLinks = Prisma.CollectionLinkGetPayload<{
+  include: {
+    collection: true;
+  };
+}>;
+function Menu({
+  collectionLinks = [],
+}: {
+  collectionLinks: collectionLinks[];
+}) {
+  const links = [
+    { label: "Home", href: "/" },
+    { label: "About", href: "/about" },
+    { label: "Shop", href: "/shop" },
+    ...(collectionLinks.length > 0
+      ? [{ label: "Collections", href: "/collections" }]
+      : []),
+    { label: "Custom Order", href: "/create-customorder" },
+    { label: "Dashboard", href: "/dashboard" },
+  ];
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -1,12 +1,9 @@
-import React from "react";
-
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Header from "../../../components/shop/Header";
 import Containers from "../../../components/global/Containers";
 import LoadingContainer from "../../../components/global/LoadingContainer";
-import Footer from "../../../components/footer/Footer";
 
 function loading() {
   return (
@@ -38,7 +35,6 @@ function loading() {
           <LoadingContainer />
         </div>
       </Containers>
-      <Footer />
     </div>
   );
 }

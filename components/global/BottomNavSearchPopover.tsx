@@ -1,4 +1,12 @@
 "use client";
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverDescription,
+//   PopoverHeader,
+//   PopoverTitle,
+//   PopoverTrigger,
+// } from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +19,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { useState, useEffect } from "react";
 import { IoMdSearch } from "react-icons/io";
-import { VisuallyHidden } from "radix-ui";
 function BottomNavSearchPopover() {
   const searchParams = useSearchParams();
   const { replace } = useRouter();
@@ -60,6 +67,27 @@ function BottomNavSearchPopover() {
         />
       </DialogContent>
     </Dialog>
+    // <Popover>
+    //   <PopoverTrigger>
+    //     <IoMdSearch className="h-9 w-9 text-white" />
+    //   </PopoverTrigger>
+    //   <PopoverContent>
+    //     {/* <PopoverHeader>
+    //       <PopoverTitle>Title</PopoverTitle>
+    //       <PopoverDescription>Description text here.</PopoverDescription>
+    //     </PopoverHeader> */}
+    //     <input
+    //       value={search}
+    //       onChange={(e) => {
+    //         setSearch(e.target.value);
+    //         handleSearch(e.target.value);
+    //       }}
+    //       type="search"
+    //       placeholder="search products..."
+    //       className="text-xs p-2 text-neutral-400 border-2 border-neutral-800 rounded-sm focus:outline-none"
+    //     />
+    //   </PopoverContent>
+    // </Popover>
   );
 }
 

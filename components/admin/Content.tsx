@@ -76,7 +76,7 @@ async function Content() {
           <h6 className="text-xs sm:text-sm truncate">
             Custom Piece Background
           </h6>
-          <h6 className="text-xs sm:text-base truncate hidden sm:block">
+          <h6 className="text-xs sm:text-sm truncate hidden sm:block">
             {customPieceBg ? "Background Created" : "Background not created"}
           </h6>
 
@@ -84,7 +84,7 @@ async function Content() {
             className="text-xs truncate text-left underline"
             href="/admin/edit-custompiece-background"
           >
-            Edit Custom Piece BGGGGGGG
+            Edit Custom Order BG
           </Link>
         </div>
       </CardContent>

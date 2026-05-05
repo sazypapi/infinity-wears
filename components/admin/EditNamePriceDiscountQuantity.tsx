@@ -23,7 +23,10 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-10 mb-4 sm:mb-5">
       <div>
-        <Label className="capitalize mb-2" htmlFor="name">
+        <Label
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
+          htmlFor="name"
+        >
           Product Name{" "}
         </Label>
         <Input
@@ -31,7 +34,7 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
           onChange={(e) => setName(e.target.value)}
           name="name"
           type="text"
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300  placeholder:text-xs sm:placeholder:text-sm"
           value={name}
           placeholder="Product Name"
           required
@@ -50,10 +53,15 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-col">
-        <Label className="mb-2">Category</Label>
+        <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+          Category
+        </Label>
         <Select required name="category" defaultValue={product.category || ""}>
-          <SelectTrigger className="border-2 w-full border-gray-300">
-            <SelectValue placeholder="select a category" />
+          <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-xs sm:placeholder:text-sm">
+            <SelectValue
+              placeholder="select a category"
+              className="placeholder:text-xs sm:placeholder:text-sm"
+            />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>

@@ -18,26 +18,67 @@ function SeoTags({ product }: { product?: Product }) {
   return (
     <>
       <div className="w-full">
-        <Label className="mb-2">SEO Tags</Label>
-        <CreatableSelect
-          instanceId="seo-tags"
-          isMulti
-          options={predefinedTags.map((tag) => ({ value: tag, label: tag }))}
-          value={tags.map((tag) => ({ value: tag, label: tag }))}
-          placeholder="Select or create tags..."
-          styles={{
-            control: (baseStyles, state) => ({
-              ...baseStyles,
-
-              borderRadius: "7px",
-              boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
-            }),
-          }}
-          onChange={(selected) => {
-            setTags(selected.map((option) => option.value));
-          }}
-          required
-        />
+        <div className="hidden sm:inline-block w-full">
+          {" "}
+          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+            SEO Tags
+          </Label>
+          <CreatableSelect
+            instanceId="seo-tags"
+            isMulti
+            options={predefinedTags.map((tag) => ({ value: tag, label: tag }))}
+            value={tags.map((tag) => ({ value: tag, label: tag }))}
+            placeholder="Select or create tags..."
+            styles={{
+              control: (baseStyles, state) => ({
+                ...baseStyles,
+                borderRadius: "7px",
+                border: "2px solid #d1d5db",
+                boxShadow: "0 1px 2px 0 rgba(209, 213, 219, 0.3)",
+                padding: "0px",
+                minHeight: "36px",
+                height: "36px",
+              }),
+              placeholder: (baseStyles) => ({
+                ...baseStyles,
+                fontSize: "14px",
+              }),
+            }}
+            onChange={(selected) => {
+              setTags(selected.map((option) => option.value));
+            }}
+            required
+          />
+        </div>
+        <div className="sm:hidden w-full">
+          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+            SEO Tags
+          </Label>
+          <CreatableSelect
+            instanceId="seo-tags-mobile"
+            isMulti
+            options={predefinedTags.map((tag) => ({ value: tag, label: tag }))}
+            value={tags.map((tag) => ({ value: tag, label: tag }))}
+            placeholder="Select or create tags..."
+            styles={{
+              control: (baseStyles, state) => ({
+                ...baseStyles,
+                borderRadius: "7px",
+                border: "2px solid #d1d5db",
+                boxShadow: "0 1px 2px 0 rgba(209, 213, 219, 0.3)",
+                padding: "0px",
+              }),
+              placeholder: (baseStyles) => ({
+                ...baseStyles,
+                fontSize: "12px",
+              }),
+            }}
+            onChange={(selected) => {
+              setTags(selected.map((option) => option.value));
+            }}
+            required
+          />
+        </div>
 
         {/* Hidden input for form submission */}
         <input type="hidden" name="seoTags" value={JSON.stringify(tags)} />

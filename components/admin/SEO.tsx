@@ -9,7 +9,12 @@ function SEO() {
     <div className="flex flex-col gap-4 mt-4 sm:mt-2">
       <div className="grid grid-cols-1 gap-4 sm:mt-3 sm:grid-cols-3 sm:gap-10 mb-0">
         <div>
-          <FormInput name="seoTitle" type="text" label="SEO Title" />
+          <FormInput
+            name="seoTitle"
+            type="text"
+            label="SEO Title"
+            placeholder="SEO Title"
+          />
         </div>
         <div>
           <SeoTags />

@@ -10,10 +10,15 @@ import {
 function GenderSelect({ value }: { value?: string }) {
   return (
     <div className="flex flex-col">
-      <Label className="mb-2">Gender</Label>
+      <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+        Gender
+      </Label>
       <Select required name="gender" defaultValue={value || ""}>
-        <SelectTrigger className="border-2 w-full border-gray-300">
-          <SelectValue placeholder="select a gender" />
+        <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-xs sm:placeholder:text-sm">
+          <SelectValue
+            placeholder="select a gender"
+            className="placeholder:text-xs sm:placeholder:text-sm"
+          />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>

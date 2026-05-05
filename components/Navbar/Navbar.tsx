@@ -23,7 +23,7 @@ function Navbar({
   return (
     <>
       {/* MOBILE NAVBAR */}
-      <nav className="lg:hidden border-b bg-black to-neutral-700 shadow-lg h-17 flex items-center px-5">
+      <nav className="lg:hidden bg-black shadow-lg h-17 flex items-center px-5">
         <div className="flex w-full items-center justify-between">
           <Logo />
 

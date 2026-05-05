@@ -1,20 +1,20 @@
 "use client";
-// import {
-//   Popover,
-//   PopoverContent,
-//   PopoverDescription,
-//   PopoverHeader,
-//   PopoverTitle,
-//   PopoverTrigger,
-// } from "@/components/ui/popover";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogFooter,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { useState, useEffect } from "react";
@@ -43,39 +43,18 @@ function BottomNavSearchPopover() {
     }
   }, [searchValue]);
   return (
-    <Dialog>
-      <DialogTrigger asChild suppressHydrationWarning>
-        <IoMdSearch className="h-9 w-9 text-white" />
-      </DialogTrigger>
-      <DialogContent
-        className="sm:max-w-[425px]   bg-black/30 backdrop-blur-sm backdrop-saturate-150
-            border-t
-            shadow-lg
-            text-white rounded-4xl"
-      >
-        <DialogTitle>Search</DialogTitle>
-
-        <input
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            handleSearch(e.target.value);
-          }}
-          type="search"
-          placeholder="search products..."
-          className="text-xs p-2 text-neutral-400 border-2 border-neutral-800 rounded-sm focus:outline-none"
-        />
-      </DialogContent>
-    </Dialog>
-    // <Popover>
-    //   <PopoverTrigger>
+    // <Dialog>
+    //   <DialogTrigger asChild suppressHydrationWarning>
     //     <IoMdSearch className="h-9 w-9 text-white" />
-    //   </PopoverTrigger>
-    //   <PopoverContent>
-    //     {/* <PopoverHeader>
-    //       <PopoverTitle>Title</PopoverTitle>
-    //       <PopoverDescription>Description text here.</PopoverDescription>
-    //     </PopoverHeader> */}
+    //   </DialogTrigger>
+    //   <DialogContent
+    //     className="sm:max-w-[425px]   bg-black/30 backdrop-blur-sm backdrop-saturate-150
+    //         border-t
+    //         shadow-lg
+    //         text-white rounded-4xl"
+    //   >
+    //     <DialogTitle>Search</DialogTitle>
+
     //     <input
     //       value={search}
     //       onChange={(e) => {
@@ -86,8 +65,29 @@ function BottomNavSearchPopover() {
     //       placeholder="search products..."
     //       className="text-xs p-2 text-neutral-400 border-2 border-neutral-800 rounded-sm focus:outline-none"
     //     />
-    //   </PopoverContent>
-    // </Popover>
+    //   </DialogContent>
+    // </Dialog>
+    <Popover>
+      <PopoverTrigger>
+        <IoMdSearch className="h-9 w-9 text-white" />
+      </PopoverTrigger>
+      <PopoverContent>
+        {/* <PopoverHeader>
+          <PopoverTitle>Title</PopoverTitle>
+          <PopoverDescription>Description text here.</PopoverDescription>
+        </PopoverHeader> */}
+        <input
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            handleSearch(e.target.value);
+          }}
+          type="search"
+          placeholder="search products..."
+          className="text-xs p-2 text-neutral-400 border-2 border-neutral-800 rounded-sm focus:outline-none"
+        />
+      </PopoverContent>
+    </Popover>
   );
 }
 

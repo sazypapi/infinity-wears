@@ -75,7 +75,7 @@ function MobileHomeCarousel({
       </Carousel>
 
       {/* Dot Navigation */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 z-10">
         {scrollSnaps.map((_, index) => (
           <button
             key={index}

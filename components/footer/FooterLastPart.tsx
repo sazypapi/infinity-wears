@@ -43,12 +43,12 @@ function FooterLastPart({
         ></iframe>
       </div>
       <div className="my-10 sm:mt-0 flex flex-1/3 flex-col sm:justify-center gap-5 text-center sm:text-right">
-        <h5 className="text-white text-[10px] sm:text-xs">Quick Links</h5>
+        <h5 className="text-white text-xs">Quick Links</h5>
         {quickLinks.map((link) => (
           <Link
             key={link.href}
             href={link.href}
-            className="text-white hover:underline transition duration-500 text-xs sm:text-base"
+            className="text-white hover:underline transition duration-500 text-sm sm:text-base"
           >
             {link.label}
           </Link>

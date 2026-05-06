@@ -2313,3 +2313,37 @@ export const createOrUpdateAdminNote = async (
   }
   redirect(`/admin/custom-orders/${orderId}`);
 };
+export const getProductsForSearch = async (search: string) => {
+  const [products, allProductsCount] = await Promise.all([
+    db.product.findMany({
+      where: {
+        ...(search && {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+            { seoTitle: { contains: search, mode: "insensitive" } },
+            { seoDescription: { contains: search, mode: "insensitive" } },
+            { seoTags: { has: search } },
+            {
+              variants: {
+                some: {
+                  colorName: { contains: search, mode: "insensitive" },
+                },
+              },
+            },
+          ],
+        }),
+      },
+      include: {
+        variants: true,
+      },
+    }),
+    db.product.count(),
+  ]);
+  const sortedProducts = products.sort((a, b) => {
+    const aInStock = a.variants.some((v) => v.inStock) ? 1 : 0;
+    const bInStock = b.variants.some((v) => v.inStock) ? 1 : 0;
+    return bInStock - aInStock;
+  });
+  return { sortedProducts, allProductsCount };
+};

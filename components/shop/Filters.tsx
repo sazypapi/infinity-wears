@@ -220,7 +220,8 @@ function Filters({
       </div>
       {/* {MOBILE} */}
       <div className="sm:hidden">
-        <ScrollArea className="w-full">
+        <div className="flex gap-2 mb-4 overflow-x-auto scrollbar-hide pb-1">
+          {/* <ScrollArea className="w-full"> */}
           <div className="flex justify-between gap-5 align-middle items-center mb-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -397,8 +398,9 @@ function Filters({
               </button>
             </div>
           </div>
-          <ScrollBar orientation="horizontal" className="mt-3" />
-        </ScrollArea>
+          {/* <ScrollBar orientation="horizontal" className="mt-3" /> */}
+          {/* </ScrollArea> */}
+        </div>
       </div>
     </>
   );

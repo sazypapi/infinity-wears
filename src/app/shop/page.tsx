@@ -54,7 +54,10 @@ async function Shop({
       <div>
         <Header />
         <Containers>
-          <NoProducts reason={allProductsCount === 0 ? "empty" : "filters"} />
+          <NoProducts
+            reason={allProductsCount === 0 ? "empty" : "filters"}
+            where="shop"
+          />
         </Containers>
       </div>
     );

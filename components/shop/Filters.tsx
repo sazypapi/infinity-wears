@@ -268,9 +268,10 @@ function Filters({
             </SheetTrigger>
             <SheetContent
               side="bottom"
-              className="h-[50vh]  bg-black/30 backdrop-blur-md backdrop-saturate-150"
+              className="h-fit py-10 bg-black/30 backdrop-blur-md backdrop-saturate-150"
+              showCloseButton={false}
             >
-              <SheetTitle className="px-5 text-white">Filters</SheetTitle>
+              <SheetTitle className="p-5 text-white">Filters</SheetTitle>
               <div className="grid grid-cols-2 gap-10 mt-4 p-5">
                 {/* SIZE */}
                 <DropdownMenu>
@@ -299,7 +300,7 @@ function Filters({
                 {/* GENDER */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-white border-2 border-neutral-500 rounded-2xl text-neutral-500 flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
                       Gender <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -323,7 +324,7 @@ function Filters({
                 {/* COLOR */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-white border-2 border-neutral-500 rounded-2xl text-neutral-500 flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
                       Color <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -347,7 +348,7 @@ function Filters({
                 {/* CATEGORY */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-white border-2 border-neutral-500 rounded-2xl text-neutral-500 flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
                       Category <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -371,7 +372,7 @@ function Filters({
                 {/* MATERIAL */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-white border-2 border-neutral-500 rounded-2xl text-neutral-500 flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
                       Material <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -395,7 +396,7 @@ function Filters({
                 {/* SORT */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-white border-2 border-neutral-500 rounded-2xl text-neutral-500 flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
                       Sort <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -424,7 +425,7 @@ function Filters({
                 </DropdownMenu>
                 {/* CLEAR */}
                 <button
-                  className="text-xs px-2 py-2 bg-white border-2 border-neutral-500 rounded-2xl text-neutral-500 w-full"
+                  className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white w-full"
                   onClick={clearAllFilters}
                 >
                   Clear Filters

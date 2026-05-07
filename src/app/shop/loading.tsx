@@ -21,15 +21,13 @@ function loading() {
           <Skeleton className="w-20 h-5 rounded-2xl" />
           <Skeleton className="w-20 h-5 rounded-2xl" />
         </div>
-        <ScrollArea className="sm:hidden w-full">
-          <div className="flex align-middle justify-between items-center gap-5 w-full pt-2">
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-          </div>
-        </ScrollArea>
+        <div className="sm:hidden w-full px-2 flex align-middle justify-between items-center gap-5  pt-2">
+          <Skeleton className="w-18 h-4 rounded-2xl" />
+          <Skeleton className="w-18 h-4 rounded-2xl" />
+          <Skeleton className="w-18 h-4 rounded-2xl" />
+          <Skeleton className="w-18 h-4 rounded-2xl" />
+          <Skeleton className="w-18 h-4 rounded-2xl" />
+        </div>
         <div className="flex flex-col gap-10 pb-10">
           <LoadingContainer />
           <LoadingContainer />

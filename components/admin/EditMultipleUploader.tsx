@@ -82,7 +82,7 @@ function EditMultipleUploader({ product }: { product: Product }) {
               multiple
               accept="image/*"
               onChange={(e) => handleFileSelection(e.target.files)}
-              className="border-2 border-gray-300 shadow p-2 rounded-2xl w-full"
+              className="border-2 border-gray-300 shadow p-2 rounded-2xl w-full text-[16px] sm:text-sm sm:placeholder:text-sm placeholder:text-[16px]"
             />
 
             <Button

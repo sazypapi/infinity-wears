@@ -68,7 +68,7 @@ function AddProductsToCollection({
   return (
     <>
       <FormContainer action={addToCollection}>
-        <div className="grid sm:grid-cols-5 grid-cols-2 gap-5 border-2">
+        <div className="grid sm:grid-cols-5 grid-cols-2 gap-5 border-2 p-3">
           {products.map((product) => {
             const isSelected = currentProducts?.some(
               (p) => p.id === product.id,

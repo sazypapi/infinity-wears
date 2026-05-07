@@ -65,7 +65,7 @@ function VariantCoverImageUploader({ coverImage, index, onChange }: Props) {
                 onChange={(e) =>
                   handleFileSelection(e.target.files?.[0] || null)
                 }
-                className="border-2 border-gray-300 shadow w-full p-2 rounded-xl"
+                className="border-2 border-gray-300 shadow w-full p-2 rounded-xl text-[16px] sm:text-sm sm:placeholder:text-sm placeholder:text-[16px]"
                 required
               />
 

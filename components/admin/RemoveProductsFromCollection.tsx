@@ -67,7 +67,7 @@ function RemoveProductsFromCollection({
         </Empty>
       ) : (
         <>
-          <div className="grid sm:grid-cols-5 grid-cols-2 gap-5 border-2">
+          <div className="grid sm:grid-cols-5 grid-cols-2 gap-5 border-2 p-3">
             {currentProducts.map((product) => (
               <div key={product.id} className="justify-start relative w-fit">
                 {/* Image */}

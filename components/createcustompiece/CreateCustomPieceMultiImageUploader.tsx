@@ -104,7 +104,7 @@ export default function CreateCustomPieceMultiImageUploader({
               multiple
               accept="image/*"
               onChange={(e) => handleFileSelection(e.target.files)}
-              className="border-2 border-neutral-300 shadow p-2 text-sm rounded-md w-full placeholder:text-xs sm:placeholder:text-sm placeholder:text-neutral-500"
+              className="border-2 border-neutral-300 shadow p-2 text-[16xpx] sm:text-sm rounded-md w-full placeholder:text-[16px] sm:placeholder:text-sm placeholder:text-neutral-500"
             />
 
             <Button

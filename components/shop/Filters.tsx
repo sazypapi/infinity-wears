@@ -271,7 +271,7 @@ function Filters({
               className="h-fit py-10 bg-black/30 backdrop-blur-md backdrop-saturate-150"
               showCloseButton={false}
             >
-              <SheetTitle className="p-5 text-white">Filters</SheetTitle>
+              <SheetTitle className="px-5 text-white">Filters</SheetTitle>
               <div className="grid grid-cols-2 gap-10 mt-4 p-5">
                 {/* SIZE */}
                 <DropdownMenu>

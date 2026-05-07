@@ -35,7 +35,7 @@ function TextArea({
         rows={5}
         placeholder={placeholder}
         required
-        className="leading-loose  border-2 border-gray-300 text-xs sm:text-sm placeholder:text-xs sm:placeholder:text-sm"
+        className="leading-loose  border-2 border-gray-300 text-[16px] sm:text-sm placeholder:text-[16px] sm:placeholder:text-sm"
       />
     </div>
   );

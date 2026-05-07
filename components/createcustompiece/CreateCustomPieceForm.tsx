@@ -32,7 +32,7 @@ function CreateCustomPieceForm() {
             <div>
               <Label
                 htmlFor="garmentType"
-                className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
+                className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
               >
                 Garment Type
               </Label>
@@ -45,7 +45,7 @@ function CreateCustomPieceForm() {
                 <SelectTrigger className="border-2 w-full border-gray-300">
                   <SelectValue
                     placeholder="select a garment type"
-                    className="placeholder:text-xs sm:placeholder:text-sm"
+                    className="placeholder:text-[16px] sm:placeholder:text-sm"
                   />
                 </SelectTrigger>
                 <SelectContent>

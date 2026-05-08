@@ -27,7 +27,7 @@ function FormInput({
   return (
     <div>
       <Label
-        className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+        className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
         htmlFor={name}
       >
         {label || name}
@@ -38,7 +38,7 @@ function FormInput({
         type={type}
         // className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300"
         className={cn(
-          "focus:outline-none focus:ring-0 border-2 col-span-2 rounded-2xl px-2 py-1 text-[16px] border-neutral-500 text-black w-[133%] scale-75 origin-left",
+          "shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]",
           className,
         )}
         value={value}

@@ -9,6 +9,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -16,7 +22,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Prisma } from "@/generated/prisma";
 import Image from "next/image";
 import { useState } from "react";
@@ -24,6 +29,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { RxValueNone } from "react-icons/rx";
 import { formatCurrency } from "../../utils/format";
 import Link from "next/link";
+import { SlidersHorizontal } from "lucide-react";
 
 type products = Prisma.ProductGetPayload<{
   include: {
@@ -293,205 +299,191 @@ function AllProductsClient({ products }: { products: products[] }) {
         </button>
       </div>
       {/* {MOBILE FILTERS} */}
-      <div className="sm:hidden overflow-hidden w-full">
-        <ScrollArea className="w-full">
-          <div className="flex gap-2 mb-4">
-            <input
-              placeholder="search name or order ID..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border-2 rounded-2xl px-2 py-1 text-xs border-neutral-500 text-black"
-            />
-            {/* STOCK STATUS */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                  Stock
-                  <IoIosArrowDown />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-xs text-neutral-400">
-                    Stock Status
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setinStock("")}
-                  >
-                    All
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setinStock("in stock")}
-                  >
-                    In Stock
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setinStock("out of stock")}
-                  >
-                    Out of Stock
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setinStock("low stock")}
-                  >
-                    Low Stock
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {/* TIME FRAME */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="text-xs whitespace-nowrap px-2 bg-transparent border-2 w-fit border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                  Time Frame
-                  <IoIosArrowDown />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-xs text-neutral-400">
-                    Choose Time Frame
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("")}
-                  >
-                    All Time
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("7days")}
-                  >
-                    Last 7 days
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("30days")}
-                  >
-                    Last 30 Days
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("90days")}
-                  >
-                    Last 90 Days
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("thisYear")}
-                  >
-                    This Year
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {/* NUM VARIANTS */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                  Variants
-                  <IoIosArrowDown />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-xs text-neutral-400">
-                    Choose Number of variants
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setNumVariants(0)}
-                  >
-                    All
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setNumVariants(1)}
-                  >
-                    1
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setNumVariants(2)}
-                  >
-                    2
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setNumVariants(3)}
-                  >
-                    3
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setNumVariants(4)}
-                  >
-                    4
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setNumVariants(5)}
-                  >
-                    5 +
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {/* COLLECTION */}
-            {allCollections.length === 0 ? (
-              ""
-            ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                    Collection
-                    <IoIosArrowDown />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-white">
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-xs text-neutral-400">
-                      Choose Collection
-                    </DropdownMenuLabel>
-                    <DropdownMenuItem
-                      className="capitalize text-black"
-                      onClick={() => setCollection("")}
-                    >
-                      All
-                    </DropdownMenuItem>
-                    {allCollections.map((collection) => {
-                      return (
-                        <DropdownMenuItem
-                          key={collection}
-                          className="capitalize text-black"
-                          onClick={() => setCollection(collection!)}
-                        >
-                          {collection}
-                        </DropdownMenuItem>
-                      );
-                    })}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-            <button
-              className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700"
-              onClick={() => {
-                setCollection("");
-                setDateFilter("");
-                setNumVariants(0);
-                setSearch("");
-                setinStock("");
-              }}
+      <div className="sm:hidden grid grid-cols-3 px-2 items-center gap-2 mb-4">
+        <input
+          placeholder="search name or order ID..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="focus:outline-none focus:ring-0 border-2 col-span-2 rounded-2xl px-2 py-1 text-[16px] border-neutral-500 text-black flex-1"
+        />
+        <div className="col-span-1">
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="flex items-center gap-1 text-[16px] px-2 py-1 border-2 border-neutral-500 rounded-2xl text-neutral-500 whitespace-nowrap">
+                <SlidersHorizontal className="h-3 w-3" />
+                Filters
+              </button>
+            </SheetTrigger>
+            <SheetContent
+              side="bottom"
+              className="h-fit py-10 bg-black/30 backdrop-blur-md backdrop-saturate-150"
+              showCloseButton={false}
             >
-              Clear Filters
-            </button>
-          </div>
-          <ScrollBar orientation="horizontal" className="mt-3" />
-        </ScrollArea>
+              <SheetTitle className="px-5 text-white">Filters</SheetTitle>
+              <div className="grid grid-cols-2 gap-x-10 gap-y-5 mt-4 p-5">
+                {/* STOCK STATUS */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                      Stock <IoIosArrowDown />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-white">
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className="text-xs text-neutral-400">
+                        Stock Status
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setinStock("")}
+                      >
+                        All
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setinStock("in stock")}
+                      >
+                        In Stock
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setinStock("out of stock")}
+                      >
+                        Out of Stock
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setinStock("low stock")}
+                      >
+                        Low Stock
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {/* TIME FRAME */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                      Time Frame <IoIosArrowDown />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-white">
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className="text-xs text-neutral-400">
+                        Choose Time Frame
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setDateFilter("")}
+                      >
+                        All Time
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setDateFilter("7days")}
+                      >
+                        Last 7 days
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setDateFilter("30days")}
+                      >
+                        Last 30 Days
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setDateFilter("90days")}
+                      >
+                        Last 90 Days
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setDateFilter("thisYear")}
+                      >
+                        This Year
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {/* NUM VARIANTS */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                      Variants <IoIosArrowDown />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-white">
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className="text-xs text-neutral-400">
+                        Number of Variants
+                      </DropdownMenuLabel>
+                      {[0, 1, 2, 3, 4].map((n) => (
+                        <DropdownMenuItem
+                          key={n}
+                          className="capitalize text-black"
+                          onClick={() => setNumVariants(n)}
+                        >
+                          {n === 0 ? "All" : n}
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuItem
+                        className="capitalize text-black"
+                        onClick={() => setNumVariants(5)}
+                      >
+                        5+
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {/* COLLECTION */}
+                {allCollections.length > 0 && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                        Collection <IoIosArrowDown />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-white">
+                      <DropdownMenuGroup>
+                        <DropdownMenuLabel className="text-xs text-neutral-400">
+                          Choose Collection
+                        </DropdownMenuLabel>
+                        <DropdownMenuItem
+                          className="capitalize text-black"
+                          onClick={() => setCollection("")}
+                        >
+                          All
+                        </DropdownMenuItem>
+                        {allCollections.map((collection) => (
+                          <DropdownMenuItem
+                            key={collection}
+                            className="capitalize text-black"
+                            onClick={() => setCollection(collection!)}
+                          >
+                            {collection}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+                {/* CLEAR */}
+                <button
+                  className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white col-span-2"
+                  onClick={() => {
+                    setCollection("");
+                    setDateFilter("");
+                    setNumVariants(0);
+                    setSearch("");
+                    setinStock("");
+                  }}
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
       {filtered.length === 0 ? (
         <Empty>

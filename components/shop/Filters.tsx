@@ -7,7 +7,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -272,7 +271,7 @@ function Filters({
               showCloseButton={false}
             >
               <SheetTitle className="px-5 text-white">Filters</SheetTitle>
-              <div className="grid grid-cols-2 gap-10 mt-4 p-5">
+              <div className="grid grid-cols-2 gap-x-10 gap-y-5 mt-4 p-5">
                 {/* SIZE */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -425,7 +424,7 @@ function Filters({
                 </DropdownMenu>
                 {/* CLEAR */}
                 <button
-                  className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white w-full"
+                  className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white w-full col-span-2"
                   onClick={clearAllFilters}
                 >
                   Clear Filters

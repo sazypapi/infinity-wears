@@ -1210,16 +1210,28 @@ export const getAllProductsForShop = async (filters: any) => {
     db.product.count(),
   ]);
 
+  const getEffectiveMinPrice = (
+    variants: (typeof allProducts)[0]["variants"],
+  ) => {
+    return Math.min(
+      ...variants.map((v) => {
+        if (v.discount && v.discount > 0) {
+          return v.price * (1 - v.discount / 100);
+        }
+        return v.price;
+      }),
+    );
+  };
+
   const sortedProducts = allProducts.sort((a, b) => {
-    const aMinPrice = Math.min(...a.variants.map((v) => v.price));
-    const bMinPrice = Math.min(...b.variants.map((v) => v.price));
+    const aMinPrice = getEffectiveMinPrice(a.variants);
+    const bMinPrice = getEffectiveMinPrice(b.variants);
     if (sort === "price_asc") return aMinPrice - bMinPrice;
     if (sort === "price_desc") return bMinPrice - aMinPrice;
     const aInStock = a.variants.some((v) => v.inStock) ? 1 : 0;
     const bInStock = b.variants.some((v) => v.inStock) ? 1 : 0;
     return bInStock - aInStock;
   });
-
   return { sortedProducts, allProductsCount };
 };
 export const getProductRatings = async (id: string) => {

@@ -19,15 +19,10 @@ function loading() {
           <Skeleton className="w-20 h-5 rounded-2xl" />
           <Skeleton className="w-20 h-5 rounded-2xl" />
         </div>
-        <ScrollArea className="sm:hidden w-full">
-          <div className="flex align-middle justify-between items-center gap-5 w-full pt-2">
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-            <Skeleton className="w-18 h-4 rounded-2xl" />
-          </div>
-        </ScrollArea>
+        <div className="grid grid-cols-3 gap-10 mt-4 px-5 sm:hidden">
+          <Skeleton className="col-span-2 h-8 rounded-2xl" />
+          <Skeleton className="col-span-1 h-8 rounded-2xl" />
+        </div>
         <div className="flex flex-col gap-10 pb-10">
           <LoadingContainer />
           <LoadingContainer />

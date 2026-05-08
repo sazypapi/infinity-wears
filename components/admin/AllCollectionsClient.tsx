@@ -16,7 +16,12 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Prisma } from "@/generated/prisma";
 import { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
@@ -25,6 +30,7 @@ import Link from "next/link";
 import EditCollectionName from "./EditCollectionName";
 import DeleteCollection from "./DeleteCollection";
 import CreateCollectionPopOver from "./CreateCollectionPopOver";
+import { SlidersHorizontal } from "lucide-react";
 
 type Collection = Prisma.CollectionGetPayload<{
   include: { products: true };
@@ -113,64 +119,81 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
       </div>
 
       {/* MOBILE FILTERS */}
-      <div className="sm:hidden overflow-hidden w-full">
-        <ScrollArea className="w-full">
-          <div className="flex gap-2 mb-4">
+      <div className="sm:hidden px-2 mb-4 space-y-2">
+        <div className="grid grid-cols-3 items-center gap-2">
+          <div className="col-span-1">
             <CreateCollectionPopOver component="Collection" />
-            <input
-              placeholder="search collections..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border-2 rounded-2xl px-2 py-1 text-xs border-neutral-500 text-black"
-            />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                  Products
-                  <IoIosArrowDown />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-xs text-neutral-400">
-                    Product Count
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setProductCount("")}
-                  >
-                    All
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setProductCount("empty")}
-                  >
-                    Empty
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setProductCount("small")}
-                  >
-                    Small (1–5)
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setProductCount("large")}
-                  >
-                    Large (5+)
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <button
-              className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700"
-              onClick={clearFilters}
-            >
-              Clear Filters
-            </button>
           </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+          <input
+            placeholder="search collections..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="focus:outline-none focus:ring-0 border-2 col-span-2 rounded-2xl px-2 py-1 text-[16px] border-neutral-500 text-black flex-1"
+          />
+        </div>
+        <Sheet>
+          <SheetTrigger asChild>
+            <button className="flex items-center gap-1 text-[16px] px-2 py-1 border-2 border-neutral-500 rounded-2xl text-neutral-500 whitespace-nowrap">
+              <SlidersHorizontal className="h-3 w-3" />
+              Filters
+            </button>
+          </SheetTrigger>
+          <SheetContent
+            side="bottom"
+            className="h-fit py-10 bg-black/30 backdrop-blur-md backdrop-saturate-150"
+            showCloseButton={false}
+          >
+            <SheetTitle className="px-5 text-white">Filters</SheetTitle>
+            <div className="grid grid-cols-2 gap-x-10 gap-y-5 mt-4 p-5">
+              {/* PRODUCTS */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    Products <IoIosArrowDown />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-white">
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel className="text-xs text-neutral-400">
+                      Product Count
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem
+                      className="capitalize text-black"
+                      onClick={() => setProductCount("")}
+                    >
+                      All
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="capitalize text-black"
+                      onClick={() => setProductCount("empty")}
+                    >
+                      Empty
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="capitalize text-black"
+                      onClick={() => setProductCount("small")}
+                    >
+                      Small (1–5)
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="capitalize text-black"
+                      onClick={() => setProductCount("large")}
+                    >
+                      Large (5+)
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              {/* CLEAR */}
+              <button
+                className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white"
+                onClick={clearFilters}
+              >
+                Clear Filters
+              </button>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
 
       {/* EMPTY STATE */}

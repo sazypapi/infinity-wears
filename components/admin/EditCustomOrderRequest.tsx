@@ -56,7 +56,7 @@ function EditCustomOrderRequest({
             The user will see this note
           </p>
           <Textarea
-            className="border-2 border-black text-xs sm:text-sm placeholder:text-xs sm:placeholder:text-sm"
+            className="border-2 border-black text-[16px] sm:text-sm placeholder:text-[16px] sm:placeholder:text-sm"
             name="adminNote"
             placeholder="Type your message here."
             defaultValue={order.adminNote ?? ""}

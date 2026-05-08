@@ -38,7 +38,7 @@ function FormInput({
         type={type}
         // className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300"
         className={cn(
-          "shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm",
+          "shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]",
           className,
         )}
         value={value}

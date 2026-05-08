@@ -28,7 +28,7 @@ function EditMultipleImage({ product }: { product: Product }) {
           name="editedUrls"
           value={JSON.stringify(currentUrls)}
         />
-        <div className="grid sm:grid-cols-6 grid-cols-2 gap-1">
+        <div className="grid sm:grid-cols-6 grid-cols-2 gap-1 gap-y-3 sm:gap-y-1">
           {currentUrls.map((image) => (
             <div
               key={image}

@@ -29,18 +29,19 @@ function Collections({
             }
             placeholder="Select or create a collection."
             styles={{
-              control: (baseStyles, state) => ({
+              control: (baseStyles) => ({
                 ...baseStyles,
                 borderRadius: "7px",
                 border: "2px solid #d1d5db",
                 boxShadow: "0 1px 2px 0 rgba(209, 213, 219, 0.3)",
                 padding: "0px",
                 minHeight: "36px",
-                // height: "36px",
+                // remove height: "36px" — it clips the placeholder
               }),
               placeholder: (baseStyles) => ({
                 ...baseStyles,
                 fontSize: "16px",
+                color: "#9ca3af", // optional: match your other placeholders
               }),
             }}
           />

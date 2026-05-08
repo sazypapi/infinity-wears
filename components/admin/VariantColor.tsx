@@ -17,14 +17,17 @@ function VariantColor({ colorHex, colorName, index, onChange }: Props) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-7 sm:gap-10 text-black">
       <div>
-        <Label className="capitalize mb-2" htmlFor={`${index}colorName`}>
+        <Label
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
+          htmlFor={`${index}colorName`}
+        >
           Color Name
         </Label>
         <Input
           id={`${index}colorName`}
           name="colorName"
           type="text"
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]"
           value={colorName}
           onChange={(e) => onChange(index, "colorName", e.target.value)}
           placeholder="Enter Color Name"

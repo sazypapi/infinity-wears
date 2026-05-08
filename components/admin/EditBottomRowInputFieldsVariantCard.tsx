@@ -30,7 +30,7 @@ function EditBottomRowInputFieldsVariantCard({
       <div>
         <Label
           htmlFor="price"
-          className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
         >
           Price (&#8358;)
         </Label>
@@ -55,7 +55,7 @@ function EditBottomRowInputFieldsVariantCard({
       <div>
         {/* DISCOUNT */}
         <Label
-          className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           htmlFor="name"
         >
           Discount
@@ -85,7 +85,7 @@ function EditBottomRowInputFieldsVariantCard({
         />
         <label
           htmlFor="inStock"
-          className="text-[16px] sm:text-sm leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          className="text-xs sm:text-sm leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
           In Stock
         </label>

@@ -53,7 +53,7 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-col">
-        <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+        <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
           Category
         </Label>
         <Select required name="category" defaultValue={product.category || ""}>

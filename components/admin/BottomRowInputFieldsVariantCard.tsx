@@ -31,7 +31,7 @@ function BottomRowInputFieldsVariantCard({
       <div>
         <Label
           htmlFor={`${index}price`}
-          className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
         >
           Price (&#8358;)
         </Label>
@@ -56,7 +56,7 @@ function BottomRowInputFieldsVariantCard({
       <div>
         {/* DISCOUNT */}
         <Label
-          className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           htmlFor={`${index}name`}
         >
           Discount
@@ -86,14 +86,14 @@ function BottomRowInputFieldsVariantCard({
         />
         <label
           htmlFor={`${index}instock`}
-          className="sm:text-sm text-[16px] leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          className="sm:text-sm text-xxs leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
           In Stock
         </label>
       </div>
       <div>
         <Label
-          className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           htmlFor={`${index}size`}
         >
           Sizes

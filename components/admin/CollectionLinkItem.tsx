@@ -91,7 +91,7 @@ function CollectionLinkItem({
         <div>
           <Label
             htmlFor={`${index}heading`}
-            className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+            className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           >
             Header on Image
           </Label>
@@ -109,7 +109,7 @@ function CollectionLinkItem({
         <div>
           <Label
             htmlFor={`${index}subHeading`}
-            className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+            className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           >
             Sub-Heading
           </Label>
@@ -125,7 +125,7 @@ function CollectionLinkItem({
           />
         </div>
         <div className="flex flex-col">
-          <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
             Collection Name
           </Label>
           <Select
@@ -155,7 +155,7 @@ function CollectionLinkItem({
       <div className="py-3 flex flex-col gap-3">
         {image ? (
           <>
-            <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+            <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
               Current Banner Image
             </Label>
             <img
@@ -179,7 +179,7 @@ function CollectionLinkItem({
         ) : (
           <>
             <div className="flex flex-col">
-              <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+              <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
                 Banner Image
               </Label>
               <div className="flex items-center gap-3">

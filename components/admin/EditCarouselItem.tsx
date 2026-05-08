@@ -55,7 +55,7 @@ function EditCarouselItem({ image }: { image: HomeCarousel }) {
           />
         </div>
         <div className="flex flex-col justify-start mt-2">
-          <Label className="mb-2 text-neutral-500 text-[16px]">
+          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
             Current Image
           </Label>
           <img
@@ -64,7 +64,9 @@ function EditCarouselItem({ image }: { image: HomeCarousel }) {
             className="w-32 h-32 object-cover rounded-lg"
           />
           <div className="flex flex-col mt-2">
-            <Label className="text-black my-2">Replace Image</Label>
+            <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+              Replace Image
+            </Label>
             <div className="flex items-center gap-3">
               <input
                 type="file"

@@ -20,7 +20,7 @@ function SeoTags({ product }: { product?: Product }) {
       <div className="w-full">
         <div className="hidden sm:inline-block w-full">
           {" "}
-          <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
             SEO Tags
           </Label>
           <CreatableSelect
@@ -51,7 +51,7 @@ function SeoTags({ product }: { product?: Product }) {
           />
         </div>
         <div className="sm:hidden w-full">
-          <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
             SEO Tags
           </Label>
           <CreatableSelect

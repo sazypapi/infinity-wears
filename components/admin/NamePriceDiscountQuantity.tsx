@@ -33,7 +33,7 @@ function NamePriceDiscountQuantity({ value }: { value?: string }) {
           onChange={(e) => setName(e.target.value)}
           name="name"
           type="text"
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300  placeholder:text-xs sm:placeholder:text-sm"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 text-[16px] sm:text-sm"
           defaultValue={name}
           placeholder="Product Name"
           required

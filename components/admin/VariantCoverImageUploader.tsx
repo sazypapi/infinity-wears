@@ -57,7 +57,9 @@ function VariantCoverImageUploader({ coverImage, index, onChange }: Props) {
       ) : (
         <>
           <div className="flex flex-col">
-            <Label className="text-black my-2">Cover Image</Label>
+            <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+              Cover Image
+            </Label>
             <div className="flex items-center gap-3">
               <input
                 type="file"

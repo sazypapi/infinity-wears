@@ -51,7 +51,7 @@ function CreateCarouselItem({ link, text, image, index, onChange }: Props) {
           <div>
             <Label
               htmlFor={`${index}text`}
-              className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+              className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
             >
               Text &#40;2-10 Characters&#41;
             </Label>
@@ -69,7 +69,7 @@ function CreateCarouselItem({ link, text, image, index, onChange }: Props) {
           <div>
             <Label
               htmlFor={`${index}link`}
-              className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+              className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
             >
               Link &#40;start with "/"&#41;
             </Label>
@@ -99,7 +99,7 @@ function CreateCarouselItem({ link, text, image, index, onChange }: Props) {
           ) : (
             <>
               <div className="flex flex-col">
-                <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+                <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
                   Carousel Image
                 </Label>
                 <div className="flex items-center gap-3">

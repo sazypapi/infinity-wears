@@ -10,7 +10,7 @@ import {
 function StatusSelect({ value }: { value?: string }) {
   return (
     <div className="flex flex-col">
-      <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+      <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
         Status
       </Label>
       <Select required name="status" defaultValue={value || ""}>

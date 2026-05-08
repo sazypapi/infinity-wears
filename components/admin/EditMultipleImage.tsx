@@ -70,7 +70,7 @@ function EditMultipleImage({ product }: { product: Product }) {
         </div>
         {showUpdate ? (
           <>
-            <Label className="mt-5 text-sm">Add product Images.</Label>
+            <Label className="mt-5 sm:text-sm">Add product Images.</Label>
             <p className="text-xs text-gray-500 mt-2">
               Hold ctrl to select multiple images on pc
             </p>

@@ -14,7 +14,7 @@ function StatusSelect({ value }: { value?: string }) {
         Status
       </Label>
       <Select required name="status" defaultValue={value || ""}>
-        <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm">
+        <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm text-[16px] sm:text-sm">
           <SelectValue
             placeholder="select a status"
             className="placeholder:text-[16px] sm:placeholder:text-sm"

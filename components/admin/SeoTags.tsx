@@ -59,7 +59,7 @@ function SeoTags({ product }: { product?: Product }) {
             isMulti
             options={predefinedTags.map((tag) => ({ value: tag, label: tag }))}
             value={tags.map((tag) => ({ value: tag, label: tag }))}
-            placeholder="Select or create tags..."
+            placeholder="select or create tags..."
             styles={{
               control: (baseStyles, state) => ({
                 ...baseStyles,

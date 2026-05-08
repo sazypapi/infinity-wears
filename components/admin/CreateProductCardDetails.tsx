@@ -20,7 +20,7 @@ function CreateProductCardDetails({
         {/* DESCRIPTION */}
         <TextArea
           name="description"
-          placeholder="Enter the description for the user"
+          placeholder="enter the description for the user"
         />
         {/* COLOR SIZE */}
 

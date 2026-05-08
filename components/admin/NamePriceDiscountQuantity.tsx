@@ -35,7 +35,7 @@ function NamePriceDiscountQuantity({ value }: { value?: string }) {
           type="text"
           className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 text-[16px] sm:text-sm"
           defaultValue={name}
-          placeholder="Product Name"
+          placeholder="product Name"
           required
         />
         <input type="hidden" name="slug" value={slug} />
@@ -58,7 +58,7 @@ function NamePriceDiscountQuantity({ value }: { value?: string }) {
           <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm">
             <SelectValue
               placeholder="select a category"
-              className="placeholder:text-[16xpx] sm:placeholder:text-sm text-[16px] sm:text-sm"
+              className="placeholder:text-[16px] sm:placeholder:text-sm text-[16px] sm:text-sm"
             />
           </SelectTrigger>
           <SelectContent>

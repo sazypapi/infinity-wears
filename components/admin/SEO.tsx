@@ -27,7 +27,7 @@ function SEO() {
         <TextArea
           name="seoDescription"
           labelText="SEO Description"
-          placeholder="Enter SEO Description"
+          placeholder="enter SEO Description"
         />
       </div>
     </div>

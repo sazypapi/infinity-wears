@@ -47,9 +47,9 @@ function BottomRowInputFieldsVariantCard({
           }
           name="price"
           min={0}
-          placeholder="Price in naira"
+          placeholder="price in naira"
           required
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm text-[16px] sm:text-sm"
           value={price ?? ""}
         />
       </div>
@@ -65,8 +65,8 @@ function BottomRowInputFieldsVariantCard({
           id={`${index}name`}
           name="discount"
           type="number"
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
-          placeholder="Discount(%)"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm text-[16px] sm:text-sm"
+          placeholder="discount(%)"
           onChange={(e) => onChange(index, "discount", Number(e.target.value))}
           value={discount ?? ""}
           step="0.01"
@@ -117,8 +117,6 @@ function BottomRowInputFieldsVariantCard({
               border: "2px solid #d1d5db",
               boxShadow: "0 1px 2px 0 rgba(209, 213, 219, 0.3)",
               padding: "0px",
-              minHeight: "36px",
-              height: "36px",
             }),
             placeholder: (baseStyles) => ({
               ...baseStyles,

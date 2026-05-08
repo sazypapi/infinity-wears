@@ -40,7 +40,7 @@ function Collections({
               }),
               placeholder: (baseStyles) => ({
                 ...baseStyles,
-                fontSize: "14px",
+                fontSize: "16px",
               }),
             }}
           />

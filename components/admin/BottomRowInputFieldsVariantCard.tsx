@@ -86,7 +86,7 @@ function BottomRowInputFieldsVariantCard({
         />
         <label
           htmlFor={`${index}instock`}
-          className="sm:text-sm text-xxs leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          className="sm:text-sm text-xs leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
           In Stock
         </label>
@@ -113,9 +113,16 @@ function BottomRowInputFieldsVariantCard({
           styles={{
             control: (baseStyles, state) => ({
               ...baseStyles,
-
               borderRadius: "7px",
-              boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px",
+              border: "2px solid #d1d5db",
+              boxShadow: "0 1px 2px 0 rgba(209, 213, 219, 0.3)",
+              padding: "0px",
+              minHeight: "36px",
+              height: "36px",
+            }),
+            placeholder: (baseStyles) => ({
+              ...baseStyles,
+              fontSize: "16px",
             }),
           }}
           id={`${index}size`}

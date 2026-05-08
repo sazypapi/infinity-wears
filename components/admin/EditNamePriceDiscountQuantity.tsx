@@ -24,7 +24,7 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-10 mb-4 sm:mb-5">
       <div>
         <Label
-          className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           htmlFor="name"
         >
           Product Name
@@ -57,11 +57,8 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
           Category
         </Label>
         <Select required name="category" defaultValue={product.category || ""}>
-          <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm">
-            <SelectValue
-              placeholder="select a category"
-              className="placeholder:text-[16px] sm:placeholder:text-sm"
-            />
+          <SelectTrigger className="border-2 w-full border-gray-300 text-[16px] sm:text-sm">
+            <SelectValue placeholder="select a category" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>

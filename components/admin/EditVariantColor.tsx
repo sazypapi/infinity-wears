@@ -17,14 +17,17 @@ function EditVariantColor({ colorHex, colorName, index, onChange }: Props) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-7 sm:gap-10 text-black">
       <div>
-        <Label className="capitalize mb-2" htmlFor="colorName">
+        <Label
+          className="placeholder:text-[16px] sm:placeholder:text-sm"
+          htmlFor="colorName"
+        >
           Color Name
         </Label>
         <Input
           id="colorName"
           name="colorName"
           type="text"
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 text-[16px] sm:text-sm"
           value={colorName}
           onChange={(e) => onChange(index, "colorName", e.target.value)}
           placeholder="Enter Color Name"

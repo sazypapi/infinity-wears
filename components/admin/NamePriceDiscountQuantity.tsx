@@ -58,7 +58,7 @@ function NamePriceDiscountQuantity({ value }: { value?: string }) {
           <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm">
             <SelectValue
               placeholder="select a category"
-              className="placeholder:text-[16xpx] sm:placeholder:text-sm"
+              className="placeholder:text-[16xpx] sm:placeholder:text-sm text-[16px] sm:text-sm"
             />
           </SelectTrigger>
           <SelectContent>

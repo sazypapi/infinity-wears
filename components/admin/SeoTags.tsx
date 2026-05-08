@@ -70,7 +70,7 @@ function SeoTags({ product }: { product?: Product }) {
               }),
               placeholder: (baseStyles) => ({
                 ...baseStyles,
-                fontSize: "12px",
+                fontSize: "16px",
               }),
             }}
             onChange={(selected) => {

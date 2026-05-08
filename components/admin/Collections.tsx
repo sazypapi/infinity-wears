@@ -36,7 +36,7 @@ function Collections({
                 boxShadow: "0 1px 2px 0 rgba(209, 213, 219, 0.3)",
                 padding: "0px",
                 minHeight: "36px",
-                height: "36px",
+                // height: "36px",
               }),
               placeholder: (baseStyles) => ({
                 ...baseStyles,

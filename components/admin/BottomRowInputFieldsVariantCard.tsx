@@ -29,7 +29,10 @@ function BottomRowInputFieldsVariantCard({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-4 items-center sm:gap-10 sm:mb-3 text-black">
       <div>
-        <Label htmlFor={`${index}price`} className="capitalize mb-2">
+        <Label
+          htmlFor={`${index}price`}
+          className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+        >
           Price (&#8358;)
         </Label>
         <Input
@@ -46,20 +49,23 @@ function BottomRowInputFieldsVariantCard({
           min={0}
           placeholder="Price in naira"
           required
-          className=" border-2 border-gray-300"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
           value={price ?? ""}
         />
       </div>
       <div>
         {/* DISCOUNT */}
-        <Label className="capitalize mb-2" htmlFor={`${index}name`}>
+        <Label
+          className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+          htmlFor={`${index}name`}
+        >
           Discount
         </Label>
         <Input
           id={`${index}name`}
           name="discount"
           type="number"
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
           placeholder="Discount(%)"
           onChange={(e) => onChange(index, "discount", Number(e.target.value))}
           value={discount ?? ""}
@@ -80,13 +86,16 @@ function BottomRowInputFieldsVariantCard({
         />
         <label
           htmlFor={`${index}instock`}
-          className="text-sm leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          className="sm:text-sm text-[16px] leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
           In Stock
         </label>
       </div>
       <div>
-        <Label className="mb-2" htmlFor={`${index}size`}>
+        <Label
+          className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
+          htmlFor={`${index}size`}
+        >
           Sizes
         </Label>
         <Select

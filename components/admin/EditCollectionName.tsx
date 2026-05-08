@@ -66,7 +66,11 @@ function EditCollectionName({ collection }: { collection: Collection }) {
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="outline">
+              <Button
+                type="button"
+                variant="outline"
+                className="bg-transparent text-white hover:bg-white hover:text-black border-white duration-500 transition"
+              >
                 Cancel
               </Button>
             </DialogClose>

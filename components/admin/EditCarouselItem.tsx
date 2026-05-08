@@ -55,7 +55,9 @@ function EditCarouselItem({ image }: { image: HomeCarousel }) {
           />
         </div>
         <div className="flex flex-col justify-start mt-2">
-          <Label className="mb-2 text-neutral-500 text-xs">Current Image</Label>
+          <Label className="mb-2 text-neutral-500 text-[16px]">
+            Current Image
+          </Label>
           <img
             src={filePreview ?? image.image}
             alt="Preview"

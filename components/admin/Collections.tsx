@@ -15,7 +15,7 @@ function Collections({
     <>
       <div className="w-full grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-10 mt-2 sm:mt-3">
         <div className="w-full hidden sm:inline-block">
-          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+          <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
             Collection
           </Label>
           <CreatableSelect
@@ -49,7 +49,7 @@ function Collections({
           <input type="hidden" name="collectionId" value={collection} />
         </div>
         <div className="w-full sm:hidden">
-          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+          <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
             Collection
           </Label>
           <CreatableSelect

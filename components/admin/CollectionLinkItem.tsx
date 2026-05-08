@@ -91,7 +91,7 @@ function CollectionLinkItem({
         <div>
           <Label
             htmlFor={`${index}heading`}
-            className="capitalize mb-2 text-xs text-black"
+            className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
           >
             Header on Image
           </Label>
@@ -102,14 +102,14 @@ function CollectionLinkItem({
             name="heading"
             placeholder="2-4 words"
             required
-            className="text-black border-2 border-gray-300 text-xs"
+            className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
             value={heading ?? ""}
           />
         </div>
         <div>
           <Label
             htmlFor={`${index}subHeading`}
-            className="capitalize mb-2 text-xs text-black"
+            className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
           >
             Sub-Heading
           </Label>
@@ -120,12 +120,12 @@ function CollectionLinkItem({
             name="subHeading"
             placeholder="2-10 words"
             required
-            className="text-black border-2 border-gray-300 text-xs"
+            className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
             value={subHeading ?? ""}
           />
         </div>
         <div className="flex flex-col">
-          <Label className="capitalize mb-2 text-xs text-black">
+          <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
             Collection Name
           </Label>
           <Select
@@ -155,7 +155,7 @@ function CollectionLinkItem({
       <div className="py-3 flex flex-col gap-3">
         {image ? (
           <>
-            <Label className="mb-2 text-neutral-500 text-xs">
+            <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
               Current Banner Image
             </Label>
             <img
@@ -179,7 +179,9 @@ function CollectionLinkItem({
         ) : (
           <>
             <div className="flex flex-col">
-              <Label className="text-black my-2">Banner Image</Label>
+              <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+                Banner Image
+              </Label>
               <div className="flex items-center gap-3">
                 <input
                   type="file"

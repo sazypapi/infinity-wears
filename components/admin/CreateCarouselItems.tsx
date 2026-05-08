@@ -51,7 +51,7 @@ function CreateCarouselItem({ link, text, image, index, onChange }: Props) {
           <div>
             <Label
               htmlFor={`${index}text`}
-              className="capitalize mb-2 text-xs text-black"
+              className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
             >
               Text &#40;2-10 Characters&#41;
             </Label>
@@ -62,14 +62,14 @@ function CreateCarouselItem({ link, text, image, index, onChange }: Props) {
               name="text"
               placeholder="Text on Carousel Image"
               required
-              className="text-black border-2 border-gray-300 text-xs"
+              className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
               value={text ?? ""}
             />
           </div>
           <div>
             <Label
               htmlFor={`${index}link`}
-              className="capitalize mb-2 text-xs text-black"
+              className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm"
             >
               Link &#40;start with "/"&#41;
             </Label>
@@ -80,7 +80,7 @@ function CreateCarouselItem({ link, text, image, index, onChange }: Props) {
               name="link"
               placeholder="Link to carousel item"
               required
-              className="text-black border-2 border-gray-300 text-xs"
+              className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
               value={link ?? ""}
             />
           </div>
@@ -99,7 +99,7 @@ function CreateCarouselItem({ link, text, image, index, onChange }: Props) {
           ) : (
             <>
               <div className="flex flex-col">
-                <Label className="text-black my-2 text-xs">
+                <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
                   Carousel Image
                 </Label>
                 <div className="flex items-center gap-3">

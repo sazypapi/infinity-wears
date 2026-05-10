@@ -284,6 +284,12 @@ function Filters({
                       <DropdownMenuLabel className="text-xs text-neutral-400">
                         All Sizes
                       </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => updateFilter("size", "")}
+                      >
+                        All
+                      </DropdownMenuItem>
                       {allSizes.map((size) => (
                         <DropdownMenuItem
                           key={size}
@@ -308,6 +314,12 @@ function Filters({
                       <DropdownMenuLabel className="text-xs text-neutral-400">
                         All Genders
                       </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => updateFilter("gender", "")}
+                      >
+                        All
+                      </DropdownMenuItem>
                       {allGenders.map((gender) => (
                         <DropdownMenuItem
                           key={gender}
@@ -332,6 +344,12 @@ function Filters({
                       <DropdownMenuLabel className="text-xs text-neutral-400">
                         All Colors
                       </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => updateFilter("color", "")}
+                      >
+                        All
+                      </DropdownMenuItem>
                       {allColors.map((color) => (
                         <DropdownMenuItem
                           key={color}
@@ -356,6 +374,12 @@ function Filters({
                       <DropdownMenuLabel className="text-xs text-neutral-400">
                         All Categories
                       </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => updateFilter("category", "")}
+                      >
+                        All
+                      </DropdownMenuItem>
                       {allCategories.map((category) => (
                         <DropdownMenuItem
                           key={category}
@@ -380,6 +404,12 @@ function Filters({
                       <DropdownMenuLabel className="text-xs text-neutral-400">
                         All Materials
                       </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => updateFilter("material", "")}
+                      >
+                        All
+                      </DropdownMenuItem>
                       {allMaterials.map((material) => (
                         <DropdownMenuItem
                           key={material}
@@ -400,6 +430,15 @@ function Filters({
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-white">
+                    <DropdownMenuLabel className="text-xs text-neutral-400">
+                      Sort By
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem
+                      className="active:bg-neutral-100 transition duration-150"
+                      onClick={() => updateFilter("sort", "")}
+                    >
+                      Default
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       className="active:bg-neutral-100 transition duration-150"
                       onClick={() => updateFilter("sort", "price_asc")}

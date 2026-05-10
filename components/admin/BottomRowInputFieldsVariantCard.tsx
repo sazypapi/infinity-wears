@@ -125,6 +125,7 @@ function BottomRowInputFieldsVariantCard({
           }}
           id={`${index}size`}
           required
+          placeholder="select sizes"
         />
       </div>
     </div>

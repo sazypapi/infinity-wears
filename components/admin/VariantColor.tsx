@@ -30,7 +30,7 @@ function VariantColor({ colorHex, colorName, index, onChange }: Props) {
           className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]"
           value={colorName}
           onChange={(e) => onChange(index, "colorName", e.target.value)}
-          placeholder="Enter Color Name"
+          placeholder="enter Color Name"
           required
         />
       </div>

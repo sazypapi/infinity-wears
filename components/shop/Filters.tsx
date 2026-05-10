@@ -275,7 +275,7 @@ function Filters({
                 {/* SIZE */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:opacity-70 transition duration-150">
                       Size <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -287,7 +287,7 @@ function Filters({
                       {allSizes.map((size) => (
                         <DropdownMenuItem
                           key={size}
-                          className="capitalize text-black"
+                          className="capitalize text-black active:scale-95 active:opacity-70 transition duration-150"
                           onClick={() => updateFilter("size", size)}
                         >
                           {size}

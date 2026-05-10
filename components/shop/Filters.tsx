@@ -260,7 +260,7 @@ function Filters({
         <div className="col-span-1">
           <Sheet>
             <SheetTrigger asChild>
-              <button className="flex items-center gap-1 text-[16px] px-2 py-1 border-2 border-neutral-500 rounded-2xl text-neutral-500 whitespace-nowrap">
+              <button className="flex items-center gap-1 text-[16px] px-2 py-1 border-2 border-neutral-500 rounded-2xl text-neutral-500 whitespace-nowrap active:scale-95 active:opacity-70 transition duration-150">
                 <SlidersHorizontal className="h-3 w-3" />
                 Filters
               </button>
@@ -275,7 +275,7 @@ function Filters({
                 {/* SIZE */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:opacity-70 transition duration-150">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                       Size <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -287,7 +287,7 @@ function Filters({
                       {allSizes.map((size) => (
                         <DropdownMenuItem
                           key={size}
-                          className="capitalize text-black active:scale-95 active:opacity-70 transition duration-150"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => updateFilter("size", size)}
                         >
                           {size}
@@ -299,7 +299,7 @@ function Filters({
                 {/* GENDER */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                       Gender <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -311,7 +311,7 @@ function Filters({
                       {allGenders.map((gender) => (
                         <DropdownMenuItem
                           key={gender}
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => updateFilter("gender", gender)}
                         >
                           {formatAllCaps(gender)}
@@ -323,7 +323,7 @@ function Filters({
                 {/* COLOR */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                       Color <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -335,7 +335,7 @@ function Filters({
                       {allColors.map((color) => (
                         <DropdownMenuItem
                           key={color}
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => updateFilter("color", color)}
                         >
                           {color}
@@ -347,7 +347,7 @@ function Filters({
                 {/* CATEGORY */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                       Category <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -359,7 +359,7 @@ function Filters({
                       {allCategories.map((category) => (
                         <DropdownMenuItem
                           key={category}
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => updateFilter("category", category)}
                         >
                           {formatAllCaps(category)}
@@ -371,7 +371,7 @@ function Filters({
                 {/* MATERIAL */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                       Material <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -383,7 +383,7 @@ function Filters({
                       {allMaterials.map((material) => (
                         <DropdownMenuItem
                           key={material}
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => updateFilter("material", material)}
                         >
                           {material}
@@ -395,27 +395,31 @@ function Filters({
                 {/* SORT */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                       Sort <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-white">
                     <DropdownMenuItem
+                      className="active:bg-neutral-100 transition duration-150"
                       onClick={() => updateFilter("sort", "price_asc")}
                     >
                       Price: low-high
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                      className="active:bg-neutral-100 transition duration-150"
                       onClick={() => updateFilter("sort", "price_desc")}
                     >
                       Price: high-low
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                      className="active:bg-neutral-100 transition duration-150"
                       onClick={() => updateFilter("sort", "newest")}
                     >
                       Newest
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                      className="active:bg-neutral-100 transition duration-150"
                       onClick={() => updateFilter("sort", "bestselling")}
                     >
                       BestSelling
@@ -424,7 +428,7 @@ function Filters({
                 </DropdownMenu>
                 {/* CLEAR */}
                 <button
-                  className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white w-full col-span-2"
+                  className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white w-full col-span-2 active:scale-95 active:bg-white/10 transition duration-150"
                   onClick={clearAllFilters}
                 >
                   Clear Filters

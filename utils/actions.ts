@@ -1,5 +1,5 @@
 "use server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import {
   adminUpdateOrderAndDeliveryStatusSchema,
   collectionLinkSchema,
@@ -1266,25 +1266,33 @@ export const getProductRatings = async (id: string) => {
     averageRating,
   };
 };
+
 export const getProductReviews = async (id: string) => {
   const isProductExist = await db.product.findUnique({
-    where: {
-      id: id,
-    },
+    where: { id },
   });
-  if (!isProductExist) {
-    return { error: "Product doesn't exist" };
-  }
+
+  if (!isProductExist) return { error: "Product doesn't exist" };
+
   const reviews = await db.review.findMany({
-    where: {
-      productId: id,
-    },
-    orderBy: {
-      rating: "desc",
-    },
+    where: { productId: id },
+    orderBy: { rating: "desc" },
     take: 3,
   });
-  return reviews;
+
+  const reviewsWithUsers = await Promise.all(
+    reviews.map(async (review) => {
+      const client = await clerkClient();
+      const user = await client.users.getUser(review.clerkId);
+      return {
+        ...review,
+        imageUrl: user.imageUrl,
+        name: `${user.firstName} ${user.lastName}`,
+      };
+    }),
+  );
+
+  return reviewsWithUsers;
 };
 export const getAllProductReviews = async (slug: string) => {
   const product = await db.product.findFirst({

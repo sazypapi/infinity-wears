@@ -50,6 +50,7 @@ function EditCollectionName({ collection }: { collection: Collection }) {
                   name="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]"
                 />
               </div>
             </div>

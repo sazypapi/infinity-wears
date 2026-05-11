@@ -235,17 +235,17 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
                     ? `${collection.products.length} Product(s)`
                     : "No Product in Collection"}
                 </h2>
-                <Button
-                  variant="link"
-                  className="text-neutral-950 bg-transparent p-1 sm:border-black sm:border-2 sm:hover:bg-black sm:hover:text-white sm:transition sm:duration-500 underline sm:no-underline underline-offset-3"
+                <Link
+                  className="text-xs"
+                  href={`/admin/view-collection-products/${collection.id}`}
                 >
-                  <Link
-                    className="text-xs"
-                    href={`/admin/view-collection-products/${collection.id}`}
+                  <Button
+                    variant="link"
+                    className="text-neutral-950 bg-transparent p-1 sm:border-black sm:border-2 sm:hover:bg-black sm:hover:text-white sm:transition sm:duration-500 underline sm:no-underline underline-offset-3"
                   >
                     View Products
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
                 <div className="flex flex-row sm:gap-3 gap-1 justify-between">
                   <EditCollectionName collection={collection} />
                   <DeleteCollection collection={collection} />

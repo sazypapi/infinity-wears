@@ -81,10 +81,10 @@ function ProductDetailsBigScreen({
         {currentVariant?.inStock ? (
           <h1 className="text-2xl">{productDetails.name}</h1>
         ) : (
-          <h1 className="text-2xl">
-            {productDetails.name}{" "}
-            <span className="text-red-500 text-base">Out of stock</span>
-          </h1>
+          <>
+            <h1 className="text-2xl">{productDetails.name} </h1>
+            <span className="text-red-500 text-xs">Out of stock</span>
+          </>
         )}
 
         {/* PRICE */}

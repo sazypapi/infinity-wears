@@ -25,7 +25,7 @@ function Footer({ collectionLinks }: { collectionLinks: collectionLinks[] }) {
              bg-[url('/images/footerBg.jpg')] bg-cover bg-center bg-no-repeat pb-20"
     >
       {/* Blur + dark overlay */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm pointer-events-none" />
 
       {/* Content (kept sharp) */}
       <div className="relative z-10 flex flex-col items-center justify-between w-full gap-6">

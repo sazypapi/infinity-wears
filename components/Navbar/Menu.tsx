@@ -1,10 +1,10 @@
 "use client";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { RiMenu5Fill } from "react-icons/ri";
 import Link from "next/link";
 import { Prisma } from "@/generated/prisma";
@@ -14,6 +14,7 @@ type collectionLinks = Prisma.CollectionLinkGetPayload<{
     collection: true;
   };
 }>;
+
 function Menu({
   collectionLinks = [],
 }: {
@@ -29,25 +30,33 @@ function Menu({
     { label: "Custom Order", href: "/create-customorder" },
     { label: "Dashboard", href: "/dashboard" },
   ];
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Sheet>
+      <SheetTrigger asChild>
         <button className="flex align-middle items-center border-none focus:outline-none">
           <RiMenu5Fill className="w-8 h-8 text-white" />
         </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" alignOffset={0} className="w-40">
-        {links.map((link) => {
-          return (
-            <DropdownMenuItem key={link.href}>
-              <Link href={link.href} className="capitalize w-full">
-                {link.label}
-              </Link>
-            </DropdownMenuItem>
-          );
-        })}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </SheetTrigger>
+      <SheetContent
+        side="right"
+        className="bg-black/30 backdrop-blur-md backdrop-saturate-150 border-none"
+        showCloseButton={false}
+      >
+        <SheetTitle className="text-white px-2 mb-6">Menu</SheetTitle>
+        <div className="flex flex-col gap-4 px-2">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="capitalize text-white text-lg hover:text-neutral-300 active:text-neutral-400 transition duration-150"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 

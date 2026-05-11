@@ -51,7 +51,7 @@ function UserIcon({ isAdmin }: { isAdmin: boolean }) {
             </div>
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="z-9999">
           <Link href="/dashboard/account">
             <DropdownMenuItem>My Account</DropdownMenuItem>
           </Link>
@@ -82,7 +82,7 @@ function UserIcon({ isAdmin }: { isAdmin: boolean }) {
           <LuUser className="h-7 w-7  bg-primary text-gray-300 rounded-full" />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="z-9999">
         <SignedOut>
           <DropdownMenuItem>
             <Link href="/" prefetch={false} className="w-full">

@@ -1286,8 +1286,8 @@ export const getProductReviews = async (id: string) => {
       const user = await client.users.getUser(review.clerkId);
       return {
         ...review,
-        imageUrl: user.imageUrl,
-        name: `${user.firstName} ${user.lastName}`,
+        authorImageUrl: user.imageUrl,
+        authorName: `${user.firstName} ${user.lastName}`,
       };
     }),
   );

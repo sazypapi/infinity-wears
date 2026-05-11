@@ -107,7 +107,7 @@ function SingpleProductRatingReview({
                             src={review.authorImageUrl}
                             height={30}
                             width={30}
-                            className="rounded-full"
+                            className="rounded-full border-2 border-amber-400 object-cover"
                             alt="profile image"
                           />
                         </CardTitle>

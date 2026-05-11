@@ -24,12 +24,14 @@ function Filters({
   allCategories,
   allMaterials,
   allGenders,
+  basePath,
 }: {
   allColors: string[];
   allSizes: string[];
   allCategories: string[];
   allMaterials: string[];
   allGenders: string[];
+  basePath: string;
 }) {
   const formatAllCaps = (status: string) =>
     status.charAt(0) + status.slice(1).toLowerCase();
@@ -40,10 +42,10 @@ function Filters({
 
     params.set(key, value);
 
-    router.push(`/shop?${params.toString()}`);
+    router.push(`${basePath}?${params.toString()}`);
   };
   const clearAllFilters = () => {
-    router.push("/shop");
+    router.push(basePath);
   };
   const [search, setSearch] = useState(
     searchParams.get("search")?.toString() || "",

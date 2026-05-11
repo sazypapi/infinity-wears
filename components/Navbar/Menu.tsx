@@ -40,10 +40,10 @@ function Menu({
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="bg-black/30 backdrop-blur-md backdrop-saturate-150 border-none"
+        className="bg-black/30 backdrop-blur-md backdrop-saturate-150 border-none z-[9999] focus:outline-none"
         showCloseButton={false}
       >
-        <SheetTitle className="text-white px-2 mb-6">Menu</SheetTitle>
+        {/* <SheetTitle className="text-white px-2 mb-6">Menu</SheetTitle> */}
         <div className="flex flex-col gap-4 px-2">
           {links.map((link) => (
             <Link

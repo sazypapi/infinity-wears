@@ -309,7 +309,7 @@ function AllProductsClient({ products }: { products: products[] }) {
         <div className="col-span-1">
           <Sheet>
             <SheetTrigger asChild>
-              <button className="flex items-center gap-1 text-[16px] px-2 py-1 border-2 border-neutral-500 rounded-2xl text-neutral-500 whitespace-nowrap">
+              <button className="flex items-center gap-1 text-[16px] px-2 py-1 border-2 border-neutral-500 rounded-2xl text-neutral-500 whitespace-nowrap active:scale-95 active:opacity-70 transition duration-150">
                 <SlidersHorizontal className="h-3 w-3" />
                 Filters
               </button>
@@ -324,7 +324,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                 {/* STOCK STATUS */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                       Stock <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -334,25 +334,25 @@ function AllProductsClient({ products }: { products: products[] }) {
                         Stock Status
                       </DropdownMenuLabel>
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setinStock("")}
                       >
                         All
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setinStock("in stock")}
                       >
                         In Stock
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setinStock("out of stock")}
                       >
                         Out of Stock
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setinStock("low stock")}
                       >
                         Low Stock
@@ -363,7 +363,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                 {/* TIME FRAME */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                       Time Frame <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -373,31 +373,31 @@ function AllProductsClient({ products }: { products: products[] }) {
                         Choose Time Frame
                       </DropdownMenuLabel>
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setDateFilter("")}
                       >
                         All Time
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setDateFilter("7days")}
                       >
                         Last 7 days
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setDateFilter("30days")}
                       >
                         Last 30 Days
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setDateFilter("90days")}
                       >
                         Last 90 Days
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setDateFilter("thisYear")}
                       >
                         This Year
@@ -408,7 +408,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                 {/* NUM VARIANTS */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                       Variants <IoIosArrowDown />
                     </button>
                   </DropdownMenuTrigger>
@@ -420,14 +420,14 @@ function AllProductsClient({ products }: { products: products[] }) {
                       {[0, 1, 2, 3, 4].map((n) => (
                         <DropdownMenuItem
                           key={n}
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => setNumVariants(n)}
                         >
                           {n === 0 ? "All" : n}
                         </DropdownMenuItem>
                       ))}
                       <DropdownMenuItem
-                        className="capitalize text-black"
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
                         onClick={() => setNumVariants(5)}
                       >
                         5+
@@ -439,7 +439,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                 {allCollections.length > 0 && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                      <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                         Collection <IoIosArrowDown />
                       </button>
                     </DropdownMenuTrigger>
@@ -449,7 +449,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                           Choose Collection
                         </DropdownMenuLabel>
                         <DropdownMenuItem
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => setCollection("")}
                         >
                           All
@@ -457,7 +457,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                         {allCollections.map((collection) => (
                           <DropdownMenuItem
                             key={collection}
-                            className="capitalize text-black"
+                            className="capitalize text-black active:bg-neutral-100 transition duration-150"
                             onClick={() => setCollection(collection!)}
                           >
                             {collection}
@@ -469,7 +469,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                 )}
                 {/* CLEAR */}
                 <button
-                  className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white col-span-2"
+                  className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white col-span-2 active:scale-95 active:bg-white/10 transition duration-150"
                   onClick={() => {
                     setCollection("");
                     setDateFilter("");

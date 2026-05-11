@@ -117,7 +117,6 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
           Clear Filters
         </button>
       </div>
-
       {/* MOBILE FILTERS */}
       <div className="sm:hidden px-2 mb-4 space-y-2">
         <CreateCollectionPopOver component="Collection" />
@@ -132,7 +131,7 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
           <div className="col-span-1">
             <Sheet>
               <SheetTrigger asChild>
-                <button className="flex items-center gap-1 text-[16px] px-2 py-1 border-2 border-neutral-500 rounded-2xl text-neutral-500 whitespace-nowrap">
+                <button className="flex items-center gap-1 text-[16px] px-2 py-1 border-2 border-neutral-500 rounded-2xl text-neutral-500 whitespace-nowrap active:scale-95 active:opacity-70 transition duration-150">
                   <SlidersHorizontal className="h-3 w-3" />
                   Filters
                 </button>
@@ -147,7 +146,7 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
                   {/* PRODUCTS */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full">
+                      <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
                         Products <IoIosArrowDown />
                       </button>
                     </DropdownMenuTrigger>
@@ -157,25 +156,25 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
                           Product Count
                         </DropdownMenuLabel>
                         <DropdownMenuItem
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => setProductCount("")}
                         >
                           All
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => setProductCount("empty")}
                         >
                           Empty
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => setProductCount("small")}
                         >
                           Small (1–5)
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="capitalize text-black"
+                          className="capitalize text-black active:bg-neutral-100 transition duration-150"
                           onClick={() => setProductCount("large")}
                         >
                           Large (5+)
@@ -185,7 +184,7 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
                   </DropdownMenu>
                   {/* CLEAR */}
                   <button
-                    className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white"
+                    className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white active:scale-95 active:bg-white/10 transition duration-150"
                     onClick={clearFilters}
                   >
                     Clear Filters
@@ -196,8 +195,7 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
           </div>
         </div>
       </div>
-
-      {/* EMPTY STATE */}
+      x{/* EMPTY STATE */}
       {filtered.length === 0 ? (
         <Empty>
           <EmptyHeader>

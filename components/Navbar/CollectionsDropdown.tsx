@@ -26,11 +26,7 @@ function CollectionsDropdown({
           <NavigationMenuTrigger className="bg-black text-white text-xs hover:bg-black hover:text-white">
             COLLECTIONS
           </NavigationMenuTrigger>
-          <NavigationMenuContent
-            className=" bg-black/30 backdrop-blur-md backdrop-saturate-150
-        border-t
-        shadow-lg "
-          >
+          <NavigationMenuContent>
             <ul className="grid w-[200px] gap-4">
               <li>
                 {collectionLinks.map((link) => {

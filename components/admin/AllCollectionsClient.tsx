@@ -195,7 +195,7 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
           </div>
         </div>
       </div>
-      x{/* EMPTY STATE */}
+      {/* EMPTY STATE */}
       {filtered.length === 0 ? (
         <Empty>
           <EmptyHeader>

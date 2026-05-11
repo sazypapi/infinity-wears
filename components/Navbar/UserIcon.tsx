@@ -47,28 +47,38 @@ function UserIcon({ isAdmin }: { isAdmin: boolean }) {
             />
           ) : (
             <div className="flex align-middle items-center">
-              <LuUser className="h-7 w-7  bg-primary text-gray-300 rounded-full" />
+              <LuUser className="h-7 w-7 bg-primary text-gray-300 rounded-full" />
             </div>
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="z-9999">
+        <DropdownMenuContent align="end" side="top" className="z-[9999]">
           <Link href="/dashboard/account">
-            <DropdownMenuItem>My Account</DropdownMenuItem>
+            <DropdownMenuItem className="active:bg-neutral-100 transition duration-150">
+              My Account
+            </DropdownMenuItem>
           </Link>
           <Link href="/dashboard/orders">
-            <DropdownMenuItem>Orders</DropdownMenuItem>
+            <DropdownMenuItem className="active:bg-neutral-100 transition duration-150">
+              Orders
+            </DropdownMenuItem>
           </Link>
           <Link href="/dashboard/wishlist">
-            <DropdownMenuItem>Wishlist</DropdownMenuItem>
+            <DropdownMenuItem className="active:bg-neutral-100 transition duration-150">
+              Wishlist
+            </DropdownMenuItem>
           </Link>
           {isAdmin && (
             <Link href="/admin">
-              <DropdownMenuItem>Admin Dashboard</DropdownMenuItem>
+              <DropdownMenuItem className="active:bg-neutral-100 transition duration-150">
+                Admin Dashboard
+              </DropdownMenuItem>
             </Link>
           )}
           <Link href="/" className="w-full" onClick={toastLogout}>
             <SignOutButton>
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem className="active:bg-neutral-100 transition duration-150">
+                Logout
+              </DropdownMenuItem>
             </SignOutButton>
           </Link>
         </DropdownMenuContent>
@@ -79,17 +89,17 @@ function UserIcon({ isAdmin }: { isAdmin: boolean }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex align-middle items-center">
-          <LuUser className="h-7 w-7  bg-primary text-gray-300 rounded-full" />
+          <LuUser className="h-7 w-7 bg-primary text-gray-300 rounded-full" />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="z-9999">
+      <DropdownMenuContent align="end" side="top" className="z-[9999]">
         <SignedOut>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="active:bg-neutral-100 transition duration-150">
             <Link href="/" prefetch={false} className="w-full">
               <SignInButton mode="modal">Login</SignInButton>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="active:bg-neutral-100 transition duration-150">
             <Link href="/" prefetch={false} className="w-full">
               <SignUpButton mode="modal">Register</SignUpButton>
             </Link>

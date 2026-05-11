@@ -64,7 +64,7 @@ function ReviewsCarousel({ reviews }: { reviews: Review[] }) {
                       src={review.authorImageUrl}
                       height={30}
                       width={30}
-                      className="rounded-full"
+                      className="rounded-full h-8 w-8 object-cover"
                       alt="profile image"
                     />
                   </CardTitle>

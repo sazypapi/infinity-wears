@@ -1,3 +1,4 @@
+"use client";
 import { RiShoppingCart2Line } from "react-icons/ri";
 import UserIcon from "../Navbar/UserIcon";
 import Link from "next/link";

@@ -41,7 +41,7 @@ function Menu({
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="bg-black/30 pt-10 backdrop-blur-md backdrop-saturate-150 border-none focus:outline-none"
+        className="bg-black/30 pt-10 backdrop-blur-md backdrop-saturate-150 border-none focus:outline-none z-[9999]"
         showCloseButton={false}
       >
         {/* <SheetTitle className="text-white px-2 mb-6">Menu</SheetTitle> */}

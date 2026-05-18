@@ -1,5 +1,5 @@
-import Containers from "../../../../components/global/Containers";
 import { Skeleton } from "@/components/ui/skeleton";
+import Containers from "../../../../../components/global/Containers";
 
 function loading() {
   return (

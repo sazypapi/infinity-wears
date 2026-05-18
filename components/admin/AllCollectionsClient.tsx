@@ -241,7 +241,7 @@ function AllCollectionsClient({ collections }: { collections: Collection[] }) {
                 >
                   <Button
                     variant="link"
-                    className="text-neutral-950 bg-transparent p-1 sm:border-black sm:border-2 sm:hover:bg-black sm:hover:text-white sm:transition sm:duration-500 underline sm:no-underline underline-offset-3"
+                    className="text-neutral-950 bg-transparent p-1 sm:border-black sm:border-2 sm:hover:bg-black sm:hover:text-white sm:transition sm:duration-500 underline sm:no-underline underline-offset-3 text-xs"
                   >
                     View Products
                   </Button>

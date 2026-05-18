@@ -5,7 +5,7 @@ import Containers from "../../../../components/global/Containers";
 import Header from "../../../../components/collectionLinkDetails/Header";
 import NoProducts from "../../../../components/collectionLinkDetails/NoProducts";
 import Filters from "../../../../components/collectionLinkDetails/Filters";
-import Products from "../../../../components/shop/Products";
+import Products from "../../../../components/collectionLinkDetails/Products";
 
 type ShopPageProps = {
   searchParams: {
@@ -83,7 +83,7 @@ async function CollectionName({
           allMaterials={allMaterials}
           basePath={`/collections/${collectionName}`} // 👈
         />
-        <Products products={products} />
+        <Products collectionName={collectionName} products={products} />
       </Containers>
     </div>
   );

@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatCurrency } from "../../utils/format";
 import { Badge } from "@/components/ui/badge";
-import FavoriteToggleButton from "./FavoriteToggleButton";
+import FavoriteToggleButton from "../shop/FavoriteToggleButton";
 
 type ProductWithVariants = Prisma.ProductGetPayload<{
   include: { variants: true };
@@ -23,7 +23,7 @@ function Products({ products }: ProductsProps) {
           const isVariantSoldOut = product.quantity <= 0;
           return (
             <article key={product.id} className="group relative ">
-              <Link href={`/shop/products/${product.slug}`}>
+              <Link href={`/search/products/${product.slug}`}>
                 <div className="justify-center w-fit flex flex-col group items-center relative">
                   {!isAnyVariantInStock ? (
                     <div className="absolute right-0 top-0 z-20">

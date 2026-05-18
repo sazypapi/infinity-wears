@@ -23,6 +23,13 @@ import { RxValueNone } from "react-icons/rx";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { formatDateMonthAndYear } from "../../utils/format";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { SlidersHorizontal } from "lucide-react";
 const getDaysAgo = (days: number) => {
   const d = new Date();
   d.setDate(d.getDate() - days);
@@ -236,181 +243,192 @@ function ViewAllCustomOrdersClient({
         </button>
       </div>
       {/* {MOBILE FILTER} */}
-      <div className="sm:hidden overflow-hidden w-full">
-        <ScrollArea className="w-full">
-          <div className="flex gap-2 mb-4">
-            <input
-              placeholder="search name or order ID..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border-2 rounded-2xl px-2 py-1 text-xs border-neutral-500 text-black"
-            />
-            {/* {STATUS} */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                  Status
-                  <IoIosArrowDown />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-xs text-neutral-400">
-                    Choose Status
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setStatusFilter("")}
-                  >
-                    All Status
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setStatusFilter("PENDING")}
-                  >
-                    Pending
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setStatusFilter("SEEN")}
-                  >
-                    Seen
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setStatusFilter("ACCEPTED")}
-                  >
-                    Accepted
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setStatusFilter("REJECTED")}
-                  >
-                    Rejected
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setStatusFilter("DONE")}
-                  >
-                    Done
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {/* {TIME FRAME} */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                  Time Frame
-                  <IoIosArrowDown />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-xs text-neutral-400">
-                    Choose Time Frame
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("")}
-                  >
-                    All Time
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("7days")}
-                  >
-                    Last 7 days
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("30days")}
-                  >
-                    Last 30 Days
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("90days")}
-                  >
-                    Last 90 Days
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setDateFilter("thisYear")}
-                  >
-                    This Year
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {/* {GARMENT TYPE} */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                  Garment Type
-                  <IoIosArrowDown />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-xs text-neutral-400">
-                    Choose Garment Type
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setGarmentType("")}
-                  >
-                    All Garment Types
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setGarmentType("SHIRT")}
-                  >
-                    Shirt
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setGarmentType("TROUSER")}
-                  >
-                    Trouser
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setGarmentType("DRESS")}
-                  >
-                    Dress
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setGarmentType("JACKET")}
-                  >
-                    Jacket
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="capitalize text-black"
-                    onClick={() => setGarmentType("SWEATSHIRT")}
-                  >
-                    Sweat Shirt
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <button
-              className="whitespace-nowrap text-xs px-2 bg-transparent border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700"
-              onClick={() => {
-                setDateFilter("");
-                setSearch("");
-                setStatusFilter("");
-                setGarmentType("");
-              }}
+      <div className="sm:hidden grid grid-cols-3 px-2 items-center gap-2 mb-4">
+        <input
+          placeholder="search name or order ID..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="focus:outline-none focus:ring-0 border-2 col-span-2 rounded-2xl px-2 py-1 text-[16px] border-neutral-500 text-black flex-1"
+        />
+        <div className="col-span-1">
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="flex items-center gap-1 text-[16px] px-2 py-1 border-2 border-neutral-500 rounded-2xl text-neutral-500 whitespace-nowrap active:scale-95 active:opacity-70 transition duration-150">
+                <SlidersHorizontal className="h-3 w-3" />
+                Filters
+              </button>
+            </SheetTrigger>
+            <SheetContent
+              side="bottom"
+              className="h-fit py-10 bg-black/30 backdrop-blur-md backdrop-saturate-150"
+              showCloseButton={false}
             >
-              Clear Filters
-            </button>
-          </div>
-          <ScrollBar orientation="horizontal" className="mt-3" />
-        </ScrollArea>
+              <SheetTitle className="px-5 text-white">Filters</SheetTitle>
+              <div className="grid grid-cols-2 gap-x-10 gap-y-5 mt-4 p-5">
+                {/* STATUS */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
+                      Status <IoIosArrowDown />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-white">
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className="text-xs text-neutral-400">
+                        Choose Status
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setStatusFilter("")}
+                      >
+                        All Status
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setStatusFilter("PENDING")}
+                      >
+                        Pending
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setStatusFilter("SEEN")}
+                      >
+                        Seen
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setStatusFilter("ACCEPTED")}
+                      >
+                        Accepted
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setStatusFilter("REJECTED")}
+                      >
+                        Rejected
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setStatusFilter("DONE")}
+                      >
+                        Done
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {/* TIME FRAME */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
+                      Time Frame <IoIosArrowDown />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-white">
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className="text-xs text-neutral-400">
+                        Choose Time Frame
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setDateFilter("")}
+                      >
+                        All Time
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setDateFilter("7days")}
+                      >
+                        Last 7 days
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setDateFilter("30days")}
+                      >
+                        Last 30 Days
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setDateFilter("90days")}
+                      >
+                        Last 90 Days
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setDateFilter("thisYear")}
+                      >
+                        This Year
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {/* GARMENT TYPE */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white flex justify-between items-center w-full active:scale-95 active:bg-white/10 transition duration-150">
+                      Garment Type <IoIosArrowDown />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-white">
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel className="text-xs text-neutral-400">
+                        Choose Garment Type
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setGarmentType("")}
+                      >
+                        All Garment Types
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setGarmentType("SHIRT")}
+                      >
+                        Shirt
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setGarmentType("TROUSER")}
+                      >
+                        Trouser
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setGarmentType("DRESS")}
+                      >
+                        Dress
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setGarmentType("JACKET")}
+                      >
+                        Jacket
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="capitalize text-black active:bg-neutral-100 transition duration-150"
+                        onClick={() => setGarmentType("SWEATSHIRT")}
+                      >
+                        Sweat Shirt
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                {/* CLEAR */}
+                <button
+                  className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white active:scale-95 active:bg-white/10 transition duration-150"
+                  onClick={() => {
+                    setDateFilter("");
+                    setSearch("");
+                    setStatusFilter("");
+                    setGarmentType("");
+                  }}
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
-
       {filtered.length === 0 ? (
         <Empty>
           <EmptyHeader>

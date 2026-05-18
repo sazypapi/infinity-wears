@@ -134,10 +134,10 @@ function CollectionLinkItem({
             value={collectionName || ""}
             onValueChange={(value) => onChange(index, "collectionName", value)}
           >
-            <SelectTrigger className="border-2 w-full border-gray-300 text-xs">
+            <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm text-[16px] sm:text-sm">
               <SelectValue
                 placeholder="select a collection"
-                className="text-xs"
+                className="placeholder:text-[16px] sm:placeholder:text-sm"
               />
             </SelectTrigger>
             <SelectContent>

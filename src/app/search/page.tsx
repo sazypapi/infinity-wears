@@ -9,9 +9,8 @@ import {
 import Containers from "../../../components/global/Containers";
 import { getProductsForSearch } from "../../../utils/actions";
 import SearchComponent from "../../../components/search/SearchComponent";
-import Header from "../../../components/shop/Header";
 import NoProducts from "../../../components/shop/NoProducts";
-import Products from "../../../components/shop/Products";
+import Products from "../../../components/search/Products";
 
 async function Search({
   searchParams,

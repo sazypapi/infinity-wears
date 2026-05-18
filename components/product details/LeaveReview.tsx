@@ -59,7 +59,7 @@ function LeaveReview({ productId }: { productId: string }) {
                 maxLength={150}
                 rows={5}
                 required
-                className="leading-loose"
+                className="leading-loose  border-2 border-white text-[16px] sm:text-sm placeholder:text-[16px] sm:placeholder:text-sm"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -71,7 +71,7 @@ function LeaveReview({ productId }: { productId: string }) {
               <SubmitButton
                 text="Leave Review"
                 loadingText="Creating..."
-                className="bg-transparent border-2 border-neutral-300 text-neutral-300 hover:text-black hover:bg-neutral-300"
+                className="bg-transparent border-2 border-white text-white hover:text-black hover:bg-white"
               />
             </DialogFooter>
           </FormContainer>

@@ -91,7 +91,7 @@ function EditBottomRowInputFieldsVariantCard({
         </label>
       </div>
       <div>
-        <Label className="capitalize mb-1 sm:mb-2 text-[16px] sm:text-sm">
+        <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
           Sizes
         </Label>
         <Select

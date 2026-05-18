@@ -91,7 +91,7 @@ function HomeCarouselItems({
         <div>
           <Label
             htmlFor={`${index}text`}
-            className="capitalize mb-2 text-xs text-black"
+            className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           >
             Text &#40;2-10 Characters&#41;
           </Label>
@@ -102,14 +102,14 @@ function HomeCarouselItems({
             name="text"
             placeholder="Text on Carousel Image"
             required
-            className="text-black border-2 border-gray-300 text-xs"
+            className= "shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]"
             value={text ?? ""}
           />
         </div>
         <div>
           <Label
             htmlFor={`${index}link`}
-            className="capitalize mb-2 text-xs text-black"
+            className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           >
             Link &#40;start with "/"&#41;
           </Label>
@@ -120,7 +120,7 @@ function HomeCarouselItems({
             name="link"
             placeholder="Link to carousel item"
             required
-            className="text-black border-2 border-gray-300 text-xs"
+            className= "shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]"
             value={link ?? ""}
           />
         </div>
@@ -130,7 +130,7 @@ function HomeCarouselItems({
       <div className="py-3 flex flex-col gap-3">
         {image && (
           <>
-            <Label className="mb-2 text-neutral-500 text-xs">
+            <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
               Current Carousel Image
             </Label>
             <img
@@ -152,7 +152,7 @@ function HomeCarouselItems({
         ) : (
           <>
             <div className="flex flex-col">
-              <Label className="text-black my-2">Carousel Image</Label>
+              <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">Carousel Image</Label>
               <div className="flex items-center gap-3">
                 <input
                   type="file"
@@ -210,7 +210,7 @@ function HomeCarouselItems({
         ) : (
           <>
             <div className="flex flex-col">
-              <Label className="text-black my-2">Mobile Carousel Image</Label>
+              <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">Mobile Carousel Image</Label>
               <div className="flex items-center gap-3">
                 <input
                   type="file"

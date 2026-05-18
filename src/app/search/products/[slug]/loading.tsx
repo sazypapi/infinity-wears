@@ -1,10 +1,10 @@
-import Containers from "../../../../components/global/Containers";
 import { Skeleton } from "@/components/ui/skeleton";
+import Containers from "../../../../../components/global/Containers";
 
 function loading() {
   return (
     <>
-      <Containers className="hidden lg:flex lg:flex-col py-5 ">
+      <Containers className="hidden lg:flex lg:flex-col py-5">
         <div className="flex flex-col justify-start">
           <div className="px-2">
             <Skeleton className="w-90 h-5 mb-5" />

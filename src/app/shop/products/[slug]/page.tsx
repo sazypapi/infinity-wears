@@ -3,9 +3,9 @@ import {
   getProductReviews,
   getSingleProductDetails,
   getYouMayAlsoLike,
-} from "../../../../utils/actions";
-import Containers from "../../../../components/global/Containers";
-import BigScreenDetails from "../../../../components/product details/BigScreenDetails";
+} from "../../../../../utils/actions";
+import Containers from "../../../../../components/global/Containers";
+import BigScreenDetails from "../../../../../components/product details/BigScreenDetails";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,7 +14,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import SmallScreenDetails from "../../../../components/product details/SmallScreenDetails";
+import SmallScreenDetails from "../../../../../components/product details/SmallScreenDetails";
 import {
   Empty,
   EmptyContent,
@@ -26,7 +26,7 @@ import {
 import { RxValueNone } from "react-icons/rx";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { fetchFavoriteId } from "../../../../utils/actions";
+import { fetchFavoriteId } from "../../../../../utils/actions";
 import { auth } from "@clerk/nextjs/server";
 async function ProductDetailsPage({
   params,
@@ -90,6 +90,15 @@ async function ProductDetailsPage({
               href="/"
             >
               Infinity Wears
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              className="hover:text-black duration-300 transition text-xs sm:text-sm"
+              href="/shop"
+            >
+              Shop
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

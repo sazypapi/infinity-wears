@@ -57,7 +57,7 @@ async function ViewCollectionProducts({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink
-              className="hover:text-black duration-300 transition"
+              className="hover:text-black duration-300 transition text-xs sm:text-sm"
               href="/admin"
             >
               Admin Page
@@ -65,7 +65,7 @@ async function ViewCollectionProducts({
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="text-black  capitalize">
+            <BreadcrumbPage className="text-black  capitalize text-xs sm:text-sm">
               {collection.name} collection
             </BreadcrumbPage>
           </BreadcrumbItem>

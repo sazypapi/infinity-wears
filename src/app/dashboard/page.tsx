@@ -8,11 +8,11 @@ export default async function DashboardPage() {
       {/* Menu list */}
       <div className="border rounded-md overflow-hidden">
         {dashboardLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="flex items-center justify-between px-4 py-4 border-b last:border-b-0 hover:bg-neutral-700 transition duration-500 hover:text-white"
-          >
+         <Link
+  key={link.href}
+  href={link.href}
+  className="flex items-center justify-between px-4 py-4 border-b last:border-b-0 hover:bg-neutral-700 transition duration-300 hover:text-white active:bg-neutral-800 active:scale-[0.98] active:opacity-70"
+>
             <div className="flex items-center gap-3">
               {link.icon && <link.icon className="w-5 h-5" />}
               <span className="text-sm">{link.label}</span>

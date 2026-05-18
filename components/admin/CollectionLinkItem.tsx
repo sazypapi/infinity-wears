@@ -120,7 +120,7 @@ function CollectionLinkItem({
             name="subHeading"
             placeholder="2-10 words"
             required
-            className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
+            className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]"
             value={subHeading ?? ""}
           />
         </div>

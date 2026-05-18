@@ -30,7 +30,7 @@ type Props = {
   onChange: (
     index: string,
     field: "image" | "collectionName" | "subHeading" | "heading",
-    value: any,
+    value: string,
   ) => void;
   collections: collections[];
   selectedCollectionNames: string[];
@@ -91,7 +91,7 @@ function CollectionLinkItem({
         <div>
           <Label
             htmlFor={`${index}heading`}
-            className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           >
             Header on Image
           </Label>
@@ -102,14 +102,14 @@ function CollectionLinkItem({
             name="heading"
             placeholder="2-4 words"
             required
-            className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm"
+            className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]"
             value={heading ?? ""}
           />
         </div>
         <div>
           <Label
             htmlFor={`${index}subHeading`}
-            className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
+              className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           >
             Sub-Heading
           </Label>
@@ -125,7 +125,7 @@ function CollectionLinkItem({
           />
         </div>
         <div className="flex flex-col">
-          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+          <Label    className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
             Collection Name
           </Label>
           <Select

@@ -76,9 +76,8 @@ function CollectionLink({
             subHeading: "",
           },
         ];
-  const [imageUploaded, setImageUploaded] = useState(false);
 
-  const updateLink = (id: string, field: keyof CollectionLink, value: any) => {
+  const updateLink = (id: string, field: keyof CollectionLink, value: string) => {
     setCollectionLinks((prev) =>
       prev.map((collection) =>
         collection.id === id ? { ...collection, [field]: value } : collection,
@@ -91,14 +90,12 @@ function CollectionLink({
     [collectionLinks],
   );
 
-  useEffect(() => {
-    const allImagesUploaded =
-      collectionLinks.length > 0 &&
-      collectionLinks.every(
-        (collection) => collection.image && collection.image.length > 0,
-      );
-    setImageUploaded(allImagesUploaded);
-  }, [collectionLinks]);
+const imageUploaded = useMemo(
+  () =>
+    collectionLinks.length > 0 &&
+    collectionLinks.every((collection) => collection.image && collection.image.length > 0),
+  [collectionLinks],
+);
   const removeCollection = (id: string) => {
     if (allCollectionLinks.length === 0 && collectionLinks.length === 1) {
       return toast("There are no collection links to remove.");

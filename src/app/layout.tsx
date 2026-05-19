@@ -47,7 +47,7 @@ export default async function RootLayout({
             {/* </ClientOnly> */}
             <main className=" bg-white text-black">{children}</main>
             <FooterWrapper />
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-999 flex justify-center pointer-events-none">
+            <div className="lg:hidden fixed bottom-1 left-0 right-0 z-999 flex justify-center pointer-events-none">
               <BottomNavWrapper isAdmin />
             </div>
             <Toaster />

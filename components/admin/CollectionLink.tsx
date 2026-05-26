@@ -10,14 +10,13 @@ import {
 } from "@/components/ui/empty";
 import { Prisma } from "@/generated/prisma";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { RxValueNone } from "react-icons/rx";
 import { toast } from "sonner";
 import FormContainer from "../form/FormContainer";
 import CollectionLinkItem from "./CollectionLinkItem";
 import { createOrUpdateCollectionLinks } from "../../utils/actions";
 import { SubmitButton } from "../form/Buttons";
-import { useFormStatus } from "react-dom";
 type collections = Prisma.CollectionGetPayload<{
   include: {
     collectionLinks: true;
@@ -64,20 +63,12 @@ function CollectionLink({
         ]
       : collectionLinksWithCollectionMappedToCollectionLinks,
   );
-  const ensureAtLeastOne = (list: CollectionLink[]) =>
-    list.length > 0
-      ? list
-      : [
-          {
-            id: "initial",
-            collectionName: "",
-            heading: "",
-            image: "",
-            subHeading: "",
-          },
-        ];
 
-  const updateLink = (id: string, field: keyof CollectionLink, value: string) => {
+  const updateLink = (
+    id: string,
+    field: keyof CollectionLink,
+    value: string,
+  ) => {
     setCollectionLinks((prev) =>
       prev.map((collection) =>
         collection.id === id ? { ...collection, [field]: value } : collection,
@@ -90,12 +81,14 @@ function CollectionLink({
     [collectionLinks],
   );
 
-const imageUploaded = useMemo(
-  () =>
-    collectionLinks.length > 0 &&
-    collectionLinks.every((collection) => collection.image && collection.image.length > 0),
-  [collectionLinks],
-);
+  const imageUploaded = useMemo(
+    () =>
+      collectionLinks.length > 0 &&
+      collectionLinks.every(
+        (collection) => collection.image && collection.image.length > 0,
+      ),
+    [collectionLinks],
+  );
   const removeCollection = (id: string) => {
     if (allCollectionLinks.length === 0 && collectionLinks.length === 1) {
       return toast("There are no collection links to remove.");
@@ -129,7 +122,6 @@ const imageUploaded = useMemo(
   const selectedCollectionNames = collectionLinks
     .map((link) => link.collectionName)
     .filter(Boolean);
-  const { pending } = useFormStatus();
   if (collectionLinks.length === 0 && allCollectionLinks.length > 0) {
     return (
       <Empty>
@@ -159,8 +151,7 @@ const imageUploaded = useMemo(
                     : collectionLinksWithCollectionMappedToCollectionLinks,
                 )
               }
-              type="button"
-            >
+              type="button">
               Reset Links
             </Button>
             <FormContainer action={createOrUpdateCollectionLinks}>
@@ -208,8 +199,7 @@ const imageUploaded = useMemo(
           {collectionLinks.map((link, index) => (
             <div
               className="w-full p-1 border-b-2 border-neutral-500 last:border-none pb-5"
-              key={link.id}
-            >
+              key={link.id}>
               <CollectionLinkItem
                 collectionName={link.collectionName}
                 collections={collections}
@@ -224,16 +214,14 @@ const imageUploaded = useMemo(
                 <button
                   onClick={() => removeCollection(link.id)}
                   className="text-red-500 bg-transparent px-2 py-1 text-xs hover:bg-red-500 hover:text-white border-2 border-red-500 transition duration-500 rounded-md"
-                  type="button"
-                >
+                  type="button">
                   Remove
                 </button>
                 {index === collectionLinks.length - 1 && (
                   <button
                     onClick={addCollection}
                     className="text-neutral-950 bg-transparent px-2 py-1 hover:bg-black text-xs hover:text-white border-2 border-black transition duration-500 rounded-md"
-                    type="button"
-                  >
+                    type="button">
                     + Add New Link
                   </button>
                 )}

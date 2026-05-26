@@ -53,15 +53,13 @@ function SmallScreenProductDetailsImages({
           }),
         ]}
         setApi={setApi}
-        className="w-full"
-      >
+        className="w-full">
         <CarouselContent>
           {allImages.map((item, index) => (
             <CarouselItem key={index}>
               <div
-                className="relative h-[40vh] rounded-sm w-full bg-cover bg-center"
-                style={{ backgroundImage: `url(${item})` }}
-              ></div>
+                className="relative h-[60vh] rounded-sm w-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${item})` }}></div>
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -73,8 +71,7 @@ function SmallScreenProductDetailsImages({
         <Button
           size="sm"
           className="p-1 bg-transparent text-black hover:bg-transparent"
-          onClick={() => api?.scrollPrev()}
-        >
+          onClick={() => api?.scrollPrev()}>
           {"<"}
         </Button>
 
@@ -85,8 +82,7 @@ function SmallScreenProductDetailsImages({
         <Button
           size="sm"
           className="p-1 bg-transparent text-black hover:bg-transparent"
-          onClick={() => api?.scrollNext()}
-        >
+          onClick={() => api?.scrollNext()}>
           {">"}
         </Button>
       </div>

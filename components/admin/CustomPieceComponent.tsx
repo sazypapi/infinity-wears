@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -130,8 +131,7 @@ function CustomPieceComponent({
                 <Button
                   className="bg-transparent text-black border-2 border-black transition duration-500 hover:text-white hover:bg-black"
                   onClick={handleUpload}
-                  disabled={isUploading || !file}
-                >
+                  disabled={isUploading || !file}>
                   {isUploading ? "Uploading..." : "Upload"}
                 </Button>
               </div>
@@ -180,8 +180,7 @@ function CustomPieceComponent({
                 <Button
                   className="bg-transparent text-black border-2 border-black transition duration-500 hover:text-white hover:bg-black"
                   onClick={handleMobileUpload}
-                  disabled={isMobileUploading || !mobileFile}
-                >
+                  disabled={isMobileUploading || !mobileFile}>
                   {isMobileUploading ? "Uploading..." : "Upload"}
                 </Button>
               </div>

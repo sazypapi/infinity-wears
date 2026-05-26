@@ -22,7 +22,7 @@ function BigScreenCart({
   userHasAddressAndPhone: UserProfile | null;
 }) {
   return (
-    <div className="grid grid-cols-3 gap-10  border-2  w-full">
+    <div className="grid grid-cols-3 gap-10 w-full">
       <div className="col-span-2 border-2 shadow-sm rounded-sm px-2 py-10">
         <BigScreenCartItems cartItems={cartItems} />
       </div>

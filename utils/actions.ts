@@ -28,7 +28,7 @@ import {
   ProductStatus,
 } from "@/generated/prisma";
 import { revalidatePath } from "next/cache";
-import { id } from "zod/v4/locales";
+
 export const checkIsAdmin = async () => {
   const { sessionClaims } = await auth();
   if (sessionClaims?.metadata?.role !== "admin") {
@@ -40,7 +40,6 @@ const getAuthUser = async () => {
   if (!user) {
     throw new Error("You must be logged in to access this route");
   }
-
   return user;
 };
 const renderError = (error: unknown): { message: string } => {
@@ -48,66 +47,42 @@ const renderError = (error: unknown): { message: string } => {
   if (error instanceof ZodError) {
     const firstMessage = error.issues[0]?.message;
     return { message: firstMessage };
-
-    // const messages = error.issues.map((iss) => iss.message);
-    // return { message: messages.join(", ") };
   }
   return {
     message: error instanceof Error ? error.message : "an error occured",
   };
 };
+
 export const createProduct = async (
   prevState: any,
   formData: FormData,
 ): Promise<{ message: string }> => {
   try {
     const rawData = Object.fromEntries(formData);
-
-    console.log(rawData);
-
     const validatedFields = createProductSchema.parse(rawData);
 
-    console.log(validatedFields);
-    console.log("Collection value:", validatedFields.collectionId);
-
     let collectionId: string | null = null;
-
-    // COLLECTION HANDLING
     if (validatedFields.collectionId === null) {
       collectionId = null;
     } else {
       const normalized = validatedFields.collectionId.toLowerCase().trim();
       const slug = normalized.replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-");
-
-      console.log("Normalized name:", normalized, "slug:", slug);
-
       const collection = await db.collection.upsert({
-        where: {
-          name: normalized,
-        },
+        where: { name: normalized },
         update: {},
-        create: {
-          name: normalized,
-          slug,
-        },
+        create: { name: normalized, slug },
       });
-
-      console.log("Collection result:", collection);
-
       collectionId = collection.id;
     }
 
-    console.log(collectionId);
     if (validatedFields.variants.length < 1)
       return { message: "You must have at least 1 variant " };
 
     const colorNameSet = new Set<string>();
     const colorHexSet = new Set<string>();
-
     for (const variant of validatedFields.variants) {
       const nameLower = variant.colorName.toLowerCase().trim();
       const hexLower = variant.colorHex.toLowerCase().trim();
-
       if (colorNameSet.has(nameLower)) {
         return {
           message: `You can't have the same Color Name in more than 1 variant`,
@@ -118,10 +93,21 @@ export const createProduct = async (
           message: `You can't have the product color in more than 1 variant`,
         };
       }
-
       colorNameSet.add(nameLower);
       colorHexSet.add(hexLower);
     }
+
+    // Confirm images before DB write
+    await Promise.all(
+      validatedFields.variants.map((variant) =>
+        backendClient.publicFiles.confirmUpload({ url: variant.coverImage }),
+      ),
+    );
+    await Promise.all(
+      validatedFields.images.map((imageUrl) =>
+        backendClient.publicFiles.confirmUpload({ url: imageUrl }),
+      ),
+    );
 
     await db.product.create({
       data: {
@@ -151,23 +137,7 @@ export const createProduct = async (
         },
       },
     });
-
-    await Promise.all(
-      validatedFields.variants.map((variant) =>
-        backendClient.publicFiles.confirmUpload({ url: variant.coverImage }),
-      ),
-    );
-    await Promise.all(
-      validatedFields.images.map((imageUrl) =>
-        backendClient.publicFiles.confirmUpload({ url: imageUrl }),
-      ),
-    );
-
-    // return { message: "Form Submitted" };
   } catch (error) {
-    console.log("=== ERROR ===");
-    console.error(error);
-
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
         return { message: "Product Name already exists" };
@@ -177,28 +147,20 @@ export const createProduct = async (
   }
   redirect("/admin");
 };
+
 export const getAllProducts = async () => {
   const allProducts = await db.product.findMany({
-    include: {
-      variants: true,
-      collection: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
+    include: { variants: true, collection: true },
+    orderBy: { createdAt: "desc" },
   });
   return allProducts;
 };
+
 export const getAllCollections = async () => {
   const allCollections = await db.collection.findMany({
-    include: {
-      products: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
+    include: { products: true },
+    orderBy: { createdAt: "desc" },
   });
-
   return allCollections;
 };
 
@@ -206,22 +168,17 @@ export const getSingleProduct = async (slug: string) => {
   let getCollection = null;
   if (!slug) return { product: null, getCollection: null };
   const product = await db.product.findUnique({
-    where: {
-      slug: slug,
-    },
-    include: {
-      variants: true,
-    },
+    where: { slug },
+    include: { variants: true },
   });
   if (product?.collectionId) {
     getCollection = await db.collection.findUnique({
-      where: {
-        id: product?.collectionId,
-      },
+      where: { id: product?.collectionId },
     });
   }
   return { product, getCollection };
 };
+
 export const editProductDetails = async (
   prevState: any,
   formData: FormData,
@@ -231,42 +188,26 @@ export const editProductDetails = async (
     const rawData = Object.fromEntries(formData);
     const validatedFields = editProductDetailsSchema.parse(rawData);
     const productId = rawData.productId?.toString();
-    const currentProduct = await db.product.findUnique({
-      where: { id: productId },
-    });
-    let collectionId: string | null = null;
 
-    // COLLECTION HANDLING
+    let collectionId: string | null = null;
     if (validatedFields.collectionId === null) {
       collectionId = null;
     } else {
       const normalized = validatedFields.collectionId.toLowerCase().trim();
       const slug = normalized.replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-");
-
-      console.log("Normalized name:", normalized, "slug:", slug);
-
       const collection = await db.collection.upsert({
-        where: {
-          name: normalized,
-        },
+        where: { name: normalized },
         update: {},
-        create: {
-          name: normalized,
-          slug,
-        },
+        create: { name: normalized, slug },
       });
-      console.log("Collection result:", collection);
-
       collectionId = collection.id;
     }
+
     validatedSlug = validatedFields.slug;
     await db.product.update({
       where: { id: productId },
-      data: { ...validatedFields, collectionId: collectionId },
+      data: { ...validatedFields, collectionId },
     });
-
-    // return { message: "Product Updated Successfully" };
-    // return { message: "Product Updated Successfully" };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -283,23 +224,16 @@ export const editProductImages = async (
   formData: FormData,
 ): Promise<{ message: string }> => {
   let validatedSlug: string;
-
   try {
     const rawData = Object.fromEntries(formData);
-
     const productId = rawData.id?.toString();
     const currentProduct = await db.product.findUnique({
       where: { id: productId },
     });
+    if (!currentProduct) return { message: "Product not found" };
 
-    if (!currentProduct) {
-      return { message: "Product not found" };
-    }
     validatedSlug = currentProduct.slug;
 
-    const slug = currentProduct.slug;
-
-    // --- Parse editedUrls (remaining images after deletion) ---
     let editedUrls: string[] = [];
     if (typeof rawData.editedUrls === "string") {
       try {
@@ -309,7 +243,6 @@ export const editProductImages = async (
       }
     }
 
-    // --- Parse images (new uploads) ---
     let newImages: string[] = [];
     if (typeof rawData.images === "string") {
       try {
@@ -319,17 +252,16 @@ export const editProductImages = async (
       }
     }
 
-    // --- Must have at least 1 image ---//
     const finalImages = [...editedUrls, ...newImages];
-    let oldItems: string[] = [];
-    if (!finalImages.length) {
+    if (!finalImages.length)
       return { message: "There must be at least 1 image in product Images" };
-    }
+
     const areImagesTheSame =
       editedUrls.length === currentProduct.images.length &&
       editedUrls.every((val) => currentProduct.images.includes(val));
+
     if (!areImagesTheSame) {
-      oldItems = currentProduct.images.filter(
+      const oldItems = currentProduct.images.filter(
         (item) => !editedUrls.includes(item),
       );
       await Promise.all(
@@ -338,23 +270,20 @@ export const editProductImages = async (
         ),
       );
     }
-    // UPDATE DB WITH NEW ARRAY OF PRODUCT IMAGES//
-    await db.product.update({
-      where: {
-        id: productId,
-      },
-      data: {
-        images: finalImages,
-      },
-    });
-    // CONFIM IMAGES IN EDGESTORE//
+
+    // Confirm new images before DB update
     await Promise.all(
       newImages.map((imageUrl) =>
         backendClient.publicFiles.confirmUpload({ url: imageUrl }),
       ),
     );
-    revalidatePath(`/admin/edit-product/${slug}`);
-    // return { message: "Product Images Updated" };
+
+    await db.product.update({
+      where: { id: productId },
+      data: { images: finalImages },
+    });
+
+    revalidatePath(`/admin/edit-product/${currentProduct.slug}`);
   } catch (error) {
     return renderError(error);
   }
@@ -369,46 +298,37 @@ export const editVariants = async (
   try {
     const rawData = Object.fromEntries(formData);
     const productId = rawData.id?.toString();
-    if (!productId) {
-      return { message: "Product doesn't exist at all" };
-    }
+    if (!productId) return { message: "Product doesn't exist at all" };
 
     const doesProductExist = await db.product.findUnique({
       where: { id: productId },
     });
-    if (!doesProductExist) {
-      return { message: "Product doesn't exist" };
-    }
+    if (!doesProductExist) return { message: "Product doesn't exist" };
+
     existingSlug = doesProductExist.slug;
-    const existingVariants = await db.colorVariant.findMany({
-      where: { productId },
-    });
 
     const validatedFields = editVariantsSchema.parse(rawData);
     const newVariantIds = validatedFields.variants.map((v) => v.id);
-    console.log(newVariantIds);
 
-    // Delete variants that are no longer present
     const variantsToDelete = await db.colorVariant.findMany({
-      where: {
-        productId,
-        id: { notIn: newVariantIds },
-      },
+      where: { productId, id: { notIn: newVariantIds } },
     });
 
     await db.colorVariant.deleteMany({
-      where: {
-        productId,
-        id: { notIn: newVariantIds },
-      },
+      where: { productId, id: { notIn: newVariantIds } },
     });
+
+    await Promise.all(
+      variantsToDelete.map((variant) =>
+        backendClient.publicFiles.deleteFile({ url: variant.coverImage }),
+      ),
+    );
+
     const colorNameSet = new Set<string>();
     const colorHexSet = new Set<string>();
-
     for (const variant of validatedFields.variants) {
       const nameLower = variant.colorName.toLowerCase().trim();
       const hexLower = variant.colorHex.toLowerCase().trim();
-
       if (colorNameSet.has(nameLower)) {
         return {
           message: `You can't have the same Color Name in more than 1 variant`,
@@ -419,11 +339,17 @@ export const editVariants = async (
           message: `You can't have the product color in more than 1 variant`,
         };
       }
-
       colorNameSet.add(nameLower);
       colorHexSet.add(hexLower);
     }
-    // Upsert the rest (create or update)
+
+    // Confirm images before upsert
+    await Promise.all(
+      validatedFields.variants.map((variant) =>
+        backendClient.publicFiles.confirmUpload({ url: variant.coverImage }),
+      ),
+    );
+
     await Promise.all(
       validatedFields.variants.map((variant) =>
         db.colorVariant.upsert({
@@ -451,19 +377,6 @@ export const editVariants = async (
         }),
       ),
     );
-    await Promise.all(
-      validatedFields.variants.map((variant) =>
-        backendClient.publicFiles.confirmUpload({ url: variant.coverImage }),
-      ),
-    );
-    await Promise.all(
-      variantsToDelete.map((variant) =>
-        backendClient.publicFiles.deleteFile({ url: variant.coverImage }),
-      ),
-    );
-    // return { message: "it got here" };
-
-    // Redirect to product page after successful edit
   } catch (error) {
     return renderError(error);
   }
@@ -482,16 +395,18 @@ export const deleteProduct = async (
       where: { id: productId },
     });
     if (!currentProduct) return { message: "Product not found" };
+
     const findAllVariants = await db.colorVariant.findMany({
-      where: { productId: productId },
+      where: { productId },
     });
+
     await db.product.delete({ where: { id: productId } });
+
     await Promise.all(
       currentProduct.images.map((image) =>
         backendClient.publicFiles.deleteFile({ url: image }),
       ),
     );
-
     await Promise.all(
       findAllVariants.map(async (variant) => {
         const isVariantOrdered = await db.orderItem.findFirst({
@@ -517,14 +432,14 @@ export const editCollectionName = async (
   try {
     const collectionId = formData.get("id")?.toString();
     if (!collectionId) return { message: "No such Collection" };
+
     const collectionNewName = formData
       .get("name")
       ?.toString()
       .trim()
       .toLowerCase();
-    if (!collectionNewName) {
-      return { message: "Collection name is required" };
-    }
+    if (!collectionNewName) return { message: "Collection name is required" };
+
     const isThereSuchCollection = await db.collection.findFirst({
       where: {
         name: collectionNewName?.toLowerCase(),
@@ -534,13 +449,10 @@ export const editCollectionName = async (
     if (isThereSuchCollection) {
       return { message: `Collection Name ${collectionNewName} already exists` };
     }
+
     await db.collection.update({
-      where: {
-        id: collectionId,
-      },
-      data: {
-        name: collectionNewName,
-      },
+      where: { id: collectionId },
+      data: { name: collectionNewName },
     });
     revalidatePath("/admin");
     return { message: "Collection name updated" };
@@ -556,30 +468,22 @@ export const deleteCollection = async (
   try {
     const collectionId = formData.get("id")?.toString();
     if (!collectionId) return { message: "No such Collection" };
-    await db.collection.delete({
-      where: {
-        id: collectionId,
-      },
-    });
+    await db.collection.delete({ where: { id: collectionId } });
     revalidatePath("/admin");
     return { message: "Collection Deleted" };
   } catch (error) {
     return renderError(error);
   }
 };
+
 export const getSingleCollection = async (id: string) => {
   const collection = await db.collection.findUnique({
     where: { id },
-    include: {
-      products: {
-        include: {
-          variants: true,
-        },
-      },
-    },
+    include: { products: { include: { variants: true } } },
   });
   return collection;
 };
+
 export const removeFromCollection = async (
   prevState: any,
   formData: FormData,
@@ -616,6 +520,7 @@ export const removeFromCollection = async (
   }
   redirect(`/admin/view-collection-products/${collectionId}`);
 };
+
 export const addToCollection = async (
   prevState: any,
   formData: FormData,
@@ -624,6 +529,7 @@ export const addToCollection = async (
     const rawData = Object.fromEntries(formData);
     const collectionId = formData.get("id")?.toString();
     if (!collectionId) return { message: "No such Collection" };
+
     let addedIds: string[] = [];
     if (typeof rawData.collections === "string") {
       try {
@@ -632,35 +538,27 @@ export const addToCollection = async (
         addedIds = [];
       }
     }
-    if (addedIds.length === 0) {
-      return { message: "No products to remove" };
-    }
+    if (addedIds.length === 0) return { message: "No products to remove" };
 
     await db.product.updateMany({
-      where: {
-        id: { in: addedIds },
-      },
-      data: {
-        collectionId: collectionId,
-      },
+      where: { id: { in: addedIds } },
+      data: { collectionId },
     });
-    revalidatePath(`/admin/view-collection-products/${id}`);
+    revalidatePath(`/admin/view-collection-products/${collectionId}`);
     return { message: "Product(s) added to collection" };
   } catch (error) {
     return renderError(error);
   }
 };
+
 export const getSelectedProducts = async (id: string) => {
   const collection = await db.product.findMany({
-    where: {
-      OR: [{ collectionId: { not: id } }, { collectionId: null }],
-    },
-    include: {
-      variants: true,
-    },
+    where: { OR: [{ collectionId: { not: id } }, { collectionId: null }] },
+    include: { variants: true },
   });
   return collection;
 };
+
 export const createCollection = async (
   prevState: any,
   formData: FormData,
@@ -672,44 +570,27 @@ export const createCollection = async (
     const name = nameInput.toLowerCase().trim();
     const slug = name.replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-");
 
-    const existing = await db.collection.findFirst({
-      where: { name },
-    });
+    const existing = await db.collection.findFirst({ where: { name } });
+    if (existing) return { message: `${nameInput} already exists` };
 
-    if (existing) {
-      return { message: `${nameInput} already exists` };
-    }
-
-    await db.collection.create({
-      data: {
-        name,
-        slug,
-      },
-    });
+    await db.collection.create({ data: { name, slug } });
     revalidatePath("/admin");
     return { message: "Collection created successfully" };
   } catch (error) {
     return renderError(error);
   }
 };
+
 export const getNewReleases = async () => {
   const latestProducts = await db.product.findMany({
     orderBy: { createdAt: "desc" },
     take: 4,
-    where: {
-      status: "ACTIVE",
-      variants: {
-        some: {
-          inStock: true,
-        },
-      },
-    },
-    include: {
-      variants: true,
-    },
+    where: { status: "ACTIVE", variants: { some: { inStock: true } } },
+    include: { variants: true },
   });
   return latestProducts;
 };
+
 export const getAlmostSoldOut = async () => {
   const almostSoldOut = await db.product.findMany({
     orderBy: { quantity: "asc" },
@@ -717,103 +598,73 @@ export const getAlmostSoldOut = async () => {
     where: {
       status: "ACTIVE",
       quantity: { gt: 0 },
-      variants: {
-        some: {
-          inStock: true,
-        },
-      },
+      variants: { some: { inStock: true } },
     },
-    include: {
-      variants: true,
-    },
+    include: { variants: true },
   });
   return almostSoldOut;
 };
+
 export const getLatestCollectionLink = async () => {
   const latestCollectionLink = await db.collectionLink.findFirst({
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: { createdAt: "desc" },
   });
   return latestCollectionLink;
 };
+
 export const getSingleProductDetails = async (slug: string) => {
   const productDetails = await db.product.findUnique({
     where: { slug },
-    include: {
-      variants: true,
-    },
+    include: { variants: true },
   });
   return productDetails;
 };
-export const getYouMayAlsoLike = async (slug: string) => {
-  const product = await db.product.findUnique({
-    where: { slug: slug },
-  });
 
+export const getYouMayAlsoLike = async (slug: string) => {
+  const product = await db.product.findUnique({ where: { slug } });
   if (!product) return [];
 
-  // 2️⃣ First: same category
   let recommendations = await db.product.findMany({
     where: {
       category: product.category,
       status: ProductStatus.ACTIVE,
       id: { not: product.id },
-      variants: {
-        some: {
-          inStock: true,
-        },
-      },
+      variants: { some: { inStock: true } },
     },
-    include: {
-      variants: true,
-    },
+    include: { variants: true },
     take: 4,
   });
 
-  // 3️⃣ If less than 4, fallback to same gender
   if (recommendations.length < 4) {
     const remaining = 4 - recommendations.length;
-
     const genderFallback = await db.product.findMany({
       where: {
         gender: product.gender,
         status: ProductStatus.ACTIVE,
-        id: {
-          notIn: [product.id, ...recommendations.map((p) => p.id)],
-        },
+        id: { notIn: [product.id, ...recommendations.map((p) => p.id)] },
       },
-      include: {
-        variants: true,
-      },
+      include: { variants: true },
       take: remaining,
     });
-
     recommendations = [...recommendations, ...genderFallback];
   }
 
-  // 4️⃣ Final fallback — any ACTIVE products
   if (recommendations.length < 4) {
     const remaining = 4 - recommendations.length;
-
     const finalFallback = await db.product.findMany({
       where: {
         status: ProductStatus.ACTIVE,
-        id: {
-          notIn: [product.id, ...recommendations.map((p) => p.id)],
-        },
+        id: { notIn: [product.id, ...recommendations.map((p) => p.id)] },
       },
-      include: {
-        variants: true,
-      },
+      include: { variants: true },
       take: remaining,
     });
-
     recommendations = [...recommendations, ...finalFallback];
   }
 
   return recommendations;
 };
+
 export const createReview = async (
   prevState: any,
   formData: FormData,
@@ -824,40 +675,35 @@ export const createReview = async (
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength);
   }
-
   try {
     const rawData = Object.fromEntries(formData);
     const productId = typeof rawData.id === "string" ? rawData.id : "";
     pathName = typeof rawData.pathName === "string" ? rawData.pathName : "";
 
-    if (!productId) {
-      return { message: "Invalid request. Missing ID." };
-    }
+    if (!productId) return { message: "Invalid request. Missing ID." };
+
     const validatedFields = createReviewSchema.parse(rawData);
-    console.log(validatedFields.rating);
     const user = await getAuthUser();
-    if (!user) {
-      return { message: "You must be logged in to review a product" };
-    }
+    if (!user) return { message: "You must be logged in to review a product" };
+
     const clerkId = user.id;
     const authorName = user.firstName;
     const authorImageUrl = user.imageUrl;
+
     const hasPurchased = await db.orderItem.findFirst({
       where: { productId, order: { clerkId } },
     });
-    if (!hasPurchased) {
+    if (!hasPurchased)
       return { message: "You can only review products you have purchased." };
-    }
+
     currentProduct = await db.product.findUnique({ where: { id: productId } });
+
     const alreadyReviewed = await db.review.findFirst({
-      where: {
-        productId,
-        clerkId,
-      },
+      where: { productId, clerkId },
     });
-    if (alreadyReviewed) {
+    if (alreadyReviewed)
       return { message: "You have already reviewed this product" };
-    }
+
     await db.review.create({
       data: {
         authorImageUrl,
@@ -868,17 +714,13 @@ export const createReview = async (
         productId,
       },
     });
-    // revalidatePath(`/product/${currentProduct!.slug}`);
-
-    // return { message: "Review Created" };
   } catch (error) {
     return renderError(error);
   }
-  if (pathName === "/dashboard/pending-reviews") {
-    redirect("/dashboard/reviews");
-  }
+  if (pathName === "/dashboard/pending-reviews") redirect("/dashboard/reviews");
   redirect(`${pathName}`);
 };
+
 export const fetchOrCreateCart = async ({
   userId,
   errorOnFailure,
@@ -887,39 +729,25 @@ export const fetchOrCreateCart = async ({
   errorOnFailure?: boolean;
 }) => {
   let cart = await db.cart.findFirst({
-    where: {
-      clerkId: userId,
-    },
-    include: {
-      cartItems: true,
-    },
+    where: { clerkId: userId },
+    include: { cartItems: true },
   });
-  if (!cart && errorOnFailure) {
-    throw new Error("Cart not found");
-  }
+  if (!cart && errorOnFailure) throw new Error("Cart not found");
   if (!cart) {
     cart = await db.cart.create({
-      data: {
-        clerkId: userId,
-      },
-      include: {
-        cartItems: true,
-      },
+      data: { clerkId: userId },
+      include: { cartItems: true },
     });
   }
   return cart;
 };
+
 const fetchProduct = async (productId: string) => {
-  const product = await db.product.findUnique({
-    where: {
-      id: productId,
-    },
-  });
-  if (!product) {
-    throw new Error("Product not found");
-  }
+  const product = await db.product.findUnique({ where: { id: productId } });
+  if (!product) throw new Error("Product not found");
   return product;
 };
+
 const updateOrCreateCartItem = async ({
   cartId,
   productId,
@@ -940,22 +768,12 @@ const updateOrCreateCartItem = async ({
   discount: number;
 }) => {
   let cartItem = await db.cartItem.findFirst({
-    where: {
-      cartId,
-      productId,
-      variantId,
-      size,
-      color,
-    },
+    where: { cartId, productId, variantId, size, color },
   });
   if (cartItem) {
     cartItem = await db.cartItem.update({
-      where: {
-        id: cartItem.id,
-      },
-      data: {
-        amount: cartItem.amount + amount,
-      },
+      where: { id: cartItem.id },
+      data: { amount: cartItem.amount + amount },
     });
   } else {
     cartItem = await db.cartItem.create({
@@ -975,20 +793,9 @@ const updateOrCreateCartItem = async ({
 
 export const updateCart = async (cart: Cart) => {
   const cartItems = await db.cartItem.findMany({
-    where: {
-      cartId: cart.id,
-    },
-    include: {
-      variant: true,
-      product: {
-        include: {
-          variants: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
+    where: { cartId: cart.id },
+    include: { variant: true, product: { include: { variants: true } } },
+    orderBy: { createdAt: "asc" },
   });
 
   let numItemsInCart = 0;
@@ -1003,40 +810,25 @@ export const updateCart = async (cart: Cart) => {
       item.amount;
   }
   const tax = cart.taxRate * cartTotal;
-
   const shipping = cartTotal ? cart.shipping : 0;
-  console.log([tax, shipping]);
-
   const orderTotal = cartTotal + tax + shipping;
+
   const currentCart = await db.cart.update({
-    where: {
-      id: cart.id,
-    },
-    data: {
-      numItemsInCart,
-      cartTotal,
-      tax,
-      orderTotal,
-    },
+    where: { id: cart.id },
+    data: { numItemsInCart, cartTotal, tax, orderTotal },
     include: includeProductClause,
   });
   return { cartItems, currentCart };
 };
-const includeProductClause = {
-  cartItems: {
-    include: {
-      product: true,
-    },
-  },
-};
+
+const includeProductClause = { cartItems: { include: { product: true } } };
+
 export const addToCartAction = async (
   prevState: any,
   formData: FormData,
 ): Promise<{ message: string }> => {
   const user = await getAuthUser();
-  if (!user) {
-    return { message: "You must be logged in to add to cart" };
-  }
+  if (!user) return { message: "You must be logged in to add to cart" };
   try {
     const productId = formData.get("productId") as string;
     const variantId = formData.get("variantId") as string;
@@ -1044,17 +836,15 @@ export const addToCartAction = async (
     const color = formData.get("color") as string;
     const price = Number(formData.get("price"));
     const discount = Number(formData.get("discount"));
-
     const amount = Number(formData.get("amount"));
+
     await fetchProduct(productId);
     const isVariantInStock = await db.colorVariant.findUnique({
-      where: {
-        id: variantId,
-      },
+      where: { id: variantId },
     });
-    if (!isVariantInStock?.inStock) {
+    if (!isVariantInStock?.inStock)
       return { message: "Product is Out of stock" };
-    }
+
     const cart = await fetchOrCreateCart({ userId: user.id });
     await updateOrCreateCartItem({
       cartId: cart.id,
@@ -1072,6 +862,7 @@ export const addToCartAction = async (
   }
   redirect("/cart");
 };
+
 export const updateCartItemAction = async ({
   amount,
   cartItemId,
@@ -1086,13 +877,8 @@ export const updateCartItemAction = async ({
       errorOnFailure: true,
     });
     await db.cartItem.update({
-      where: {
-        id: cartItemId,
-        cartId: cart.id,
-      },
-      data: {
-        amount,
-      },
+      where: { id: cartItemId, cartId: cart.id },
+      data: { amount },
     });
     await updateCart(cart);
     revalidatePath("/cart");
@@ -1101,31 +887,23 @@ export const updateCartItemAction = async ({
     return renderError(error);
   }
 };
+
 export const deleteCartItem = async (
   prevState: any,
   formData: FormData,
 ): Promise<{ message: string }> => {
   try {
     const productId = formData.get("id") as string;
-    const isProduct = await db.cartItem.findFirst({
-      where: {
-        id: productId,
-      },
-    });
-    if (!isProduct) {
-      return { message: "Product doesn't exist" };
-    }
-    await db.cartItem.delete({
-      where: {
-        id: productId,
-      },
-    });
+    const isProduct = await db.cartItem.findFirst({ where: { id: productId } });
+    if (!isProduct) return { message: "Product doesn't exist" };
+    await db.cartItem.delete({ where: { id: productId } });
     revalidatePath("/cart");
     return { message: "Item deleted from cart" };
   } catch (error) {
     return renderError(error);
   }
 };
+
 export const updateCartItems = async (
   prevState: any,
   formData: FormData,
@@ -1138,35 +916,21 @@ export const updateCartItems = async (
     const discount = Number(formData.get("discount"));
     const amount = Number(formData.get("amount"));
     const itemId = formData.get("itemId") as string;
-    const isItem = await db.cartItem.findFirst({
-      where: {
-        id: itemId,
-      },
-    });
-    if (!isItem) {
+
+    const isItem = await db.cartItem.findFirst({ where: { id: itemId } });
+    if (!isItem)
       return { message: "There was error updating the Item, try again" };
-    }
-    console.log(amount);
 
     await db.cartItem.update({
-      where: {
-        id: itemId,
-      },
-      data: {
-        variantId: variantId,
-        size: size,
-        color: colorName,
-        price: price,
-        discount: discount,
-        amount: amount,
-      },
+      where: { id: itemId },
+      data: { variantId, size, color: colorName, price, discount, amount },
     });
-    // return { message: "Cart updated successfully" };
   } catch (error) {
     return renderError(error);
   }
   redirect("/cart");
 };
+
 export const getAllProductsForShop = async (filters: any) => {
   const { size, color, gender, category, material, sort, search } = filters;
 
@@ -1185,9 +949,7 @@ export const getAllProductsForShop = async (filters: any) => {
             { seoTags: { has: search } },
             {
               variants: {
-                some: {
-                  colorName: { contains: search, mode: "insensitive" },
-                },
+                some: { colorName: { contains: search, mode: "insensitive" } },
               },
             },
           ],
@@ -1212,16 +974,14 @@ export const getAllProductsForShop = async (filters: any) => {
 
   const getEffectiveMinPrice = (
     variants: (typeof allProducts)[0]["variants"],
-  ) => {
-    return Math.min(
-      ...variants.map((v) => {
-        if (v.discount && v.discount > 0) {
-          return v.price * (1 - v.discount / 100);
-        }
-        return v.price;
-      }),
+  ) =>
+    Math.min(
+      ...variants.map((v) =>
+        v.discount && v.discount > 0
+          ? v.price * (1 - v.discount / 100)
+          : v.price,
+      ),
     );
-  };
 
   const sortedProducts = allProducts.sort((a, b) => {
     const aMinPrice = getEffectiveMinPrice(a.variants);
@@ -1232,22 +992,15 @@ export const getAllProductsForShop = async (filters: any) => {
     const bInStock = b.variants.some((v) => v.inStock) ? 1 : 0;
     return bInStock - aInStock;
   });
+
   return { sortedProducts, allProductsCount };
 };
+
 export const getProductRatings = async (id: string) => {
-  const isProductExist = await db.product.findUnique({
-    where: {
-      id: id,
-    },
-  });
-  if (!isProductExist) {
-    return { error: "Product doesn't exist" };
-  }
-  const reviews = await db.review.findMany({
-    where: {
-      productId: id,
-    },
-  });
+  const isProductExist = await db.product.findUnique({ where: { id } });
+  if (!isProductExist) return { error: "Product doesn't exist" };
+
+  const reviews = await db.review.findMany({ where: { productId: id } });
   const oneStar = reviews.filter((r) => r.rating === 1).length;
   const twoStar = reviews.filter((r) => r.rating === 2).length;
   const threeStar = reviews.filter((r) => r.rating === 3).length;
@@ -1256,10 +1009,11 @@ export const getProductRatings = async (id: string) => {
   const totalRating = reviews.length;
   const averageRating =
     reviews.reduce((acc, r) => acc + r.rating, 0) / totalRating;
+
   return {
     oneStar,
-    threeStar,
     twoStar,
+    threeStar,
     fourStar,
     fiveStar,
     totalRating,
@@ -1268,10 +1022,7 @@ export const getProductRatings = async (id: string) => {
 };
 
 export const getProductReviews = async (id: string) => {
-  const isProductExist = await db.product.findUnique({
-    where: { id },
-  });
-
+  const isProductExist = await db.product.findUnique({ where: { id } });
   if (!isProductExist) return { error: "Product doesn't exist" };
 
   const reviews = await db.review.findMany({
@@ -1294,43 +1045,32 @@ export const getProductReviews = async (id: string) => {
 
   return reviewsWithUsers;
 };
+
 export const getAllProductReviews = async (slug: string) => {
-  const product = await db.product.findFirst({
-    where: {
-      slug,
-    },
-  });
-  if (!product) {
-    redirect("/");
-  }
+  const product = await db.product.findFirst({ where: { slug } });
+  if (!product) redirect("/");
+
   const allReviews = await db.review.findMany({
-    where: {
-      productId: product.id,
-    },
+    where: { productId: product.id },
   });
   return { allReviews, product };
 };
+
 export const getAllOrders = async () => {
   const user = await currentUser();
-  if (!user) {
-    redirect("/");
-  }
+  if (!user) redirect("/");
+
   const allOrders = await db.order.findMany({
-    where: {
-      clerkId: user.id,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      orderItems: true,
-    },
+    where: { clerkId: user.id },
+    orderBy: { createdAt: "desc" },
+    include: { orderItems: true },
   });
   const allOrderedItems: OrderItem[] = allOrders.flatMap(
     (order) => order.orderItems,
   );
   return { allOrderedItems, allOrders };
 };
+
 export const createOrGetUser = async () => {
   const user = await currentUser();
   if (!user) redirect("/");
@@ -1340,61 +1080,46 @@ export const createOrGetUser = async () => {
     update: {},
     create: { clerkId: user.id },
   });
-
   return userProfile;
 };
+
 export const createAddress = async (
   prevState: any,
   formData: FormData,
 ): Promise<{ message: string }> => {
   try {
     const user = await currentUser();
-    if (!user) {
-      redirect("/");
-    }
+    if (!user) redirect("/");
+
     const rawData = Object.fromEntries(formData);
     const validatedFields = createOrEditAddressBook.parse(rawData);
     await db.userProfile.update({
-      where: {
-        clerkId: user.id,
-      },
-      data: {
-        address: validatedFields.address,
-        phone: validatedFields.phone,
-      },
+      where: { clerkId: user.id },
+      data: { address: validatedFields.address, phone: validatedFields.phone },
     });
-    // return { message: "" };
   } catch (error) {
     return renderError(error);
   }
   redirect("/dashboard/account");
 };
+
 export const getOrder = async (id: string) => {
   const user = await currentUser();
   if (!user) redirect("/");
-  const order = await db.order.findFirst({
-    where: {
-      id,
 
-      clerkId: user.id,
-    },
-    include: {
-      orderItems: true,
-    },
+  const order = await db.order.findFirst({
+    where: { id, clerkId: user.id },
+    include: { orderItems: true },
   });
-  if (!order) {
-    redirect("/dashboard/orders");
-  }
+  if (!order) redirect("/dashboard/orders");
   return order;
 };
+
 export const isProductExists = async (id: string) => {
-  const isProductExisting = await db.product.findUnique({
-    where: {
-      id,
-    },
-  });
+  const isProductExisting = await db.product.findUnique({ where: { id } });
   return isProductExisting;
 };
+
 export const toggleFavoriteAction = async (prevState: {
   productId: string;
   favoriteId: string | null;
@@ -1404,24 +1129,14 @@ export const toggleFavoriteAction = async (prevState: {
   const { productId, favoriteId, pathName } = prevState;
   try {
     if (favoriteId) {
-      await db.wishlist.delete({
-        where: {
-          id: favoriteId,
-        },
-      });
+      await db.wishlist.delete({ where: { id: favoriteId } });
     } else {
       const wishlistCount = await db.wishlist.count({
         where: { clerkId: user.id },
       });
-      if (wishlistCount >= 50) {
+      if (wishlistCount >= 50)
         return { message: "Wishlist is full (20 items max)" };
-      }
-      await db.wishlist.create({
-        data: {
-          productId,
-          clerkId: user.id,
-        },
-      });
+      await db.wishlist.create({ data: { productId, clerkId: user.id } });
     }
     revalidatePath(pathName);
     return {
@@ -1431,109 +1146,69 @@ export const toggleFavoriteAction = async (prevState: {
     return renderError(error);
   }
 };
+
 export const fetchFavoriteId = async ({ productId }: { productId: string }) => {
   const user = await getAuthUser();
   const favorite = await db.wishlist.findFirst({
-    where: {
-      productId,
-      clerkId: user.id,
-    },
-    select: {
-      id: true,
-    },
+    where: { productId, clerkId: user.id },
+    select: { id: true },
   });
   return favorite?.id || null;
 };
+
 export const getWishlist = async () => {
   const user = await getAuthUser();
   const wishlist = await db.wishlist.findMany({
-    where: {
-      clerkId: user.id,
-    },
-    include: {
-      product: {
-        include: { variants: true },
-      },
-    },
+    where: { clerkId: user.id },
+    include: { product: { include: { variants: true } } },
   });
   return wishlist;
 };
+
 export const removeFromWishlist = async (
   prevState: any,
   formData: FormData,
 ): Promise<{ message: string }> => {
   try {
     const productId = formData.get("productId")?.toString();
-    const isProduct = await db.product.findFirst({
-      where: {
-        id: productId,
-      },
-    });
-    if (!isProduct) {
-      return { message: "Product doesn't exist" };
-    }
+    const isProduct = await db.product.findFirst({ where: { id: productId } });
+    if (!isProduct) return { message: "Product doesn't exist" };
+
     const user = await currentUser();
-    await db.wishlist.deleteMany({
-      where: {
-        clerkId: user?.id,
-        productId: productId,
-      },
-    });
+    await db.wishlist.deleteMany({ where: { clerkId: user?.id, productId } });
     revalidatePath("/dashboard/wishlist");
     return { message: "Wishlist updated successfully" };
   } catch (error) {
     return renderError(error);
   }
 };
+
 export const getPendingReviews = async () => {
   const user = await currentUser();
   const orderedItems = await db.orderItem.findMany({
-    where: {
-      order: {
-        clerkId: user?.id,
-      },
-      productId: { not: null },
-    },
-    include: {
-      order: true,
-    },
+    where: { order: { clerkId: user?.id }, productId: { not: null } },
+    include: { order: true },
     distinct: ["productId"],
   });
-  const reviews = await db.review.findMany({
-    where: {
-      clerkId: user?.id,
-    },
-  });
+  const reviews = await db.review.findMany({ where: { clerkId: user?.id } });
   const pendingReviews = orderedItems.filter(
     (item) => !reviews.some((review) => review.productId === item.productId),
   );
-  console.log("orderedItems", orderedItems);
-  console.log("reviews", reviews);
-  console.log("pendingReviews", pendingReviews);
   return pendingReviews;
 };
+
 export const getAllUsersReviews = async () => {
   const user = await currentUser();
-  if (!user) {
-    redirect("/");
-  }
+  if (!user) redirect("/");
+
   const allReviews = await db.review.findMany({
-    orderBy: {
-      updatedAt: "desc",
-    },
-    where: {
-      clerkId: user.id,
-    },
-    include: {
-      product: {
-        include: {
-          variants: true,
-        },
-      },
-    },
+    orderBy: { updatedAt: "desc" },
+    where: { clerkId: user.id },
+    include: { product: { include: { variants: true } } },
   });
   return allReviews;
 };
+
 export const editReview = async (
   prevState: any,
   formData: FormData,
@@ -1543,33 +1218,25 @@ export const editReview = async (
     const productId = typeof rawData.id === "string" ? rawData.id : "";
     const reviewId =
       typeof rawData.reviewId === "string" ? rawData.reviewId : "";
-    const isReview = await db.review.findFirst({
-      where: {
-        id: reviewId,
-      },
-    });
-    if (!isReview) {
-      return { message: "There was an error, try again" };
-    }
-    if (!productId) {
-      return { message: "Invalid request. Missing ID." };
-    }
+
+    const isReview = await db.review.findFirst({ where: { id: reviewId } });
+    if (!isReview) return { message: "There was an error, try again" };
+    if (!productId) return { message: "Invalid request. Missing ID." };
+
     const validatedFields = createReviewSchema.parse(rawData);
     await db.review.update({
-      where: {
-        id: reviewId,
-      },
+      where: { id: reviewId },
       data: {
         description: validatedFields.description,
         rating: validatedFields.rating,
       },
     });
-    // return { message: "Review Created" };
   } catch (error) {
     return renderError(error);
   }
   redirect("/dashboard/reviews");
 };
+
 export const deleteReview = async (
   prevState: any,
   formData: FormData,
@@ -1578,48 +1245,33 @@ export const deleteReview = async (
     const rawData = Object.fromEntries(formData);
     const reviewId =
       typeof rawData.reviewId === "string" ? rawData.reviewId : "";
-    const isReview = await db.review.findFirst({
-      where: {
-        id: reviewId,
-      },
-    });
-    if (!isReview) {
-      return { message: "There was an error, try again" };
-    }
-    await db.review.delete({
-      where: {
-        id: reviewId,
-      },
-    });
-    // return{message:""}
+
+    const isReview = await db.review.findFirst({ where: { id: reviewId } });
+    if (!isReview) return { message: "There was an error, try again" };
+
+    await db.review.delete({ where: { id: reviewId } });
   } catch (error) {
     return renderError(error);
   }
   redirect("/dashboard/reviews");
 };
+
 export const getAdminAllOrders = async () => {
   const allOrders = await db.order.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      orderItems: true,
-    },
+    orderBy: { createdAt: "desc" },
+    include: { orderItems: true },
   });
   return allOrders;
 };
+
 export const getAdminSingleOrder = async (id: string) => {
   const order = await db.order.findUnique({
-    where: {
-      id: id,
-    },
-    include: {
-      orderItems: true,
-    },
+    where: { id },
+    include: { orderItems: true },
   });
-
   return order;
 };
+
 export const adminUpdateOrderAndDeliveryStatus = async (
   prevState: any,
   formData: FormData,
@@ -1627,24 +1279,13 @@ export const adminUpdateOrderAndDeliveryStatus = async (
   try {
     const rawData = Object.fromEntries(formData);
     const id = formData.get("id")?.toString();
-    const isOrderExists = await db.order.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    if (!isOrderExists) {
-      return { message: "Order doesn't exist" };
-    }
+
+    const isOrderExists = await db.order.findUnique({ where: { id } });
+    if (!isOrderExists) return { message: "Order doesn't exist" };
+
     const validatedFields =
       adminUpdateOrderAndDeliveryStatusSchema.parse(rawData);
-    await db.order.update({
-      where: {
-        id: id,
-      },
-      data: {
-        ...validatedFields,
-      },
-    });
+    await db.order.update({ where: { id }, data: { ...validatedFields } });
     revalidatePath(`/admin/order-details/${id}`);
     revalidatePath(`/dashboard/orders/${id}`);
     return { message: "Order updated successfully" };
@@ -1652,6 +1293,7 @@ export const adminUpdateOrderAndDeliveryStatus = async (
     return renderError(error);
   }
 };
+
 export const isAddressAndPhone = async () => {
   const user = await currentUser();
   const userHasAddressAndPhone = await db.userProfile.findFirst({
@@ -1667,33 +1309,36 @@ export const isAddressAndPhone = async () => {
   });
   return userHasAddressAndPhone;
 };
+
 export const getHomeCarouselImages = async () => {
   const carousels = await db.homeCarousel.findMany({});
   return carousels;
 };
+
 export const createCarouselImages = async (
   prevState: any,
   formData: FormData,
 ): Promise<{ message: string }> => {
   try {
     const raw = formData.get("carousels");
-
     let carousels;
     try {
       carousels = JSON.parse(raw as string);
     } catch {
       return { message: "Invalid carousel data" };
     }
+
     const validatedFields = z.array(createCarouselsSchema).parse(carousels);
     const allCarousels = await db.homeCarousel.findMany({});
-    if (allCarousels.length >= 4) {
+
+    if (allCarousels.length >= 4)
       return { message: "You can't create more carousels" };
-    } else if (validatedFields.length + allCarousels.length > 4) {
+    if (validatedFields.length + allCarousels.length > 4) {
       return {
         message: `Max 4 carousels allowed. Remove ${validatedFields.length + allCarousels.length - 4} carousel(s).`,
       };
     }
-    const allLinks = validatedFields.find((carousel) => carousel.link);
+
     const editedValidatedFields = validatedFields.map((field) => ({
       link: field.link,
       text: field.text,
@@ -1701,9 +1346,7 @@ export const createCarouselImages = async (
       mobileImage: field.mobileImage,
     }));
 
-    await db.homeCarousel.createMany({
-      data: editedValidatedFields,
-    });
+    // Confirm images before DB write
     await Promise.all(
       validatedFields.map((carousel) =>
         backendClient.publicFiles.confirmUpload({ url: carousel.image }),
@@ -1714,13 +1357,14 @@ export const createCarouselImages = async (
         backendClient.publicFiles.confirmUpload({ url: carousel.mobileImage }),
       ),
     );
-    // revalidatePath("/admin");
-    // return { message: "" };
+
+    await db.homeCarousel.createMany({ data: editedValidatedFields });
   } catch (error) {
     return renderError(error);
   }
   redirect("/admin");
 };
+
 export const updateCarouselItems = async (
   prevState: any,
   formData: FormData,
@@ -1733,19 +1377,17 @@ export const updateCarouselItems = async (
     } catch {
       return { message: "Invalid carousel data" };
     }
+
     const validatedFields = z.array(createCarouselsSchema).parse(carousels);
     const allCarousels = await db.homeCarousel.findMany({});
+
     const carouselsToDelete = allCarousels.filter(
       (carousel) => !validatedFields.some((field) => field.id === carousel.id),
     );
     if (carouselsToDelete.length > 0) {
       await Promise.all(
         carouselsToDelete.map((carousel) =>
-          db.homeCarousel.delete({
-            where: {
-              id: carousel.id,
-            },
-          }),
+          db.homeCarousel.delete({ where: { id: carousel.id } }),
         ),
       );
       await Promise.all(
@@ -1764,6 +1406,7 @@ export const updateCarouselItems = async (
     const existingCarousels = validatedFields.filter((field) =>
       existingIds.has(field.id),
     );
+
     const existingLinkChecks = await Promise.all(
       existingCarousels.map((carousel) =>
         checkInternalLinkExists(carousel.link),
@@ -1772,27 +1415,15 @@ export const updateCarouselItems = async (
     const invalidExisting = existingCarousels.find(
       (_, i) => !existingLinkChecks[i],
     );
-    if (invalidExisting) {
+    if (invalidExisting)
       return { message: `The link "${invalidExisting.link}" doesn't exist` };
-    }
+
     if (existingCarousels.length > 0) {
       await Promise.all(
         existingCarousels.map(async (carousel) => {
           const isImageSame = await db.homeCarousel.findUnique({
-            where: {
-              id: carousel.id,
-            },
-          });
-          await db.homeCarousel.update({
             where: { id: carousel.id },
-            data: {
-              image: carousel.image,
-              text: carousel.text,
-              link: carousel.link,
-              mobileImage: carousel.mobileImage,
-            },
           });
-          console.log(existingCarousels);
 
           if (isImageSame && isImageSame.image !== carousel.image) {
             await backendClient.publicFiles.confirmUpload({
@@ -1810,9 +1441,20 @@ export const updateCarouselItems = async (
               url: isImageSame.mobileImage,
             });
           }
+
+          await db.homeCarousel.update({
+            where: { id: carousel.id },
+            data: {
+              image: carousel.image,
+              text: carousel.text,
+              link: carousel.link,
+              mobileImage: carousel.mobileImage,
+            },
+          });
         }),
       );
     }
+
     const newCarousels = validatedFields.filter(
       (field) => !existingIds.has(field.id),
     );
@@ -1820,22 +1462,10 @@ export const updateCarouselItems = async (
       newCarousels.map((carousel) => checkInternalLinkExists(carousel.link)),
     );
     const invalidNew = newCarousels.find((_, i) => !newLinkChecks[i]);
-    if (invalidNew) {
+    if (invalidNew)
       return { message: `The link "${invalidNew.link}" doesn't exist` };
-    }
+
     if (newCarousels.length > 0) {
-      await Promise.all(
-        newCarousels.map((carousel) =>
-          db.homeCarousel.create({
-            data: {
-              link: carousel.link,
-              image: carousel.image,
-              text: carousel.text,
-              mobileImage: carousel.mobileImage,
-            },
-          }),
-        ),
-      );
       await Promise.all(
         newCarousels.map((carousel) =>
           backendClient.publicFiles.confirmUpload({ url: carousel.image }),
@@ -1848,42 +1478,41 @@ export const updateCarouselItems = async (
           }),
         ),
       );
+      await Promise.all(
+        newCarousels.map((carousel) =>
+          db.homeCarousel.create({
+            data: {
+              link: carousel.link,
+              image: carousel.image,
+              text: carousel.text,
+              mobileImage: carousel.mobileImage,
+            },
+          }),
+        ),
+      );
     }
-
-    // return { message: "" };
   } catch (error) {
     return renderError(error);
   }
   redirect("/admin/edit-carousel-items");
 };
+
 export const getAllCollectionLinks = async () => {
   const collectionLinks = await db.collectionLink.findMany({
-    where: {
-      collection: {
-        products: {
-          some: {},
-        },
-      },
-    },
-    include: {
-      collection: true,
-    },
+    where: { collection: { products: { some: {} } } },
+    include: { collection: true },
   });
   return collectionLinks;
 };
+
 export const getAllCollectionsForLinksWithCollectionLinks = async () => {
   const collections = await db.collection.findMany({
-    where: {
-      products: {
-        some: {},
-      },
-    },
-    include: {
-      collectionLinks: true,
-    },
+    where: { products: { some: {} } },
+    include: { collectionLinks: true },
   });
   return collections;
 };
+
 export const checkInternalLinkExists = async (path: string) => {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -1893,6 +1522,7 @@ export const checkInternalLinkExists = async (path: string) => {
     return false;
   }
 };
+
 export const createOrUpdateCollectionLinks = async (
   prevState: any,
   formData: FormData,
@@ -1917,7 +1547,6 @@ export const createOrUpdateCollectionLinks = async (
       (collection) =>
         !validatedFields.some((field) => collection.id === field.id),
     );
-
     if (linksToDelete.length > 0) {
       await Promise.all(
         linksToDelete.map((link) =>
@@ -1934,7 +1563,6 @@ export const createOrUpdateCollectionLinks = async (
     const linksThatExist = validatedFields.filter((field) =>
       allCollectionLinks.map((link) => link.id).some((id) => field.id === id),
     );
-
     if (linksThatExist.length > 0) {
       const duplicateCollection = linksThatExist.find((link) =>
         allCollectionLinks.some(
@@ -1943,17 +1571,25 @@ export const createOrUpdateCollectionLinks = async (
             existing.id !== link.id,
         ),
       );
-
       if (duplicateCollection) {
         return {
           message: `A link already exists for ${duplicateCollection.collectionName}`,
         };
       }
+
       await Promise.all(
         linksThatExist.map(async (link) => {
           const isImageSame = await db.collectionLink.findUnique({
             where: { id: link.id },
           });
+
+          if (isImageSame && isImageSame.image !== link.image) {
+            await backendClient.publicFiles.confirmUpload({ url: link.image });
+            await backendClient.publicFiles.deleteFile({
+              url: isImageSame.image,
+            });
+          }
+
           await db.collectionLink.update({
             where: { id: link.id },
             data: {
@@ -1963,12 +1599,6 @@ export const createOrUpdateCollectionLinks = async (
               subHeading: link.subHeading,
             },
           });
-          if (isImageSame && isImageSame.image !== link.image) {
-            await backendClient.publicFiles.confirmUpload({ url: link.image });
-            await backendClient.publicFiles.deleteFile({
-              url: isImageSame.image,
-            });
-          }
         }),
       );
     }
@@ -1979,8 +1609,12 @@ export const createOrUpdateCollectionLinks = async (
           .map((link) => link.id)
           .some((id) => field.id === id),
     );
-
     if (newLinks.length > 0) {
+      await Promise.all(
+        newLinks.map((link) =>
+          backendClient.publicFiles.confirmUpload({ url: link.image }),
+        ),
+      );
       await Promise.all(
         newLinks.map((link) =>
           db.collectionLink.create({
@@ -1993,17 +1627,13 @@ export const createOrUpdateCollectionLinks = async (
           }),
         ),
       );
-      await Promise.all(
-        newLinks.map((link) =>
-          backendClient.publicFiles.confirmUpload({ url: link.image }),
-        ),
-      );
     }
   } catch (error) {
     return renderError(error);
   }
   redirect("/admin/edit-collection-links");
 };
+
 export const getSingleCollectionLinkProducts = async (
   filters: {
     size?: string;
@@ -2022,9 +1652,7 @@ export const getSingleCollectionLinkProducts = async (
     include: {
       collection: {
         include: {
-          _count: {
-            select: { products: true },
-          },
+          _count: { select: { products: true } },
           products: {
             where: {
               ...(category && { category }),
@@ -2052,7 +1680,6 @@ export const getSingleCollectionLinkProducts = async (
   if (!productsFromCollectionLink) return null;
 
   const products = productsFromCollectionLink?.collection?.products ?? [];
-
   const sortedProducts =
     sort === "price_asc" || sort === "price_desc"
       ? [...products].sort((a, b) => {
@@ -2070,10 +1697,12 @@ export const getSingleCollectionLinkProducts = async (
     },
   };
 };
+
 export const getCustomPieceBg = async () => {
   const customPieceBg = await db.customPiece.findFirst({});
   return customPieceBg;
 };
+
 export const upsertCustomPieceBg = async (
   prevState: any,
   formData: FormData,
@@ -2081,15 +1710,10 @@ export const upsertCustomPieceBg = async (
   try {
     const image = formData.get("image") as string;
     const mobileImage = formData.get("mobileImage") as string;
-
     const result = customPieceSchema.parse({ image, mobileImage });
 
     const existing = await db.customPiece.findFirst();
     if (existing) {
-      await db.customPiece.update({
-        where: { id: existing.id },
-        data: { ...result },
-      });
       if (existing.image !== result.image) {
         await backendClient.publicFiles.confirmUpload({ url: result.image });
         await backendClient.publicFiles.deleteFile({ url: existing.image });
@@ -2102,23 +1726,24 @@ export const upsertCustomPieceBg = async (
           url: existing.mobileImage,
         });
       }
-    } else {
-      await db.customPiece.create({
+      await db.customPiece.update({
+        where: { id: existing.id },
         data: { ...result },
       });
+    } else {
       await backendClient.publicFiles.confirmUpload({ url: result.image });
       await backendClient.publicFiles.confirmUpload({
         url: result.mobileImage,
       });
+      await db.customPiece.create({ data: { ...result } });
     }
-
     revalidatePath("/");
-    // return { message: "Custom Piece Background updated successfully" };
   } catch (error) {
     return renderError(error);
   }
   redirect("/admin/edit-custompiece-background");
 };
+
 export const createCreateCustomPiece = async (
   prevState: any,
   formData: FormData,
@@ -2127,65 +1752,56 @@ export const createCreateCustomPiece = async (
     const rawData = Object.fromEntries(formData);
     const validatedFields = createCustomPieceSchema.parse(rawData);
     const user = await getAuthUser();
-    if (!user) {
+    if (!user)
       return { message: "You must be logged in to create a custom order" };
-    }
-    await db.customPieceRequest.create({
-      data: {
-        ...validatedFields,
-        userId: user.id,
-      },
-    });
+
     await Promise.all(
       validatedFields.sampleImages.map((image) =>
         backendClient.publicFiles.confirmUpload({ url: image }),
       ),
     );
-    // return { message: "" };
+
+    await db.customPieceRequest.create({
+      data: { ...validatedFields, userId: user.id },
+    });
   } catch (error) {
     return renderError(error);
   }
   redirect("/dashboard/custom-orders");
 };
+
 export const getUsersCustomOrders = async () => {
   const user = await getAuthUser();
   const usersCustomOrders = await db.customPieceRequest.findMany({
-    where: {
-      userId: user.id,
-    },
+    where: { userId: user.id },
     include: { customOrder: true },
   });
   return usersCustomOrders;
 };
+
 export const getSingleCustomOrder = async (id: string) => {
   const order = await db.customPieceRequest.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      customOrder: true,
-    },
+    where: { id },
+    include: { customOrder: true },
   });
   return order;
 };
+
 export const getAllCustomOrders = async () => {
   const allCustomOrders = await db.customPieceRequest.findMany({
     include: { customOrder: true },
   });
   return allCustomOrders;
 };
+
 export const getAdminSingleCustomOrder = async (id: string) => {
   const order = await db.customPieceRequest.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      customOrder: true,
-      user: true,
-    },
+    where: { id },
+    include: { customOrder: true, user: true },
   });
   return order;
 };
+
 export const createCustomOrder = async (
   prevState: any,
   formData: FormData,
@@ -2195,33 +1811,24 @@ export const createCustomOrder = async (
     const rawData = Object.fromEntries(formData);
     const validatedFields = createCustomOrderSchema.parse(rawData);
     const isOrderExists = await db.customPieceRequest.findUnique({
-      where: {
-        id: validatedFields.requestId,
-      },
-      include: {
-        customOrder: true,
-      },
+      where: { id: validatedFields.requestId },
+      include: { customOrder: true },
     });
-    if (!isOrderExists) {
+    if (!isOrderExists)
       return { message: "The Custom Order Request was not found" };
-    }
-
-    if (isOrderExists.customOrder) {
+    if (isOrderExists.customOrder)
       return { message: "An order already exists for this Request" };
-    }
+
     await db.customOrder.create({
-      data: {
-        ...validatedFields,
-        userId: isOrderExists.userId,
-      },
+      data: { ...validatedFields, userId: isOrderExists.userId },
     });
     orderId = isOrderExists.id;
-    // return { message: "" };
   } catch (error) {
     return renderError(error);
   }
   redirect(`/admin/custom-orders/${orderId}`);
 };
+
 export const editCustomOrder = async (
   prevState: any,
   formData: FormData,
@@ -2231,25 +1838,18 @@ export const editCustomOrder = async (
     const rawData = Object.fromEntries(formData);
     const validatedFields = createCustomOrderSchema.parse(rawData);
     requestId = validatedFields.requestId;
+
     const isOrderExists = await db.customPieceRequest.findUnique({
-      where: {
-        id: requestId,
-      },
-      include: {
-        customOrder: true,
-      },
+      where: { id: requestId },
+      include: { customOrder: true },
     });
-    if (!isOrderExists) {
+    if (!isOrderExists)
       return { message: "The Custom Order Request was not found" };
-    }
-    if (!isOrderExists.customOrder) {
+    if (!isOrderExists.customOrder)
       return { message: "No custom order has been created for this request" };
-    }
 
     await db.customOrder.update({
-      where: {
-        id: isOrderExists.customOrder.id,
-      },
+      where: { id: isOrderExists.customOrder.id },
       data: {
         agreedPrice: validatedFields.agreedPrice,
         status: validatedFields.status,
@@ -2260,6 +1860,7 @@ export const editCustomOrder = async (
   }
   redirect(`/admin/custom-orders/${requestId!}`);
 };
+
 export const updateCustomOrderRequestStatus = async (
   prevState: any,
   formData: FormData,
@@ -2269,16 +1870,11 @@ export const updateCustomOrderRequestStatus = async (
     const rawData = Object.fromEntries(formData);
     const validatedFields = updateCustomOrderRequestSchema.parse(rawData);
     const isOrderExists = await db.customPieceRequest.findUnique({
-      where: {
-        id: validatedFields.id,
-      },
-      include: {
-        customOrder: true,
-      },
+      where: { id: validatedFields.id },
+      include: { customOrder: true },
     });
-    if (!isOrderExists) {
-      return { message: "This Custom order wasn't found" };
-    }
+    if (!isOrderExists) return { message: "This Custom order wasn't found" };
+
     orderId = validatedFields.id;
     if (
       (validatedFields.status === "ACCEPTED" ||
@@ -2289,20 +1885,17 @@ export const updateCustomOrderRequestStatus = async (
         message: `To change status to ${validatedFields.status}, create the order `,
       };
     }
+
     await db.customPieceRequest.update({
-      where: {
-        id: validatedFields.id,
-      },
-      data: {
-        status: validatedFields.status,
-      },
+      where: { id: validatedFields.id },
+      data: { status: validatedFields.status },
     });
-    // return { message: "" };
   } catch (error) {
     return renderError(error);
   }
   redirect(`/admin/custom-orders/${orderId}`);
 };
+
 export const createOrUpdateAdminNote = async (
   prevState: any,
   formData: FormData,
@@ -2312,27 +1905,21 @@ export const createOrUpdateAdminNote = async (
     const rawData = Object.fromEntries(formData);
     const validatedFields = createOrUpdateAdminNoteSchema.parse(rawData);
     const isOrderExists = await db.customPieceRequest.findUnique({
-      where: {
-        id: validatedFields.id,
-      },
+      where: { id: validatedFields.id },
     });
-    if (!isOrderExists) {
-      return { message: "This Custom order wasn't found" };
-    }
+    if (!isOrderExists) return { message: "This Custom order wasn't found" };
+
     orderId = validatedFields.id;
     await db.customPieceRequest.update({
-      where: {
-        id: validatedFields.id,
-      },
-      data: {
-        adminNote: validatedFields.adminNote,
-      },
+      where: { id: validatedFields.id },
+      data: { adminNote: validatedFields.adminNote },
     });
   } catch (error) {
     return renderError(error);
   }
   redirect(`/admin/custom-orders/${orderId}`);
 };
+
 export const getProductsForSearch = async (search: string) => {
   const [products, allProductsCount] = await Promise.all([
     db.product.findMany({
@@ -2346,24 +1933,22 @@ export const getProductsForSearch = async (search: string) => {
             { seoTags: { has: search } },
             {
               variants: {
-                some: {
-                  colorName: { contains: search, mode: "insensitive" },
-                },
+                some: { colorName: { contains: search, mode: "insensitive" } },
               },
             },
           ],
         }),
       },
-      include: {
-        variants: true,
-      },
+      include: { variants: true },
     }),
     db.product.count(),
   ]);
+
   const sortedProducts = products.sort((a, b) => {
     const aInStock = a.variants.some((v) => v.inStock) ? 1 : 0;
     const bInStock = b.variants.some((v) => v.inStock) ? 1 : 0;
     return bInStock - aInStock;
   });
+
   return { sortedProducts, allProductsCount };
 };

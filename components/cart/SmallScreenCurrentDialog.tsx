@@ -3,21 +3,23 @@ import { SubmitButton } from "../form/Buttons";
 import { updateCartItems } from "../../utils/actions";
 import FormContainer from "../form/FormContainer";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Prisma } from "@/generated/prisma";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import SmallScreenProductDetailsImages from "./SmallScreenProductDetailsImages";
 import SmallScreenCartDetails from "./SmallScreenCartDetails";
+
 type ProductWithVariants = Prisma.ProductGetPayload<{
   include: { variants: true };
 }>;
+
 function SmallScreenCurrentDialog({
   color,
   size,
@@ -37,19 +39,22 @@ function SmallScreenCurrentDialog({
 }) {
   const [currentSelectedVariantId, setSelectedCurrentVariantId] =
     useState(currentVariantId);
+
   return (
-    <Dialog>
-      <DialogTrigger className="flex justify-start">
+    <Sheet>
+      <SheetTrigger className="flex justify-start">
         <p className="text-neutral-600 text-xs hover:underline hover:cursor-default">
           Color: {color} | Size: {size} &rarr;
         </p>
-      </DialogTrigger>
-      <DialogContent className="bg-white rounded-xl shadow-sm border">
-        <ScrollArea className="w-full h-[80vh] border-2 rounded-sm">
-          <DialogTitle></DialogTitle>
-          <FormContainer action={updateCartItems}>
-            <DialogHeader className="my-5">
-              <div className="flex flex-col align-middle justify-center items-center">
+      </SheetTrigger>
+      <SheetContent className="bg-white border-l w-full sm:max-w-md p-0">
+        <ScrollArea className="h-full w-full">
+          <div className="flex flex-col min-h-full p-4">
+            <SheetHeader className="mb-4">
+              <SheetTitle className="sr-only">Update Cart Item</SheetTitle>
+            </SheetHeader>
+            <FormContainer action={updateCartItems}>
+              <div className="flex flex-col gap-4">
                 <div className="w-full">
                   <SmallScreenProductDetailsImages
                     currentVariantId={currentSelectedVariantId}
@@ -67,19 +72,19 @@ function SmallScreenCurrentDialog({
                   />
                 </div>
               </div>
-            </DialogHeader>
-            <DialogFooter>
-              <SubmitButton
-                text="Update Details"
-                loadingText="Updating..."
-                className="bg-transparent border-2 border-black text-black hover:text-white hover:bg-black"
-              />
-            </DialogFooter>
-          </FormContainer>
+              <SheetFooter className="mt-6">
+                <SubmitButton
+                  text="Update Details"
+                  loadingText="Updating..."
+                  className="w-full bg-transparent border-2 border-black text-black hover:text-white hover:bg-black"
+                />
+              </SheetFooter>
+            </FormContainer>
+          </div>
           <ScrollBar orientation="vertical" />
         </ScrollArea>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
@@ -111,7 +112,7 @@ function HomeCarouselItems({
             htmlFor={`${index}link`}
             className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
           >
-            Link &#40;start with "/"&#41;
+            Link &#40;start with &quot;/&quot;&#41;
           </Label>
           <Input
             id={`${index}link`}

@@ -43,8 +43,8 @@ async function ProductDetailsPage({
           <EmptyMedia variant="icon">
             <RxValueNone />
           </EmptyMedia>
-          <EmptyTitle>Couldn't find product</EmptyTitle>
-          <EmptyDescription>This product doesn't exist</EmptyDescription>
+          <EmptyTitle>Couldn&apos;t find product</EmptyTitle>
+          <EmptyDescription>This product doesn&apos;t exist</EmptyDescription>
         </EmptyHeader>
         <EmptyContent className="flex-row justify-center gap-2">
           <Button className="bg-white text-black border-2 border-black hover:text-white hover:bg-black transition duration-500">
@@ -87,8 +87,7 @@ async function ProductDetailsPage({
           <BreadcrumbItem>
             <BreadcrumbLink
               className="hover:text-black duration-300 transition text-xs sm:text-sm"
-              href="/"
-            >
+              href="/">
               Infinity Wears
             </BreadcrumbLink>
           </BreadcrumbItem>

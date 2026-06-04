@@ -4,6 +4,7 @@ import Link from "next/link";
 import { formatCurrency } from "../../utils/format";
 import { Badge } from "@/components/ui/badge";
 import FavoriteToggleButton from "../shop/FavoriteToggleButton";
+import HoverSwapImage from "../home/HoverSwapImage";
 
 type ProductWithVariants = Prisma.ProductGetPayload<{
   include: { variants: true };
@@ -14,12 +15,13 @@ type ProductsProps = {
 function Products({ products }: ProductsProps) {
   return (
     <div className="sm:py-10 ">
-      <div className="w-full sm:gap-15 gap-4 grid-cols-2 mt-5 lg:grid-cols-4 justify-items-center items-center text-center grid">
+      <div className="w-full grid grid-cols-2 mt-5 gap-y-5 md:grid-cols-3 lg:grid-cols-4 justify-items-center items-center text-center">
         {products.map((product) => {
           const firstVariant = product.variants[0];
           const isAnyVariantInStock = product.variants.some(
             (variant) => variant.inStock,
           );
+          const secondVariant = product.variants[1];
           const isVariantSoldOut = product.quantity <= 0;
           return (
             <article key={product.id} className="group relative ">
@@ -40,16 +42,16 @@ function Products({ products }: ProductsProps) {
                   ) : null}
 
                   {/* /*IMAGE  */}
-                  <div className="w-36 h-48 sm:w-60 sm:h-72 rounded-lg group-hover:scale-110 transition-transform duration-500 relative overflow-hidden">
-                    <Image
-                      src={firstVariant.coverImage}
+                  <div className="w-40 h-56 md:w-44 md:h-60 lg:w-52 lg:h-72 rounded-lg relative overflow-hidden">
+                    <HoverSwapImage
+                      defaultImage={firstVariant.coverImage}
+                      hoverImage={
+                        secondVariant?.coverImage ?? product.images[0]
+                      }
                       alt={product.name}
-                      className="w-full h-full object-cover"
-                      fill
                     />
-                    {/* <HoverSwapImage images={hoverImages} alt={product.name} /> */}
                   </div>
-                  <div className="w-36 sm:w-60 mt-4 h-20">
+                  <div className="w-40 md:w-44 lg:w-52 mt-4 h-20">
                     <p className="text-black text-base text-center truncate ">
                       {product.name}
                     </p>

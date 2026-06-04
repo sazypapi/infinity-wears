@@ -91,8 +91,7 @@ function CollectionLinkItem({
         <div>
           <Label
             htmlFor={`${index}heading`}
-          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
-          >
+            className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
             Header on Image
           </Label>
           <Input
@@ -109,8 +108,7 @@ function CollectionLinkItem({
         <div>
           <Label
             htmlFor={`${index}subHeading`}
-              className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
-          >
+            className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
             Sub-Heading
           </Label>
           <Input
@@ -125,15 +123,14 @@ function CollectionLinkItem({
           />
         </div>
         <div className="flex flex-col">
-          <Label    className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
+          <Label className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm">
             Collection Name
           </Label>
           <Select
             required
             name="category"
             value={collectionName || ""}
-            onValueChange={(value) => onChange(index, "collectionName", value)}
-          >
+            onValueChange={(value) => onChange(index, "collectionName", value)}>
             <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm text-[16px] sm:text-sm">
               <SelectValue
                 placeholder="select a collection"
@@ -195,8 +192,7 @@ function CollectionLinkItem({
                   variant="default"
                   onClick={handleUpload}
                   disabled={isUploading || !file}
-                  className="bg-white text-black border-2 border-black hover:bg-black hover:text-white transition duration-500"
-                >
+                  className="bg-white text-black border-2 border-black hover:bg-black hover:text-white transition duration-500">
                   {isUploading ? "Uploading..." : "Upload"}
                 </Button>
               </div>

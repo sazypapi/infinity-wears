@@ -1,3 +1,9 @@
+type SearchPageProps = {
+  searchParams: {
+    search?: string;
+    page?: string;
+  };
+};
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,15 +17,18 @@ import { getProductsForSearch } from "../../../utils/actions";
 import SearchComponent from "../../../components/search/SearchComponent";
 import NoProducts from "../../../components/shop/NoProducts";
 import Products from "../../../components/search/Products";
+import Pagination from "../../../components/shop/Pagination";
 
 async function Search({
   searchParams,
 }: {
-  searchParams: Promise<{ search: string }>;
+  searchParams: Promise<SearchPageProps["searchParams"]>;
 }) {
-  const { search } = await searchParams;
-  const { sortedProducts, allProductsCount } =
-    await getProductsForSearch(search);
+  const resolvedParams = await searchParams;
+  const currentPage = Number(resolvedParams.page) || 0;
+
+  const { sortedProducts, allProductsCount, hasMore } =
+    await getProductsForSearch(resolvedParams.search ?? "", currentPage);
   if (!sortedProducts.length) {
     return (
       <div>
@@ -39,8 +48,7 @@ async function Search({
           <BreadcrumbItem>
             <BreadcrumbLink
               className="hover:text-black duration-300 transition"
-              href="/"
-            >
+              href="/">
               Home
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -54,6 +62,7 @@ async function Search({
       </Breadcrumb>
       <SearchComponent products={sortedProducts} />
       <Products products={sortedProducts} />
+      <Pagination currentPage={currentPage} hasMore={hasMore} />
     </Containers>
   );
 }

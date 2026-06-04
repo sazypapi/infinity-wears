@@ -30,14 +30,13 @@ async function ViewProductPage({
     );
   }
   return (
-    <Containers className="py-10 px-2 sm:py-15 sm:mt-14">
-      <Breadcrumb className="mb-4">
+    <Containers className="py-5 px-2">
+      <Breadcrumb className="mb-5">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink
               className="hover:text-black duration-300 transition"
-              href="/admin"
-            >
+              href="/admin">
               Admin Page
             </BreadcrumbLink>
           </BreadcrumbItem>

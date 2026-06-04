@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/sheet";
 import { SlidersHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { useDebouncedCallback } from "use-debounce";
 function Filters({
@@ -37,17 +36,15 @@ function Filters({
   const searchParams = useSearchParams();
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-
     params.set(key, value);
-
+    params.delete("page");
     router.push(`/shop?${params.toString()}`);
   };
+
   const clearAllFilters = () => {
     router.push("/shop");
   };
-  const [search, setSearch] = useState(
-    searchParams.get("search")?.toString() || "",
-  );
+
   const handleSearch = useDebouncedCallback((value: string) => {
     const params = new URLSearchParams(searchParams);
     if (value) {
@@ -57,17 +54,11 @@ function Filters({
     }
     router.replace(`/shop?${params.toString()}`);
   }, 500);
+  const search = searchParams.get("search") ?? "";
 
-  const searchValue = searchParams.get("search");
-
-  useEffect(() => {
-    if (!searchValue) {
-      setSearch("");
-    }
-  }, [searchValue]);
   return (
     <>
-      <div className="hidden sm:flex justify-between align-middle items-center sm:px-10">
+      <div className="hidden lg:flex justify-between align-middle items-center sm:px-10">
         <div className="flex justify-between align-middle items-center gap-5">
           {/* {size} */}
           <DropdownMenu>
@@ -87,8 +78,7 @@ function Filters({
                     <DropdownMenuItem
                       key={size}
                       className="capitalize text-black"
-                      onClick={() => updateFilter("size", size)}
-                    >
+                      onClick={() => updateFilter("size", size)}>
                       {size}
                     </DropdownMenuItem>
                   );
@@ -114,8 +104,7 @@ function Filters({
                     <DropdownMenuItem
                       key={gender}
                       className="capitalize text-black"
-                      onClick={() => updateFilter("gender", gender)}
-                    >
+                      onClick={() => updateFilter("gender", gender)}>
                       {formatAllCaps(gender)}
                     </DropdownMenuItem>
                   );
@@ -141,8 +130,7 @@ function Filters({
                     <DropdownMenuItem
                       key={color}
                       className="capitalize text-black"
-                      onClick={() => updateFilter("color", color)}
-                    >
+                      onClick={() => updateFilter("color", color)}>
                       {color}
                     </DropdownMenuItem>
                   );
@@ -168,8 +156,7 @@ function Filters({
                     <DropdownMenuItem
                       key={category}
                       className="capitalize text-black"
-                      onClick={() => updateFilter("category", category)}
-                    >
+                      onClick={() => updateFilter("category", category)}>
                       {formatAllCaps(category)}
                     </DropdownMenuItem>
                   );
@@ -195,8 +182,7 @@ function Filters({
                     <DropdownMenuItem
                       key={material}
                       className="capitalize text-black"
-                      onClick={() => updateFilter("material", material)}
-                    >
+                      onClick={() => updateFilter("material", material)}>
                       {material}
                     </DropdownMenuItem>
                   );
@@ -216,21 +202,18 @@ function Filters({
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem
-                onClick={() => updateFilter("sort", "price_asc")}
-              >
+                onClick={() => updateFilter("sort", "price_asc")}>
                 Price: low-high
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => updateFilter("sort", "price_desc")}
-              >
+                onClick={() => updateFilter("sort", "price_desc")}>
                 Price: high-low
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => updateFilter("sort", "newest")}>
                 Newest
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => updateFilter("sort", "bestselling")}
-              >
+                onClick={() => updateFilter("sort", "bestselling")}>
                 BestSelling
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -240,19 +223,17 @@ function Filters({
         <div>
           <button
             className="text-sm px-2 bg-white border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700"
-            onClick={clearAllFilters}
-          >
+            onClick={clearAllFilters}>
             Clear Filters
           </button>
         </div>
       </div>
       {/* {MOBILE} */}
-      <div className="sm:hidden grid grid-cols-3 px-2 items-center gap-2 mb-4">
+      <div className="lg:hidden grid grid-cols-3 px-2 items-center gap-2 mb-4">
         <input
           placeholder="search products..."
           value={search}
           onChange={(e) => {
-            setSearch(e.target.value);
             handleSearch(e.target.value);
           }}
           className="focus:outline-none focus:ring-0 border-2 col-span-2 rounded-2xl px-2 py-1 text-[16px] border-neutral-500 text-black flex-1"
@@ -268,8 +249,7 @@ function Filters({
             <SheetContent
               side="bottom"
               className="h-fit pt-10 pb-15 bg-black/30 backdrop-blur-md backdrop-saturate-150"
-              showCloseButton={false}
-            >
+              showCloseButton={false}>
               <SheetTitle className="px-5 text-white">Filters</SheetTitle>
               <div className="grid grid-cols-2 gap-x-10 gap-y-5 mt-4 p-5">
                 {/* SIZE */}
@@ -286,16 +266,14 @@ function Filters({
                       </DropdownMenuLabel>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => updateFilter("size", "")}
-                      >
+                        onClick={() => updateFilter("size", "")}>
                         All
                       </DropdownMenuItem>
                       {allSizes.map((size) => (
                         <DropdownMenuItem
                           key={size}
                           className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                          onClick={() => updateFilter("size", size)}
-                        >
+                          onClick={() => updateFilter("size", size)}>
                           {size}
                         </DropdownMenuItem>
                       ))}
@@ -316,16 +294,14 @@ function Filters({
                       </DropdownMenuLabel>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => updateFilter("gender", "")}
-                      >
+                        onClick={() => updateFilter("gender", "")}>
                         All
                       </DropdownMenuItem>
                       {allGenders.map((gender) => (
                         <DropdownMenuItem
                           key={gender}
                           className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                          onClick={() => updateFilter("gender", gender)}
-                        >
+                          onClick={() => updateFilter("gender", gender)}>
                           {formatAllCaps(gender)}
                         </DropdownMenuItem>
                       ))}
@@ -346,16 +322,14 @@ function Filters({
                       </DropdownMenuLabel>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => updateFilter("color", "")}
-                      >
+                        onClick={() => updateFilter("color", "")}>
                         All
                       </DropdownMenuItem>
                       {allColors.map((color) => (
                         <DropdownMenuItem
                           key={color}
                           className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                          onClick={() => updateFilter("color", color)}
-                        >
+                          onClick={() => updateFilter("color", color)}>
                           {color}
                         </DropdownMenuItem>
                       ))}
@@ -376,16 +350,14 @@ function Filters({
                       </DropdownMenuLabel>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => updateFilter("category", "")}
-                      >
+                        onClick={() => updateFilter("category", "")}>
                         All
                       </DropdownMenuItem>
                       {allCategories.map((category) => (
                         <DropdownMenuItem
                           key={category}
                           className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                          onClick={() => updateFilter("category", category)}
-                        >
+                          onClick={() => updateFilter("category", category)}>
                           {formatAllCaps(category)}
                         </DropdownMenuItem>
                       ))}
@@ -406,16 +378,14 @@ function Filters({
                       </DropdownMenuLabel>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => updateFilter("material", "")}
-                      >
+                        onClick={() => updateFilter("material", "")}>
                         All
                       </DropdownMenuItem>
                       {allMaterials.map((material) => (
                         <DropdownMenuItem
                           key={material}
                           className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                          onClick={() => updateFilter("material", material)}
-                        >
+                          onClick={() => updateFilter("material", material)}>
                           {material}
                         </DropdownMenuItem>
                       ))}
@@ -435,32 +405,27 @@ function Filters({
                     </DropdownMenuLabel>
                     <DropdownMenuItem
                       className="active:bg-neutral-100 transition duration-150"
-                      onClick={() => updateFilter("sort", "")}
-                    >
+                      onClick={() => updateFilter("sort", "")}>
                       Default
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="active:bg-neutral-100 transition duration-150"
-                      onClick={() => updateFilter("sort", "price_asc")}
-                    >
+                      onClick={() => updateFilter("sort", "price_asc")}>
                       Price: low-high
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="active:bg-neutral-100 transition duration-150"
-                      onClick={() => updateFilter("sort", "price_desc")}
-                    >
+                      onClick={() => updateFilter("sort", "price_desc")}>
                       Price: high-low
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="active:bg-neutral-100 transition duration-150"
-                      onClick={() => updateFilter("sort", "newest")}
-                    >
+                      onClick={() => updateFilter("sort", "newest")}>
                       Newest
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="active:bg-neutral-100 transition duration-150"
-                      onClick={() => updateFilter("sort", "bestselling")}
-                    >
+                      onClick={() => updateFilter("sort", "bestselling")}>
                       BestSelling
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -468,8 +433,7 @@ function Filters({
                 {/* CLEAR */}
                 <button
                   className="text-xs px-2 py-2 bg-transparent border-2 border-white rounded-2xl text-white w-full col-span-2 active:scale-95 active:bg-white/10 transition duration-150"
-                  onClick={clearAllFilters}
-                >
+                  onClick={clearAllFilters}>
                   Clear Filters
                 </button>
               </div>

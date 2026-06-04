@@ -25,8 +25,7 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
       <div>
         <Label
           className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
-          htmlFor="name"
-        >
+          htmlFor="name">
           Product Name
         </Label>
         <Input
@@ -60,6 +59,7 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
           <SelectTrigger className="border-2 w-full border-gray-300 text-[16px] sm:text-sm">
             <SelectValue placeholder="select a category" />
           </SelectTrigger>
+
           <SelectContent>
             <SelectGroup>
               <SelectItem value="TSHIRTS">T-Shirts</SelectItem>
@@ -67,6 +67,16 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
               <SelectItem value="DRESSES">Dresses</SelectItem>
               <SelectItem value="JACKETS">Jackets</SelectItem>
               <SelectItem value="ACTIVEWEAR">Activewear</SelectItem>
+              <SelectItem value="SWEATSHIRTS">Sweatshirts</SelectItem>
+              <SelectItem value="HOODIES">Hoodies</SelectItem>
+              <SelectItem value="SHIRTS">Shirts</SelectItem>
+              <SelectItem value="SHORTS">Shorts</SelectItem>
+              <SelectItem value="JORTS">Jorts</SelectItem>
+              <SelectItem value="TROUSERS">Trousers</SelectItem>
+              <SelectItem value="OUTERWEAR">Outerwear</SelectItem>
+              <SelectItem value="KNITWEAR">Knitwear</SelectItem>
+              <SelectItem value="ACCESSORIES">Accessories</SelectItem>
+              <SelectItem value="FOOTWEAR">Footwear</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

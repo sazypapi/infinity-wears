@@ -13,6 +13,7 @@ import { Suspense } from "react";
 import NavbarSkeleton from "../../components/Navbar/NavSkeleton";
 import FooterWrapper from "../../components/footer/FooterWrapper";
 import { auth } from "@clerk/nextjs/server";
+import { ScrollToTop } from "./ScrollToTop";
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
@@ -36,10 +37,10 @@ export default async function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body
           suppressHydrationWarning
-          className={`${montserrat.className} bg-white`}
-        >
+          className={`${montserrat.className} bg-white`}>
           <Providers>
             {/* <ClientOnly> */}
+            <ScrollToTop />
 
             <Suspense fallback={<NavbarSkeleton />}>
               <NavbarWrapper />
@@ -47,7 +48,7 @@ export default async function RootLayout({
             {/* </ClientOnly> */}
             <main className=" bg-white text-black">{children}</main>
             <FooterWrapper />
-            <div className="lg:hidden fixed bottom-1 left-0 right-0 z-999 flex justify-center pointer-events-none">
+            <div className="lg:hidden fixed bottom-2 left-0 right-0 z-999 flex justify-center pointer-events-none">
               <BottomNavWrapper isAdmin />
             </div>
             <Toaster />

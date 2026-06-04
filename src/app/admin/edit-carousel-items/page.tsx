@@ -1,4 +1,7 @@
-import { getHomeCarouselImages } from "../../../../utils/actions";
+import {
+  getCollectionsForHomeCarousel,
+  getHomeCarouselImages,
+} from "../../../../utils/actions";
 import Containers from "../../../../components/global/Containers";
 import {
   Breadcrumb,
@@ -12,7 +15,7 @@ import HomeCarousels from "../../../../components/admin/HomeCarousels";
 
 async function EditCarouselImages() {
   const carousels = await getHomeCarouselImages();
-
+  const collections = await getCollectionsForHomeCarousel();
   return (
     <Containers className="py-5 px-2">
       <Breadcrumb className="mb-5">
@@ -20,8 +23,7 @@ async function EditCarouselImages() {
           <BreadcrumbItem>
             <BreadcrumbLink
               className="hover:text-black duration-300 transition"
-              href="/admin"
-            >
+              href="/admin">
               Admin Page
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -35,7 +37,7 @@ async function EditCarouselImages() {
         </BreadcrumbList>
       </Breadcrumb>
       <h1 className="text-2xl font-bold mb-8 capitalize">edit carousels</h1>
-      <HomeCarousels allCarousels={carousels} />
+      <HomeCarousels allCarousels={carousels} collections={collections} />
     </Containers>
   );
 }

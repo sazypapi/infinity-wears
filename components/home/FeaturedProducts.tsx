@@ -48,8 +48,7 @@ export function FeaturedProducts({
       <Carousel
         plugins={[Autoplay({ delay: autoplayDelay })]}
         setApi={setApi}
-        className="w-full"
-      >
+        className="w-full">
         <CarouselContent>
           {items.map((product, index) => {
             const firstVariant = product.variants[0];
@@ -57,7 +56,7 @@ export function FeaturedProducts({
               <article className="group relative" key={product.id}>
                 <Link href={`/products/${product.slug}`}>
                   <CarouselItem className="basis-1/3 justify-center w-fit flex flex-col items-center">
-                    <div className="w-36 h-42 sm:w-60 sm:h-72 rounded-lg relative overflow-hidden">
+                    <div className="w-36 h-48 md:w-44 md:h-60 lg:w-52 lg:h-72 rounded-lg relative overflow-hidden">
                       <Image
                         src={firstVariant.coverImage}
                         alt={product.name}
@@ -76,7 +75,7 @@ export function FeaturedProducts({
                   </CarouselItem>
                 </Link>
                 {/* button passed in from server by index */}
-                <div className="absolute top-0 left-2 z-20">
+                <div className="absolute top-0 left-4 z-20">
                   {children[index]}
                 </div>
               </article>

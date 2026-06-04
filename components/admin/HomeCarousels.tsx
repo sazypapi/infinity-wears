@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { HomeCarousel } from "@/generated/prisma";
@@ -8,7 +9,13 @@ import { updateCarouselItems } from "../../utils/actions";
 import { SubmitButton } from "../form/Buttons";
 import HomeCarouselItems from "./HomeCarouselItems";
 
-function HomeCarousels({ allCarousels }: { allCarousels: HomeCarousel[] }) {
+function HomeCarousels({
+  allCarousels,
+  collections,
+}: {
+  allCarousels: HomeCarousel[];
+  collections: any[];
+}) {
   const [carousels, setCarousels] = useState<HomeCarousel[]>(
     allCarousels.length === 0
       ? [
@@ -81,30 +88,29 @@ function HomeCarousels({ allCarousels }: { allCarousels: HomeCarousel[] }) {
             return (
               <div
                 className="w-full p-1 border-b-2 border-neutral-500 last:border-none pb-5"
-                key={carousel.id}
-              >
+                key={carousel.id}>
                 <HomeCarouselItems
+                  collections={collections}
                   mobileImage={carousel.mobileImage}
                   image={carousel.image}
                   index={carousel.id}
                   link={carousel.link}
                   onChange={updateCarousel}
                   text={carousel.text}
+                  allCarousels={carousels}
                 />
                 <div className="w-full flex justify-end gap-2 mt-2">
                   <button
                     onClick={() => removeCarousel(carousel.id)}
                     className="text-red-500 bg-transparent px-2 py-1 text-xs hover:bg-red-500 hover:text-white border-2 border-red-500 transition duration-500 rounded-md"
-                    type="button"
-                  >
+                    type="button">
                     Remove
                   </button>
                   {index === carousels.length - 1 && (
                     <button
                       onClick={addCarousel}
                       className="text-neutral-950 bg-transparent px-2 py-1 hover:bg-black text-xs hover:text-white border-2 border-black transition duration-500 rounded-md"
-                      type="button"
-                    >
+                      type="button">
                       + Add New Carousel
                     </button>
                   )}

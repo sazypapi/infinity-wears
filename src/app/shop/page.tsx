@@ -7,6 +7,7 @@ type ShopPageProps = {
     material?: string;
     sort?: string;
     search?: string;
+    page?: string;
   };
 };
 import Header from "../../../components/shop/Header";
@@ -15,6 +16,7 @@ import Containers from "../../../components/global/Containers";
 import Products from "../../../components/shop/Products";
 import Filters from "../../../components/shop/Filters";
 import NoProducts from "../../../components/shop/NoProducts";
+import Pagination from "../../../components/shop/Pagination";
 
 async function Shop({
   searchParams,
@@ -22,9 +24,12 @@ async function Shop({
   searchParams: Promise<ShopPageProps["searchParams"]>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const { sortedProducts, allProductsCount } =
-    await getAllProductsForShop(resolvedSearchParams);
-  const products = sortedProducts;
+  const currentPage = Number(resolvedSearchParams.page) || 0;
+
+  const { products, filteredCount, hasMore } = await getAllProductsForShop(
+    resolvedSearchParams,
+    currentPage,
+  );
 
   const allColors = Array.from(
     new Set(
@@ -55,7 +60,7 @@ async function Shop({
         <Header />
         <Containers>
           <NoProducts
-            reason={allProductsCount === 0 ? "empty" : "filters"}
+            reason={filteredCount === 0 ? "empty" : "filters"}
             where="shop"
           />
         </Containers>
@@ -74,6 +79,7 @@ async function Shop({
           allMaterials={allMaterials}
         />
         <Products products={products} />
+        <Pagination currentPage={currentPage} hasMore={hasMore} />
       </Containers>
     </div>
   );

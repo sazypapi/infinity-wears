@@ -81,7 +81,7 @@ async function CollectionName({
           allGenders={allGenders}
           allCategories={allCategories}
           allMaterials={allMaterials}
-          basePath={`/collections/${collectionName}`} // 👈
+          basePath={`/collections/${collectionName}`}
         />
         <Products collectionName={collectionName} products={products} />
       </Containers>

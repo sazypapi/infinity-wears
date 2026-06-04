@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import { ColorVariant, Prisma, Review } from "@/generated/prisma";
 import { cn } from "@/lib/utils";
@@ -97,8 +98,7 @@ function ProductDetailsSmallScreen({
         <h2
           className={cn(
             isDiscount ? "line-through text-neutral-500 text-sm" : "text-sm",
-          )}
-        >
+          )}>
           {formatCurrency(currentVariant!.price)}
         </h2>
         <h2 className="flex flex-row text-sm">
@@ -128,8 +128,7 @@ function ProductDetailsSmallScreen({
                   className={cn(
                     "h-7 w-7 sm:h-10 sm:w-full flex justify-center items-center rounded-full sm:rounded-none border-2 border-neutral-300 hover:border-black transition duration-500",
                     isVariant ? variantClassNameSelect : "",
-                  )}
-                >
+                  )}>
                   <div
                     className="w-6 h-6 sm:h-5 sm:w-5 rounded-full border-2 border-neutral-300 shadow-2xl"
                     style={{ backgroundColor: currentVariant.colorHex }}
@@ -141,31 +140,32 @@ function ProductDetailsSmallScreen({
       </div>
       {/* SIZE */}
       <h4 className="text-sm mt-7 text-neutral-600">Size: {size}</h4>
-      <div className="grid sm:gap-3 gap-2 grid-cols-5">
-        {allSizes.map((currentSize) => {
-          const isSizeSelected = currentSize === size;
-          const isAvailable = currentVariant?.sizes.includes(currentSize);
+      {currentVariant?.sizes[0] !== "One Size" && (
+        <div className="grid sm:gap-3 gap-2 grid-cols-5">
+          {allSizes.map((currentSize) => {
+            const isSizeSelected = currentSize === size;
+            const isAvailable = currentVariant?.sizes.includes(currentSize);
 
-          return (
-            <button
-              key={currentSize}
-              disabled={!isAvailable}
-              onClick={() => isAvailable && setSize(currentSize)}
-              className={cn(
-                "w-full h-10 flex items-center justify-center border-2 text-sm transition duration-200",
-                isSizeSelected && isAvailable
-                  ? "bg-black text-white border-black"
-                  : "",
-                !isAvailable
-                  ? "bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed line-through"
-                  : "hover:bg-black hover:text-white border-black",
-              )}
-            >
-              {currentSize}
-            </button>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={currentSize}
+                disabled={!isAvailable}
+                onClick={() => isAvailable && setSize(currentSize)}
+                className={cn(
+                  "w-full h-10 flex items-center justify-center border-2 text-sm transition duration-200",
+                  isSizeSelected && isAvailable
+                    ? "bg-black text-white border-black"
+                    : "",
+                  !isAvailable
+                    ? "bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed line-through"
+                    : "hover:bg-black hover:text-white border-black",
+                )}>
+                {currentSize}
+              </button>
+            );
+          })}
+        </div>
+      )}
       {/* { ADD TO CART} */}
       <div className="grid grid-cols-5 justify-between gap-3 mt-10 items-center">
         <div className="col-span-2 grid grid-cols-3 justify-between items-center align-middle">
@@ -177,8 +177,7 @@ function ProductDetailsSmallScreen({
                 toast("You must have at least 1 product in cart");
                 return prev;
               });
-            }}
-          >
+            }}>
             -
           </Button>
           <p className="h-10 flex justify-center align-middle items-center text-lg text-center">
@@ -186,8 +185,7 @@ function ProductDetailsSmallScreen({
           </p>
           <Button
             className="bg-transparent rounded-none flex justify-center items-center p-0  h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500 text-black"
-            onClick={() => setAmount((prev) => prev + 1)}
-          >
+            onClick={() => setAmount((prev) => prev + 1)}>
             +
           </Button>
         </div>
@@ -219,8 +217,7 @@ function ProductDetailsSmallScreen({
                 <Button
                   type="button"
                   disabled
-                  className="w-full bg-transparent rounded-none p-0 text-black text-sm h-10 border-2 border-black hover:border-black hover:bg-black hover:text-white transition duration-500"
-                >
+                  className="w-full bg-transparent rounded-none p-0 text-black text-sm h-10 border-2 border-black hover:border-black hover:bg-black hover:text-white transition duration-500">
                   Out of stock
                 </Button>
               )
@@ -228,8 +225,7 @@ function ProductDetailsSmallScreen({
               <Button
                 asChild
                 type="button"
-                className="w-full bg-transparent rounded-none p-0 text-black text-sm h-10 border-2 border-black hover:border-black hover:bg-black hover:text-white transition duration-500"
-              >
+                className="w-full bg-transparent rounded-none p-0 text-black text-sm h-10 border-2 border-black hover:border-black hover:bg-black hover:text-white transition duration-500">
                 <SignInButton mode="modal">Add to Cart</SignInButton>
               </Button>
             )}

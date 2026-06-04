@@ -1,6 +1,6 @@
 "use client";
 import { ColorVariant } from "@/generated/prisma";
-import { useMemo, useState } from "react";
+import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import { toast } from "sonner";
 import AdminProductVariantsHeader from "./AdminProductVariantsHeader";
 import { Card } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import EditVariantCoverImageUploader from "./EditVariantCoverImageUploader";
 import FormContainer from "../form/FormContainer";
 import { SubmitButton } from "../form/Buttons";
 import { editVariants } from "../../utils/actions";
+import { SizeCategory } from "../../utils/types";
 type VariantForm = {
   id: string;
   colorName: string;
@@ -21,13 +22,18 @@ type VariantForm = {
   sizes: string[];
 };
 
-function EditVariantCards({
-  productVariants,
-  productId,
-}: {
-  productVariants: ColorVariant[];
-  productId: string;
-}) {
+const EditVariantCards = forwardRef(function EditVariantCards(
+  {
+    productVariants,
+    productId,
+    sizeCategory,
+  }: {
+    productVariants: ColorVariant[];
+    productId: string;
+    sizeCategory: SizeCategory;
+  },
+  ref: React.Ref<{ resetSizes: (category: SizeCategory) => void }>,
+) {
   const formattedForm: VariantForm[] = productVariants.map((variant) => ({
     id: variant.id,
     colorName: variant.colorName,
@@ -39,6 +45,17 @@ function EditVariantCards({
     sizes: variant.sizes,
   }));
   const [variants, setVariants] = useState<VariantForm[]>(formattedForm);
+  useImperativeHandle(ref, () => ({
+    resetSizes: (category: SizeCategory) => {
+      setVariants((prev) =>
+        prev.map((v) => ({
+          ...v,
+          sizes: category === "accessories" ? ["One Size"] : [],
+        })),
+      );
+    },
+  }));
+
   const variantsJson = useMemo(() => JSON.stringify(variants), [variants]);
 
   const addVariant = () => {
@@ -86,14 +103,14 @@ function EditVariantCards({
         {variants.map((variant, index) => (
           <Card
             key={variant.id}
-            className="w-full bg-white border-2 p-5 border-gray-200 mb-5"
-          >
+            className="w-full bg-white border-2 p-5 border-gray-200 mb-5">
             <EditBottomRowInputFieldsVariantCard
               discount={variant.discount}
               inStock={variant.inStock}
               index={variant.id}
               onChange={updateVariant}
               price={variant.price}
+              sizeCategory={sizeCategory}
               sizes={variant.sizes}
             />
             <EditVariantColor
@@ -107,36 +124,19 @@ function EditVariantCards({
               index={variant.id}
               onChange={updateVariant}
             />
-            {/* <div className="w-full flex justify-end gap-2">
-              <Button
-                onClick={() => removeVariant(variant.id)}
-                className="text-red-500 bg-transparent shadow-lg hover:bg-red-500 hover:text-white border-2 border-red-500 transition duration-500 "
-                type="button"
-              >
-                Remove
-              </Button>
-              <Button
-                onClick={addVariant}
-                className="text-neutral-950 bg-transparent shadow-lg hover:bg-black hover:text-white border-2 border-black transition duration-500 "
-                type="button"
-              >
-                + Add New Variant
-              </Button>
-            </div> */}
+
             <div className="w-full flex justify-end gap-2 mt-2">
               <button
                 onClick={() => removeVariant(variant.id)}
                 className="text-red-500 bg-transparent px-2 py-1 text-xs hover:bg-red-500 hover:text-white border-2 border-red-500 transition duration-500 rounded-md"
-                type="button"
-              >
+                type="button">
                 Remove
               </button>
               {index === variants.length - 1 && (
                 <button
                   onClick={addVariant}
                   className="text-neutral-950 bg-transparent px-2 py-1 hover:bg-black text-xs hover:text-white border-2 border-black transition duration-500 rounded-md"
-                  type="button"
-                >
+                  type="button">
                   + Add New Variant
                 </button>
               )}
@@ -144,11 +144,14 @@ function EditVariantCards({
           </Card>
         ))}
         <div className="p-3 w-full flex justify-end">
-          <SubmitButton text="Edit Variant" loadingText="Editing Variants..." />
+          <SubmitButton
+            text="Edit Variants"
+            loadingText="Editing Variants..."
+          />
         </div>
       </FormContainer>
     </Card>
   );
-}
+});
 
 export default EditVariantCards;

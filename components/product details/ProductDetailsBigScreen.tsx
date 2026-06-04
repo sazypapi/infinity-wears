@@ -92,8 +92,7 @@ function ProductDetailsBigScreen({
           <h2
             className={cn(
               isDiscount ? "line-through text-neutral-500 text-lg" : "text-lg",
-            )}
-          >
+            )}>
             {formatCurrency(currentVariant!.price)}
           </h2>
           <h2 className="flex flex-row text-lg">
@@ -127,8 +126,7 @@ function ProductDetailsBigScreen({
                   "p-2 flex justify-center items-center border-2 transition duration-500 border-neutral-300 hover:border-black",
                   isVariant ? variantClassNameSelect : "",
                 )}
-                type="button"
-              >
+                type="button">
                 <div
                   className="w-5 h-5 rounded-full border-2 border-neutral-300 shadow-2xl"
                   style={{ backgroundColor: variantItem.colorHex }}
@@ -139,6 +137,7 @@ function ProductDetailsBigScreen({
         </div>
 
         {/* SIZE */}
+
         <div className="mt-7">
           {currentVariant?.inStock ? (
             <h4 className="text-sm text-neutral-600">Size: {size}</h4>
@@ -146,35 +145,36 @@ function ProductDetailsBigScreen({
             ""
           )}
         </div>
-        <div className="grid gap-3 grid-cols-5">
-          {allSizes.map((currentSize) => {
-            const isSizeSelected = currentSize === size;
-            const isAvailable = currentVariant?.sizes.includes(currentSize);
-            const existsInAnyVariant = variants.some(
-              (v) => v.sizes.includes(currentSize) && v.inStock,
-            );
+        {currentVariant?.sizes[0] !== "One Size" && (
+          <div className="grid gap-3 grid-cols-5">
+            {allSizes.map((currentSize) => {
+              const isSizeSelected = currentSize === size;
+              const isAvailable = currentVariant?.sizes.includes(currentSize);
+              const existsInAnyVariant = variants.some(
+                (v) => v.sizes.includes(currentSize) && v.inStock,
+              );
 
-            return (
-              <button
-                key={currentSize}
-                disabled={!existsInAnyVariant}
-                type="button"
-                onClick={() => handleSizeClick(currentSize)}
-                className={cn(
-                  "w-full h-10 flex items-center justify-center border-2 transition duration-200",
-                  isSizeSelected && isAvailable
-                    ? "bg-black text-white border-black"
-                    : "",
-                  !existsInAnyVariant
-                    ? "bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed line-through"
-                    : "hover:bg-black hover:text-white border-black",
-                )}
-              >
-                {currentSize}
-              </button>
-            );
-          })}
-        </div>
+              return (
+                <button
+                  key={currentSize}
+                  disabled={!existsInAnyVariant}
+                  type="button"
+                  onClick={() => handleSizeClick(currentSize)}
+                  className={cn(
+                    "w-full h-10 flex items-center justify-center border-2 transition duration-200",
+                    isSizeSelected && isAvailable
+                      ? "bg-black text-white border-black"
+                      : "",
+                    !existsInAnyVariant
+                      ? "bg-neutral-100 text-neutral-400 border-neutral-200 cursor-not-allowed line-through"
+                      : "hover:bg-black hover:text-white border-black",
+                  )}>
+                  {currentSize}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div className="w-full mt-10">
@@ -190,16 +190,14 @@ function ProductDetailsBigScreen({
                   return prev;
                 });
               }}
-              type="button"
-            >
+              type="button">
               -
             </Button>
             <p className="w-7 text-center">{amount}</p>
             <Button
               className="bg-transparent rounded-none flex justify-center items-center p-0 w-12 h-10 border-2 border-black text-2xl hover:border-black hover:bg-black hover:text-white transition duration-500 text-black"
               onClick={() => setAmount((prev) => prev + 1)}
-              type="button"
-            >
+              type="button">
               +
             </Button>
           </div>
@@ -231,8 +229,7 @@ function ProductDetailsBigScreen({
                 <Button
                   type="button"
                   disabled
-                  className="bg-transparent text-black rounded-none p-0 w-80 h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500"
-                >
+                  className="bg-transparent text-black rounded-none p-0 w-80 h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500">
                   Out of stock
                 </Button>
               )
@@ -240,8 +237,7 @@ function ProductDetailsBigScreen({
               <Button
                 asChild
                 type="button"
-                className="bg-transparent text-black rounded-none p-0 w-80 h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500"
-              >
+                className="bg-transparent text-black rounded-none p-0 w-80 h-10 border-2 border-black text-xl hover:border-black hover:bg-black hover:text-white transition duration-500">
                 <SignInButton mode="modal">Add to Cart</SignInButton>
               </Button>
             )}

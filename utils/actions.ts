@@ -343,7 +343,6 @@ export const editVariants = async (
       colorHexSet.add(hexLower);
     }
 
-    // Confirm images before upsert
     await Promise.all(
       validatedFields.variants.map((variant) =>
         backendClient.publicFiles.confirmUpload({ url: variant.coverImage }),
@@ -362,6 +361,9 @@ export const editVariants = async (
             discount: variant.discount,
             inStock: variant.inStock,
             sizes: variant.sizes,
+            effectivePrice:
+              variant.price *
+              (1 - (variant.discount ? variant.discount : 0) / 100),
           },
           create: {
             id: variant.id,
@@ -373,10 +375,29 @@ export const editVariants = async (
             discount: variant.discount,
             inStock: variant.inStock,
             sizes: variant.sizes,
+            effectivePrice:
+              variant.price *
+              (1 - (variant.discount ? variant.discount : 0) / 100),
           },
         }),
       ),
     );
+    await db.product.update({
+      where: { id: productId },
+      data: {
+        hasStock:
+          (await db.colorVariant.count({
+            where: { productId, inStock: true },
+          })) > 0,
+        minEffectivePrice:
+          (
+            await db.colorVariant.aggregate({
+              where: { productId },
+              _min: { effectivePrice: true },
+            })
+          )._min.effectivePrice ?? 0,
+      },
+    });
   } catch (error) {
     return renderError(error);
   }
@@ -584,7 +605,7 @@ export const createCollection = async (
 export const getNewReleases = async () => {
   const latestProducts = await db.product.findMany({
     orderBy: { createdAt: "desc" },
-    take: 4,
+    take: 6,
     where: { status: "ACTIVE", variants: { some: { inStock: true } } },
     include: { variants: true },
   });
@@ -594,7 +615,7 @@ export const getNewReleases = async () => {
 export const getAlmostSoldOut = async () => {
   const almostSoldOut = await db.product.findMany({
     orderBy: { quantity: "asc" },
-    take: 8,
+    take: 10,
     where: {
       status: "ACTIVE",
       quantity: { gt: 0 },
@@ -931,69 +952,68 @@ export const updateCartItems = async (
   redirect("/cart");
 };
 
-export const getAllProductsForShop = async (filters: any) => {
+export const getAllProductsForShop = async (
+  filters: any,
+  page = 0,
+  take = 24,
+) => {
   const { size, color, gender, category, material, sort, search } = filters;
 
-  const [allProducts, allProductsCount] = await Promise.all([
-    db.product.findMany({
-      where: {
-        category: category || undefined,
-        gender: gender || undefined,
-        material: material || undefined,
-        ...(search && {
-          OR: [
-            { name: { contains: search, mode: "insensitive" } },
-            { description: { contains: search, mode: "insensitive" } },
-            { seoTitle: { contains: search, mode: "insensitive" } },
-            { seoDescription: { contains: search, mode: "insensitive" } },
-            { seoTags: { has: search } },
-            {
-              variants: {
-                some: { colorName: { contains: search, mode: "insensitive" } },
-              },
-            },
-          ],
-        }),
-        variants: {
-          some: {
-            ...(size && { sizes: { has: size } }),
-            ...(color && { colorName: color }),
+  const where = {
+    category: category || undefined,
+    gender: gender || undefined,
+    material: material || undefined,
+    ...(search && {
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+        { seoTitle: { contains: search, mode: "insensitive" } },
+        { seoDescription: { contains: search, mode: "insensitive" } },
+        { seoTags: { has: search } },
+        {
+          variants: {
+            some: { colorName: { contains: search, mode: "insensitive" } },
           },
         },
-      },
+      ],
+    }),
+    ...(size || color
+      ? {
+          variants: {
+            some: {
+              ...(size && { sizes: { has: size } }),
+              ...(color && { colorName: color }),
+            },
+          },
+        }
+      : {}),
+  };
+
+  const [products, filteredCount] = await Promise.all([
+    db.product.findMany({
+      where,
       include: { variants: true },
       orderBy:
         sort === "bestselling"
-          ? { sold: "desc" }
+          ? [{ hasStock: "desc" }, { sold: "desc" }]
           : sort === "newest"
-            ? { createdAt: "desc" }
-            : undefined,
+            ? [{ hasStock: "desc" }, { createdAt: "desc" }]
+            : sort === "price_asc"
+              ? [{ hasStock: "desc" }, { minEffectivePrice: "asc" }]
+              : sort === "price_desc"
+                ? [{ hasStock: "desc" }, { minEffectivePrice: "desc" }]
+                : [{ hasStock: "desc" }],
+      skip: page * take,
+      take,
     }),
-    db.product.count(),
+    db.product.count({ where }),
   ]);
 
-  const getEffectiveMinPrice = (
-    variants: (typeof allProducts)[0]["variants"],
-  ) =>
-    Math.min(
-      ...variants.map((v) =>
-        v.discount && v.discount > 0
-          ? v.price * (1 - v.discount / 100)
-          : v.price,
-      ),
-    );
-
-  const sortedProducts = allProducts.sort((a, b) => {
-    const aMinPrice = getEffectiveMinPrice(a.variants);
-    const bMinPrice = getEffectiveMinPrice(b.variants);
-    if (sort === "price_asc") return aMinPrice - bMinPrice;
-    if (sort === "price_desc") return bMinPrice - aMinPrice;
-    const aInStock = a.variants.some((v) => v.inStock) ? 1 : 0;
-    const bInStock = b.variants.some((v) => v.inStock) ? 1 : 0;
-    return bInStock - aInStock;
-  });
-
-  return { sortedProducts, allProductsCount };
+  return {
+    products,
+    filteredCount,
+    hasMore: (page + 1) * take < filteredCount,
+  };
 };
 
 export const getProductRatings = async (id: string) => {
@@ -1155,7 +1175,17 @@ export const fetchFavoriteId = async ({ productId }: { productId: string }) => {
   });
   return favorite?.id || null;
 };
-
+export const fetchFavoriteIds = async (productIds: string[]) => {
+  const { userId } = await auth();
+  if (!userId) return [];
+  const favorites = await db.wishlist.findMany({
+    where: { clerkId: userId, productId: { in: productIds } },
+  });
+  return productIds.map((productId) => {
+    const match = favorites.find((f) => f.productId === productId);
+    return match ? match.id : null;
+  });
+};
 export const getWishlist = async () => {
   const user = await getAuthUser();
   const wishlist = await db.wishlist.findMany({
@@ -1895,7 +1925,6 @@ export const updateCustomOrderRequestStatus = async (
   }
   redirect(`/admin/custom-orders/${orderId}`);
 };
-
 export const createOrUpdateAdminNote = async (
   prevState: any,
   formData: FormData,
@@ -1919,8 +1948,11 @@ export const createOrUpdateAdminNote = async (
   }
   redirect(`/admin/custom-orders/${orderId}`);
 };
-
-export const getProductsForSearch = async (search: string) => {
+export const getProductsForSearch = async (
+  search: string,
+  page = 0,
+  take = 24,
+) => {
   const [products, allProductsCount] = await Promise.all([
     db.product.findMany({
       where: {
@@ -1940,6 +1972,8 @@ export const getProductsForSearch = async (search: string) => {
         }),
       },
       include: { variants: true },
+      skip: page * take,
+      take,
     }),
     db.product.count(),
   ]);
@@ -1950,5 +1984,16 @@ export const getProductsForSearch = async (search: string) => {
     return bInStock - aInStock;
   });
 
-  return { sortedProducts, allProductsCount };
+  return {
+    sortedProducts,
+    allProductsCount,
+    hasMore: (page + 1) * take < allProductsCount,
+  };
+};
+export const getCollectionsForHomeCarousel = async () => {
+  const collections = await db.collection.findMany({
+    where: { products: { some: {} }, collectionLinks: { some: {} } },
+    include: { collectionLinks: true },
+  });
+  return collections;
 };

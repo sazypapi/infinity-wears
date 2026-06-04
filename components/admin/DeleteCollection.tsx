@@ -22,8 +22,7 @@ function DeleteCollection({ collection }: { collection: Collection }) {
       <DialogTrigger asChild>
         <Button
           type="button"
-          className="bg-transparent border-none hover:bg-transparent text-black hover:cursor-pointer"
-        >
+          className="bg-transparent border-none hover:bg-transparent text-black hover:cursor-pointer">
           <AiFillDelete />
         </Button>
       </DialogTrigger>
@@ -31,14 +30,13 @@ function DeleteCollection({ collection }: { collection: Collection }) {
         className="sm:max-w-[425px]   bg-black/30 backdrop-blur-sm backdrop-saturate-150
         border-t
         shadow-lg
-        text-white rounded-4xl"
-      >
+        text-white rounded-4xl">
         <FormContainer action={deleteCollection}>
           <input type="hidden" name="id" value={collection.id} />
           <DialogHeader className="my-5">
             <DialogTitle>Once Deleted,</DialogTitle>
 
-            <DialogDescription className="text-sm">
+            <DialogDescription className="text-sm text-white">
               Once this collection is deleted, all products that belong to it
               will no longer have a collection name. This action cannot be
               undone, and the collection name cannot be recovered.
@@ -46,7 +44,10 @@ function DeleteCollection({ collection }: { collection: Collection }) {
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="outline">
+              <Button
+                type="button"
+                variant="outline"
+                className="bg-transparent text-white border-2 border-white transition duration-500">
                 Cancel
               </Button>
             </DialogClose>

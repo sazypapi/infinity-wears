@@ -1,3 +1,4 @@
+import { Category } from "@/generated/prisma";
 import * as z from "zod";
 const collectionId = (fieldName: string) =>
   z.preprocess(
@@ -129,7 +130,7 @@ export const createProductSchema = z.object({
   ),
   status: z.enum(["ACTIVE", "INACTIVE", "DRAFT"]).default("ACTIVE"),
   gender: z.enum(["MALE", "FEMALE", "UNISEX"]).default("UNISEX"),
-  category: z.enum(["TSHIRTS", "JEANS", "DRESSES", "JACKETS", "ACTIVEWEAR"]),
+  category: z.nativeEnum(Category),
   collectionId: collectionId("collectionId"),
   material: z
     .string()
@@ -197,7 +198,7 @@ export const editProductDetailsSchema = z.object({
   ),
   status: z.enum(["ACTIVE", "INACTIVE", "DRAFT"]).default("ACTIVE"),
   gender: z.enum(["MALE", "FEMALE", "UNISEX"]).default("UNISEX"),
-  category: z.enum(["TSHIRTS", "JEANS", "DRESSES", "JACKETS", "ACTIVEWEAR"]),
+  category: z.nativeEnum(Category),
   collectionId: collectionId("collectionId"),
   material: z
     .string()

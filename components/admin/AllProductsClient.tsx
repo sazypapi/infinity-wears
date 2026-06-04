@@ -105,7 +105,7 @@ function AllProductsClient({ products }: { products: products[] }) {
       {/* {DESKTOP FILTERS} */}
       <div className="hidden sm:flex gap-2 mb-4">
         <input
-          placeholder="search name or order ID..."
+          placeholder="search name or product ID..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="border-2 rounded-2xl px-2 py-1 text-xs border-neutral-500 text-black"
@@ -125,26 +125,22 @@ function AllProductsClient({ products }: { products: products[] }) {
               </DropdownMenuLabel>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setinStock("")}
-              >
+                onClick={() => setinStock("")}>
                 All
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setinStock("in stock")}
-              >
+                onClick={() => setinStock("in stock")}>
                 In Stock
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setinStock("out of stock")}
-              >
+                onClick={() => setinStock("out of stock")}>
                 Out of Stock
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setinStock("low stock")}
-              >
+                onClick={() => setinStock("low stock")}>
                 Low Stock
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -165,32 +161,27 @@ function AllProductsClient({ products }: { products: products[] }) {
               </DropdownMenuLabel>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setDateFilter("")}
-              >
+                onClick={() => setDateFilter("")}>
                 All Time
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setDateFilter("7days")}
-              >
+                onClick={() => setDateFilter("7days")}>
                 Last 7 days
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setDateFilter("30days")}
-              >
+                onClick={() => setDateFilter("30days")}>
                 Last 30 Days
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setDateFilter("90days")}
-              >
+                onClick={() => setDateFilter("90days")}>
                 Last 90 Days
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setDateFilter("thisYear")}
-              >
+                onClick={() => setDateFilter("thisYear")}>
                 This Year
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -211,38 +202,32 @@ function AllProductsClient({ products }: { products: products[] }) {
               </DropdownMenuLabel>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setNumVariants(0)}
-              >
+                onClick={() => setNumVariants(0)}>
                 All
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setNumVariants(1)}
-              >
+                onClick={() => setNumVariants(1)}>
                 1
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setNumVariants(2)}
-              >
+                onClick={() => setNumVariants(2)}>
                 2
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setNumVariants(3)}
-              >
+                onClick={() => setNumVariants(3)}>
                 3
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setNumVariants(4)}
-              >
+                onClick={() => setNumVariants(4)}>
                 4
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setNumVariants(5)}
-              >
+                onClick={() => setNumVariants(5)}>
                 5 +
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -266,8 +251,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                 </DropdownMenuLabel>
                 <DropdownMenuItem
                   className="capitalize text-black"
-                  onClick={() => setCollection("")}
-                >
+                  onClick={() => setCollection("")}>
                   All
                 </DropdownMenuItem>
                 {allCollections.map((collection) => {
@@ -275,8 +259,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                     <DropdownMenuItem
                       key={collection}
                       className="capitalize text-black"
-                      onClick={() => setCollection(collection!)}
-                    >
+                      onClick={() => setCollection(collection!)}>
                       {collection}
                     </DropdownMenuItem>
                   );
@@ -293,8 +276,7 @@ function AllProductsClient({ products }: { products: products[] }) {
             setNumVariants(0);
             setSearch("");
             setinStock("");
-          }}
-        >
+          }}>
           Clear Filters
         </button>
       </div>
@@ -317,8 +299,7 @@ function AllProductsClient({ products }: { products: products[] }) {
             <SheetContent
               side="bottom"
               className="h-fit pt-10 pb-15  bg-black/30 backdrop-blur-md backdrop-saturate-150"
-              showCloseButton={false}
-            >
+              showCloseButton={false}>
               <SheetTitle className="px-5 text-white">Filters</SheetTitle>
               <div className="grid grid-cols-2 gap-x-10 gap-y-5 mt-4 p-5">
                 {/* STOCK STATUS */}
@@ -335,26 +316,22 @@ function AllProductsClient({ products }: { products: products[] }) {
                       </DropdownMenuLabel>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setinStock("")}
-                      >
+                        onClick={() => setinStock("")}>
                         All
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setinStock("in stock")}
-                      >
+                        onClick={() => setinStock("in stock")}>
                         In Stock
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setinStock("out of stock")}
-                      >
+                        onClick={() => setinStock("out of stock")}>
                         Out of Stock
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setinStock("low stock")}
-                      >
+                        onClick={() => setinStock("low stock")}>
                         Low Stock
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
@@ -374,32 +351,27 @@ function AllProductsClient({ products }: { products: products[] }) {
                       </DropdownMenuLabel>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setDateFilter("")}
-                      >
+                        onClick={() => setDateFilter("")}>
                         All Time
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setDateFilter("7days")}
-                      >
+                        onClick={() => setDateFilter("7days")}>
                         Last 7 days
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setDateFilter("30days")}
-                      >
+                        onClick={() => setDateFilter("30days")}>
                         Last 30 Days
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setDateFilter("90days")}
-                      >
+                        onClick={() => setDateFilter("90days")}>
                         Last 90 Days
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setDateFilter("thisYear")}
-                      >
+                        onClick={() => setDateFilter("thisYear")}>
                         This Year
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
@@ -421,15 +393,13 @@ function AllProductsClient({ products }: { products: products[] }) {
                         <DropdownMenuItem
                           key={n}
                           className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                          onClick={() => setNumVariants(n)}
-                        >
+                          onClick={() => setNumVariants(n)}>
                           {n === 0 ? "All" : n}
                         </DropdownMenuItem>
                       ))}
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setNumVariants(5)}
-                      >
+                        onClick={() => setNumVariants(5)}>
                         5+
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
@@ -450,16 +420,14 @@ function AllProductsClient({ products }: { products: products[] }) {
                         </DropdownMenuLabel>
                         <DropdownMenuItem
                           className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                          onClick={() => setCollection("")}
-                        >
+                          onClick={() => setCollection("")}>
                           All
                         </DropdownMenuItem>
                         {allCollections.map((collection) => (
                           <DropdownMenuItem
                             key={collection}
                             className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                            onClick={() => setCollection(collection!)}
-                          >
+                            onClick={() => setCollection(collection!)}>
                             {collection}
                           </DropdownMenuItem>
                         ))}
@@ -476,8 +444,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                     setNumVariants(0);
                     setSearch("");
                     setinStock("");
-                  }}
-                >
+                  }}>
                   Clear Filters
                 </button>
               </div>
@@ -506,8 +473,7 @@ function AllProductsClient({ products }: { products: products[] }) {
                   setNumVariants(0);
                   setSearch("");
                   setinStock("");
-                }}
-              >
+                }}>
                 Clear Filters
               </Button>
             </EmptyContent>
@@ -519,8 +485,7 @@ function AllProductsClient({ products }: { products: products[] }) {
             return (
               <div
                 className="flex flex-row justify-between align-middle items-center bg-neutral-300 sm:py-3 p-2 sm:px-2 rounded-2xl mb-3"
-                key={product.id}
-              >
+                key={product.id}>
                 <div className="sm:w-16 sm:h-16 h-12 w-12 relative">
                   <Image
                     src={product.variants[0].coverImage}
@@ -545,12 +510,10 @@ function AllProductsClient({ products }: { products: products[] }) {
                 <Button
                   asChild
                   variant="link"
-                  className="text-neutral-950 bg-transparent p-1 sm:border-black sm:border-2 sm:hover:bg-black sm:hover:text-white sm:transition sm:duration-500 underline sm:no-underline underline-offset-3"
-                >
+                  className="text-neutral-950 bg-transparent p-1 sm:border-black sm:border-2 sm:hover:bg-black sm:hover:text-white sm:transition sm:duration-500 underline sm:no-underline underline-offset-3">
                   <Link
                     className="text-xs"
-                    href={`/admin/view-product/${product.slug}`}
-                  >
+                    href={`/admin/view-product/${product.slug}`}>
                     View Product
                   </Link>
                 </Button>

@@ -30,8 +30,10 @@ review Review[]
   updatedAt      DateTime       @updatedAt
   cartItem CartItem[]
   sold  Int @default(0)
+  hasStock Boolean @default(true)
  recentlyViewed RecentlyViewed[]
   wishlist Wishlist[]
+  minEffectivePrice Float @default(0)
 }
 
 model ColorVariant {
@@ -49,7 +51,7 @@ model ColorVariant {
   inStock    Boolean  @default(true)
   cartItem CartItem[]
   sizes      String[] 
-
+effectivePrice Float    @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -171,7 +173,6 @@ model UserProfile {
   address     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
   customOrders CustomOrder[]
 
   customPieceRequests CustomPieceRequest[]
@@ -238,12 +239,21 @@ enum Gender {
   UNISEX
 }
 enum Category {
-  TSHIRTS
-  JEANS
-  DRESSES
-  JACKETS
-  ACTIVEWEAR
-  SWEATSHIRT
+TSHIRTS
+JEANS
+DRESSES
+JACKETS
+ACTIVEWEAR
+SWEATSHIRTS
+HOODIES
+SHIRTS
+SHORTS
+JORTS
+TROUSERS
+OUTERWEAR
+KNITWEAR
+ACCESSORIES
+FOOTWEAR
 }
 
 enum OrderStatus {

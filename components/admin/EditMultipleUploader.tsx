@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,13 @@ import { Product } from "@/generated/prisma";
 import { useEdgeStore } from "@/lib/edgestore";
 import { useRef, useState } from "react";
 
-function EditMultipleUploader({ product }: { product: Product }) {
+function EditMultipleUploader({
+  product,
+  setImageUploaded,
+}: {
+  product: Product;
+  setImageUploaded: (uploaded: boolean) => void;
+}) {
   const [files, setFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
 
@@ -41,7 +48,7 @@ function EditMultipleUploader({ product }: { product: Product }) {
     }
 
     setUploadedUrls(urls);
-
+    setImageUploaded(true);
     // Clear UI
     setFiles([]);
     setFilePreviews([]);
@@ -86,10 +93,9 @@ function EditMultipleUploader({ product }: { product: Product }) {
             />
 
             <Button
-              variant="default"
+              className="bg-white text-black border-2 border-black hover:text-white hover:bg-black transition duration-500"
               onClick={handleUpload}
-              disabled={isUploading || files.length === 0}
-            >
+              disabled={isUploading || files.length === 0}>
               {isUploading ? "Uploading..." : "Upload"}
             </Button>
           </div>

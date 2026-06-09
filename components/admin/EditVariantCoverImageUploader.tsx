@@ -81,10 +81,9 @@ function EditVariantCoverImageUploader({ coverImage, index, onChange }: Props) {
               />
 
               <Button
-                variant="default"
+                className="bg-white text-black border-2 border-black hover:text-white hover:bg-black transition duration-500"
                 onClick={handleUpload}
-                disabled={isUploading || !file}
-              >
+                disabled={isUploading || !file}>
                 {isUploading ? "Uploading..." : "Upload"}
               </Button>
             </div>

@@ -208,6 +208,8 @@ export const editProductDetails = async (
       where: { id: productId },
       data: { ...validatedFields, collectionId },
     });
+    revalidatePath(`/admin/edit-product/${validatedSlug}`);
+    return { message: "Product details updated successfully" };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -216,7 +218,7 @@ export const editProductDetails = async (
     }
     return renderError(error);
   }
-  redirect(`/admin/view-product/${validatedSlug}`);
+  redirect(`/admin/edit-product/${validatedSlug}`);
 };
 
 export const editProductImages = async (
@@ -284,10 +286,11 @@ export const editProductImages = async (
     });
 
     revalidatePath(`/admin/edit-product/${currentProduct.slug}`);
+    return { message: "Product images updated successfully" };
   } catch (error) {
     return renderError(error);
   }
-  redirect(`/admin/view-product/${validatedSlug}`);
+  redirect(`/admin/edit-product/${validatedSlug}`);
 };
 
 export const editVariants = async (
@@ -398,10 +401,12 @@ export const editVariants = async (
           )._min.effectivePrice ?? 0,
       },
     });
+    revalidatePath(`/admin/edit-product/${existingSlug}`);
+    return { message: "Product variants updated successfully" };
   } catch (error) {
     return renderError(error);
   }
-  redirect(`/admin/view-product/${existingSlug}`);
+  redirect(`/admin/edit-product/${existingSlug}`);
 };
 
 export const deleteProduct = async (
@@ -640,7 +645,15 @@ export const getSingleProductDetails = async (slug: string) => {
   });
   return productDetails;
 };
-
+export const getSingleProductDetailsForCollectionsPage = async (
+  slug: string,
+) => {
+  const productDetails = await db.product.findUnique({
+    where: { slug },
+    include: { variants: true, collection: true },
+  });
+  return productDetails;
+};
 export const getYouMayAlsoLike = async (slug: string) => {
   const product = await db.product.findUnique({ where: { slug } });
   if (!product) return [];
@@ -1521,10 +1534,11 @@ export const updateCarouselItems = async (
         ),
       );
     }
+    return { message: "Carousel(s) updated successfully" };
   } catch (error) {
     return renderError(error);
   }
-  redirect("/admin/edit-carousel-items");
+  // redirect("/admin/edit-carousel-items");
 };
 
 export const getAllCollectionLinks = async () => {
@@ -1673,12 +1687,16 @@ export const getSingleCollectionLinkProducts = async (
     material?: string;
     sort?: string;
   },
-  collectionName: string,
+  collectionSlug: string,
 ) => {
   const { size, color, gender, category, material, sort } = filters;
 
   const productsFromCollectionLink = await db.collectionLink.findFirst({
-    where: { collectionName },
+    where: {
+      collection: {
+        slug: collectionSlug,
+      },
+    },
     include: {
       collection: {
         include: {
@@ -1996,4 +2014,93 @@ export const getCollectionsForHomeCarousel = async () => {
     include: { collectionLinks: true },
   });
   return collections;
+};
+export const getProductsForBestSellingPage = async (filters: any) => {
+  const { size, color, gender, category, material } = filters;
+
+  const where = {
+    category: category || undefined,
+    gender: gender || undefined,
+    material: material || undefined,
+
+    ...(size || color
+      ? {
+          variants: {
+            some: {
+              ...(size && { sizes: { has: size } }),
+              ...(color && { colorName: color }),
+            },
+          },
+        }
+      : {}),
+  };
+
+  const products = await db.product.findMany({
+    where,
+    include: { variants: true },
+    orderBy: [{ hasStock: "desc" }, { sold: "desc" }],
+    take: 24,
+  });
+  return products;
+};
+export const getProductsForCategoryPage = async (
+  category: string,
+  filters: any,
+  page = 0,
+  take = 24,
+) => {
+  const { size, color, gender, material, sort, search } = filters;
+  const where = {
+    category: category,
+    gender: gender || undefined,
+    material: material || undefined,
+    ...(search && {
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+        { seoTitle: { contains: search, mode: "insensitive" } },
+        { seoDescription: { contains: search, mode: "insensitive" } },
+        { seoTags: { has: search } },
+        {
+          variants: {
+            some: { colorName: { contains: search, mode: "insensitive" } },
+          },
+        },
+      ],
+    }),
+    ...(size || color
+      ? {
+          variants: {
+            some: {
+              ...(size && { sizes: { has: size } }),
+              ...(color && { colorName: color }),
+            },
+          },
+        }
+      : {}),
+  };
+  const [products, filteredCount] = await Promise.all([
+    db.product.findMany({
+      where,
+      include: { variants: true },
+      orderBy:
+        sort === "bestselling"
+          ? [{ hasStock: "desc" }, { sold: "desc" }]
+          : sort === "newest"
+            ? [{ hasStock: "desc" }, { createdAt: "desc" }]
+            : sort === "price_asc"
+              ? [{ hasStock: "desc" }, { minEffectivePrice: "asc" }]
+              : sort === "price_desc"
+                ? [{ hasStock: "desc" }, { minEffectivePrice: "desc" }]
+                : [{ hasStock: "desc" }],
+      skip: page * take,
+      take,
+    }),
+    db.product.count({ where }),
+  ]);
+  return {
+    products,
+    filteredCount,
+    hasMore: (page + 1) * take < filteredCount,
+  };
 };

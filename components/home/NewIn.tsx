@@ -21,20 +21,16 @@ async function NewIn() {
           return (
             <article
               className={`group relative ${
-                i >= 6
-                  ? "hidden"
-                  : i >= 4
-                    ? "hidden md:block lg:hidden"
-                    : "block"
+                i >= 6 ? "hidden" : i >= 4 ? "hidden md:block lg:hidden" : ""
               }`}
               key={product.id}>
               <Link href={`/products/${product.slug}`}>
                 <div className="justify-center w-fit flex flex-col group items-center">
-                  <div className="w-40 h-56 md:w-44 md:h-60 lg:w-52 lg:h-72 rounded-lg  relative overflow-hidden">
+                  <div className="w-40 h-56 md:w-44 md:h-60 lg:w-52 lg:h-72 rounded-lg relative overflow-hidden isolate">
                     <HoverSwapImage
                       defaultImage={firstVariant.coverImage}
                       hoverImage={
-                        secondVariant?.coverImage ?? firstVariant.coverImage
+                        secondVariant?.coverImage ?? product.images[0]
                       }
                       alt={product.name}
                     />

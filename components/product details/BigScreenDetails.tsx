@@ -44,7 +44,7 @@ function BigScreenDetails({
   return (
     <div className="shadow-sm rounded-sm px-2 py-10  w-full ">
       <div className="w-full flex justify-between gap-10">
-        <div className="flex flex-3/5">
+        <div className="flex basis-4/6">
           <ScrollArea className="h-180 w-full rounded-md border-2 border-neutral-100">
             <ProductDetailsImagesBigScreen
               currentVariantId={currentVariantId}
@@ -53,7 +53,7 @@ function BigScreenDetails({
             <ScrollBar orientation="vertical" />
           </ScrollArea>
         </div>
-        <div className="flex flex-2/5">
+        <div className="flex basis-2/6">
           <ProductDetailsBigScreen
             currentId={currentVariantId}
             productDetails={productDetails}

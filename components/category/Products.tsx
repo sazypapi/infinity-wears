@@ -13,10 +13,10 @@ type ProductsProps = {
 };
 function Products({
   products,
-  collectionSlug,
+  categoryName,
 }: {
   products: ProductsProps["products"];
-  collectionSlug: string;
+  categoryName: string;
 }) {
   return (
     <div className="sm:py-10 ">
@@ -31,7 +31,7 @@ function Products({
           return (
             <article key={product.id} className="group relative ">
               <Link
-                href={`/collections/${collectionSlug}/products/${product.slug}`}>
+                href={`/collections/category/${categoryName}/products/${product.slug}`}>
                 <div className="justify-center w-fit flex flex-col group items-center relative">
                   {!isAnyVariantInStock ? (
                     <div className="absolute right-0 top-0 z-20">

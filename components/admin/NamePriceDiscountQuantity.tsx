@@ -75,6 +75,10 @@ function NamePriceDiscountQuantity({ value }: { value?: string }) {
               <SelectItem value="KNITWEAR">Knitwear</SelectItem>
               <SelectItem value="ACCESSORIES">Accessories</SelectItem>
               <SelectItem value="FOOTWEAR">Footwear</SelectItem>
+              <SelectItem value="DOUBLELAYERLONGSLEEVE">
+                Double Layer Long Sleeve
+              </SelectItem>
+              <SelectItem value="TANKTOPS">Tank Tops</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

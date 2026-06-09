@@ -42,14 +42,12 @@ async function page() {
         {allCollections.map((collection) => {
           return (
             <Link
-              href={`/collections/${collection.collectionName}`}
-              key={collection.id}
-            >
+              href={`/collections/${collection.collection.slug}`}
+              key={collection.id}>
               <div className="overflow-hidden border-3 border-black hover:border-white transition duration-500">
                 <div
                   className="relative h-[50vh] w-full bg-cover bg-center transition duration-500 hover:scale-105"
-                  style={{ backgroundImage: `url(${collection.image})` }}
-                >
+                  style={{ backgroundImage: `url(${collection.image})` }}>
                   <div className="absolute inset-0 bg-black/30" />
                   <div className="relative z-10 flex flex-col items-center justify-center h-full">
                     <h1 className="text-base sm:text-2xl text-white">

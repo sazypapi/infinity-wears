@@ -1,20 +1,12 @@
+import React from "react";
 import {
+  fetchFavoriteId,
   getProductRatings,
   getProductReviews,
   getSingleProductDetails,
   getYouMayAlsoLike,
 } from "../../../../../../utils/actions";
-import Containers from "../../../../../../components/global/Containers";
-import BigScreenDetails from "../../../../../../components/product details/BigScreenDetails";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import SmallScreenDetails from "../../../../../../components/product details/SmallScreenDetails";
+import { auth } from "@clerk/nextjs/server";
 import {
   Empty,
   EmptyContent,
@@ -26,17 +18,21 @@ import {
 import { RxValueNone } from "react-icons/rx";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { fetchFavoriteId } from "../../../../../../utils/actions";
-import { auth } from "@clerk/nextjs/server";
-async function ProductDetailsPage({
-  params,
-}: {
-  params: Promise<{ slug: string; collectionName: string }>;
-}) {
-  const { slug, collectionName } = await params;
-  const productDetails = await getSingleProductDetails(slug);
-  const decodedCollectionName = decodeURIComponent(collectionName);
+import Containers from "../../../../../../components/global/Containers";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import BigScreenDetails from "../../../../../../components/product details/BigScreenDetails";
+import SmallScreenDetails from "../../../../../../components/product details/SmallScreenDetails";
 
+async function page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const productDetails = await getSingleProductDetails(slug);
   const { userId } = await auth();
   if (!productDetails) {
     return (
@@ -45,12 +41,14 @@ async function ProductDetailsPage({
           <EmptyMedia variant="icon">
             <RxValueNone />
           </EmptyMedia>
-          <EmptyTitle>Couldn't find product</EmptyTitle>
-          <EmptyDescription>This product doesn't exist</EmptyDescription>
+          <EmptyTitle>Couldn&apos;t find product</EmptyTitle>
+          <EmptyDescription>This product doesn&apos;t exist</EmptyDescription>
         </EmptyHeader>
         <EmptyContent className="flex-row justify-center gap-2">
           <Button className="bg-white text-black border-2 border-black hover:text-white hover:bg-black transition duration-500">
-            <Link href="/shop">Go to Shop</Link>
+            <Link href="/collections/best-selling">
+              Go back to Best Selling
+            </Link>
           </Button>
         </EmptyContent>
       </Empty>
@@ -67,7 +65,6 @@ async function ProductDetailsPage({
   if ("error" in result) {
     return <div>Error loading ratings</div>;
   }
-
   const {
     oneStar,
     twoStar,
@@ -81,7 +78,6 @@ async function ProductDetailsPage({
   if (!Array.isArray(reviews)) {
     return <div>Error loading ratings</div>;
   }
-
   return (
     <Containers className="py-5  px-2">
       <Breadcrumb className="mb-4">
@@ -89,8 +85,7 @@ async function ProductDetailsPage({
           <BreadcrumbItem>
             <BreadcrumbLink
               className="hover:text-black duration-300 transition text-xs sm:text-sm"
-              href="/"
-            >
+              href="/">
               Infinity Wears
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -98,8 +93,7 @@ async function ProductDetailsPage({
           <BreadcrumbItem>
             <BreadcrumbLink
               className="hover:text-black duration-300 transition text-xs sm:text-sm"
-              href="/collections"
-            >
+              href="/collections">
               Collections
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -107,9 +101,8 @@ async function ProductDetailsPage({
           <BreadcrumbItem>
             <BreadcrumbLink
               className="hover:text-black duration-300 transition text-xs sm:text-sm capitalize"
-              href={`/collections/${collectionName}`}
-            >
-              {decodedCollectionName}
+              href={`/collections/best-selling`}>
+              Best Selling
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
@@ -156,5 +149,4 @@ async function ProductDetailsPage({
     </Containers>
   );
 }
-
-export default ProductDetailsPage;
+export default page;

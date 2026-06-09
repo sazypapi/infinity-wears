@@ -10,7 +10,7 @@ function EditSEO({ product }: { product: Product }) {
           <FormInput
             name="seoTitle"
             type="text"
-            label="SEO Title"
+            label="SEO Titlee"
             defaultValue={product.seoTitle}
           />
         </div>

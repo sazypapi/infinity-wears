@@ -21,15 +21,14 @@ async function CollectionName({
   params,
   searchParams,
 }: {
-  params: Promise<{ collectionName: string }>;
+  params: Promise<{ collectionSlug: string }>;
   searchParams: Promise<ShopPageProps["searchParams"]>;
 }) {
-  const { collectionName } = await params;
-  const decodedCollectionName = decodeURIComponent(collectionName);
+  const { collectionSlug } = await params;
   const resolvedSearchParams = await searchParams;
   const getCollectionLinksProducts = await getSingleCollectionLinkProducts(
     resolvedSearchParams,
-    decodedCollectionName,
+    collectionSlug,
   );
   if (!getCollectionLinksProducts) notFound();
   const products = getCollectionLinksProducts.collection.products;
@@ -81,9 +80,9 @@ async function CollectionName({
           allGenders={allGenders}
           allCategories={allCategories}
           allMaterials={allMaterials}
-          basePath={`/collections/${collectionName}`}
+          basePath={`/collections/${collectionSlug}`}
         />
-        <Products collectionName={collectionName} products={products} />
+        <Products collectionSlug={collectionSlug} products={products} />
       </Containers>
     </div>
   );

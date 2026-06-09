@@ -189,7 +189,7 @@ function HomeCarouselItems({
                   return (
                     <SelectItem
                       key={collection.id}
-                      value={`/collections/${collection.name}`}
+                      value={`/collections/${collection.slug}`}
                       className="capitalize">
                       {collection.name}
                     </SelectItem>

@@ -33,9 +33,8 @@ function CollectionsDropdown({
                   return (
                     <NavigationMenuLink asChild key={link.id}>
                       <Link
-                        href={`/collections/${link.collectionName}`}
-                        className="text-xs capitalize"
-                      >
+                        href={`/collections/${link.collection.slug}`}
+                        className="text-xs capitalize">
                         {link.collectionName}
                       </Link>
                     </NavigationMenuLink>

@@ -22,13 +22,15 @@ function HoverSwapImage({
         src={defaultImage}
         alt={alt}
         fill
-        className={`object-cover transition-opacity duration-500 ${hovered ? "opacity-0" : "opacity-100"}`}
+        priority
+        className={`object-cover h-full w-full transition-opacity duration-500 ${hovered ? "opacity-0" : "opacity-100"}`}
       />
       <Image
+        priority
         src={hoverImage}
         alt={alt}
         fill
-        className={`object-cover transition-opacity duration-500 ${hovered ? "opacity-100" : "opacity-0"}`}
+        className={`object-cover h-full w-full transition-opacity duration-500 ${hovered ? "opacity-100" : "opacity-0"}`}
       />
     </div>
   );

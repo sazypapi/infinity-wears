@@ -1,4 +1,4 @@
-function Header() {
+function Header({ link }: { link?: string }) {
   return (
     <div
       className="relative h-20 sm:h-60 w-full bg-cover bg-center"
@@ -9,11 +9,14 @@ function Header() {
       <div className="relative z-10 flex items-center justify-center h-full">
         <div className="flex flex-col justify-center align-middle items-center">
           <h1 className="sm:text-4xl text-xl font-extrabold text-white">
-            Our Best Selling Products
+            {link === "new-in"
+              ? "Our latest Products"
+              : "Our Best Selling Products"}
           </h1>
           <h3 className="sm:text-lg text-xs text-white">
-            Shop our most popular items that customers love and keep coming back
-            for.
+            {link === "new-in"
+              ? "Discover our newest arrivals and be the first to experience the latest trends."
+              : "Shop our most popular items that customers love and keep coming back for."}
           </h3>
         </div>
       </div>

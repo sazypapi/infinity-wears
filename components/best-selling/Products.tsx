@@ -11,7 +11,13 @@ type ProductWithVariants = Prisma.ProductGetPayload<{
 type ProductsProps = {
   products: ProductWithVariants[];
 };
-function Products({ products }: { products: ProductsProps["products"] }) {
+function Products({
+  products,
+  link,
+}: {
+  products: ProductsProps["products"];
+  link?: string;
+}) {
   return (
     <div className="sm:py-10 ">
       <div className="w-full grid grid-cols-2 mt-5 gap-y-5 md:grid-cols-3 lg:grid-cols-4 justify-items-center items-center text-center">
@@ -24,7 +30,12 @@ function Products({ products }: { products: ProductsProps["products"] }) {
           const isVariantSoldOut = product.quantity <= 0;
           return (
             <article key={product.id} className="group relative ">
-              <Link href={`/collections/best-selling/products/${product.slug}`}>
+              <Link
+                href={
+                  link === "new-in"
+                    ? `/collections/new-in/products/${product.slug}`
+                    : `/collections/best-selling/products/${product.slug}`
+                }>
                 <div className="justify-center w-fit flex flex-col group items-center relative">
                   {!isAnyVariantInStock ? (
                     <div className="absolute right-0 top-0 z-20">

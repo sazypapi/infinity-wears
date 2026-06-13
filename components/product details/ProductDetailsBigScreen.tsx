@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import { Button } from "@/components/ui/button";
 import { ColorVariant, Prisma } from "@/generated/prisma";
@@ -38,10 +39,23 @@ function ProductDetailsBigScreen({
   }, [variantId]);
 
   const currentVariant = variants.find((variant) => variant.id === variantId);
+  const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
   const allSizes = Array.from(
     new Set(variants.flatMap((variant) => variant.sizes)),
-  );
+  ).sort((a, b) => {
+    const ai = SIZE_ORDER.indexOf(a);
+    const bi = SIZE_ORDER.indexOf(b);
 
+    const aNum = Number(a);
+    const bNum = Number(b);
+
+    if (ai !== -1 && bi !== -1) return ai - bi;
+    if (ai !== -1) return -1;
+    if (bi !== -1) return 1;
+    if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+    return a.localeCompare(b); // fallback
+  });
   const [size, setSize] = useState(currentVariant!.sizes[0]);
 
   useEffect(() => {

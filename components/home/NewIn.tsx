@@ -24,7 +24,7 @@ async function NewIn() {
                 i >= 6 ? "hidden" : i >= 4 ? "hidden md:block lg:hidden" : ""
               }`}
               key={product.id}>
-              <Link href={`/products/${product.slug}`}>
+              <Link href={`/collections/new-in/products/${product.slug}`}>
                 <div className="justify-center w-fit flex flex-col group items-center">
                   <div className="w-40 h-56 md:w-44 md:h-60 lg:w-52 lg:h-72 rounded-lg relative overflow-hidden isolate">
                     <HoverSwapImage
@@ -53,7 +53,9 @@ async function NewIn() {
         })}
       </div>
       <div className="flex items-center pt-8 justify-center justify-items-center md:hidden">
-        <FeaturedProducts items={latestProducts}>
+        <FeaturedProducts
+          items={latestProducts}
+          link={`/collections/new-in/products/`}>
           {latestProducts.map((product) => (
             <FavoriteToggleButton key={product.id} productId={product.id} />
           ))}

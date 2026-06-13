@@ -25,7 +25,7 @@ async function Search({
   searchParams: Promise<SearchPageProps["searchParams"]>;
 }) {
   const resolvedParams = await searchParams;
-  const currentPage = Number(resolvedParams.page) || 0;
+  const currentPage = Number(resolvedParams.page) || 1;
 
   const { sortedProducts, allProductsCount, hasMore } =
     await getProductsForSearch(resolvedParams.search ?? "", currentPage);

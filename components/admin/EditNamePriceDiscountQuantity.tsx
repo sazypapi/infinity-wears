@@ -33,7 +33,7 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
           onChange={(e) => setName(e.target.value)}
           name="name"
           type="text"
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300  placeholder:text-[16px] sm:placeholder:text-sm sm:text-sm text-[16px]"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300  placeholder:text-[16px]  text-[16px]"
           value={name}
           placeholder="product Name"
           required
@@ -56,7 +56,7 @@ function EditNamePriceDiscountQuantity({ product }: { product: Product }) {
           Category
         </Label>
         <Select required name="category" defaultValue={product.category || ""}>
-          <SelectTrigger className="border-2 w-full border-gray-300 text-[16px] sm:text-sm">
+          <SelectTrigger className="border-2 w-full border-gray-300 text-[16px]">
             <SelectValue placeholder="select a category" />
           </SelectTrigger>
 

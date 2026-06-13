@@ -17,14 +17,16 @@ function EditVariantColor({ colorHex, colorName, index, onChange }: Props) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-7 sm:gap-10 text-black">
       <div>
-        <Label className="text-xa text-sm" htmlFor="colorName">
+        <Label
+          className="capitalize mb-1 sm:mb-2 text-xs sm:text-sm"
+          htmlFor="colorName">
           Color Name
         </Label>
         <Input
           id="colorName"
           name="colorName"
           type="text"
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 text-xs sm:text-sm"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 text-[16px]"
           value={colorName}
           onChange={(e) => onChange(index, "colorName", e.target.value)}
           placeholder="Enter Color Name"
@@ -47,8 +49,7 @@ function EditVariantColor({ colorHex, colorName, index, onChange }: Props) {
           <p className="text-black">{colorHex}</p>
           <div
             className="w-5 h-5 rounded-full border"
-            style={{ backgroundColor: colorHex }}
-          ></div>
+            style={{ backgroundColor: colorHex }}></div>
         </div>
       </div>
     </div>

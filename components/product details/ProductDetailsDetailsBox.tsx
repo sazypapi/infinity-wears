@@ -1,4 +1,6 @@
 import { Prisma } from "@/generated/prisma";
+import Link from "next/link";
+import { formatCategory } from "../../utils/format-categoryName";
 
 type ProductWithVariants = Prisma.ProductGetPayload<{
   include: { variants: true };
@@ -12,7 +14,6 @@ function ProductDetailsDetailsBox({
     status.charAt(0) + status.slice(1).toLowerCase();
   return (
     <>
-      {" "}
       <div className="shadow-sm mt-7 rounded-2xl p-3 border">
         <div>
           <h2 className="text-sm text-neutral-600">Description</h2>
@@ -22,20 +23,26 @@ function ProductDetailsDetailsBox({
         <div className="grid grid-cols-3 mt-5">
           <div className="flex justify-start flex-col">
             <p className="text-xs text-neutral-600">Category: </p>
-            <span className="text-black text-xs">
-              {[formatStatus(productDetails.category)]}
+            <span className="text-black text-xs underline truncate">
+              <Link
+                href={`/collections/category/${productDetails.category.toLowerCase()}`}>
+                {[formatCategory(productDetails.category)]}
+              </Link>
             </span>
           </div>
           <div className="flex justify-start flex-col">
             <p className="text-xs text-neutral-600">Material: </p>
-            <span className="text-black text-xs">
+            <span className="text-black text-xs truncate">
               {[productDetails.material]}
             </span>
           </div>
           <div className="flex justify-start flex-col">
             <p className="text-xs text-neutral-600">Gender: </p>
-            <span className="text-black text-xs">
-              {[formatStatus(productDetails.gender)]}
+            <span className="text-black text-xs underline truncate">
+              <Link
+                href={`/collections/gender/${productDetails.gender.toLowerCase()}`}>
+                {[formatStatus(productDetails.gender)]}
+              </Link>
             </span>
           </div>
         </div>

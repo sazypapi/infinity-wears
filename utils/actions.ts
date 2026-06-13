@@ -616,7 +616,19 @@ export const getNewReleases = async () => {
   });
   return latestProducts;
 };
-
+export const getHomeBestSellers = async () => {
+  const bestSellers = await db.product.findMany({
+    orderBy: { sold: "desc" },
+    take: 10,
+    where: {
+      status: "ACTIVE",
+      variants: { some: { inStock: true } },
+      quantity: { gt: 0 },
+    },
+    include: { variants: true },
+  });
+  return bestSellers;
+};
 export const getAlmostSoldOut = async () => {
   const almostSoldOut = await db.product.findMany({
     orderBy: { quantity: "asc" },
@@ -967,7 +979,7 @@ export const updateCartItems = async (
 
 export const getAllProductsForShop = async (
   filters: any,
-  page = 0,
+  page = 1,
   take = 24,
 ) => {
   const { size, color, gender, category, material, sort, search } = filters;
@@ -1016,7 +1028,7 @@ export const getAllProductsForShop = async (
               : sort === "price_desc"
                 ? [{ hasStock: "desc" }, { minEffectivePrice: "desc" }]
                 : [{ hasStock: "desc" }],
-      skip: page * take,
+      skip: (page - 1) * take,
       take,
     }),
     db.product.count({ where }),
@@ -1025,7 +1037,7 @@ export const getAllProductsForShop = async (
   return {
     products,
     filteredCount,
-    hasMore: (page + 1) * take < filteredCount,
+    hasMore: page * take < filteredCount,
   };
 };
 
@@ -1968,7 +1980,7 @@ export const createOrUpdateAdminNote = async (
 };
 export const getProductsForSearch = async (
   search: string,
-  page = 0,
+  page = 1,
   take = 24,
 ) => {
   const [products, allProductsCount] = await Promise.all([
@@ -1990,7 +2002,7 @@ export const getProductsForSearch = async (
         }),
       },
       include: { variants: true },
-      skip: page * take,
+      skip: (page - 1) * take,
       take,
     }),
     db.product.count(),
@@ -2005,7 +2017,7 @@ export const getProductsForSearch = async (
   return {
     sortedProducts,
     allProductsCount,
-    hasMore: (page + 1) * take < allProductsCount,
+    hasMore: page * take < allProductsCount,
   };
 };
 export const getCollectionsForHomeCarousel = async () => {
@@ -2044,9 +2056,9 @@ export const getProductsForBestSellingPage = async (filters: any) => {
   return products;
 };
 export const getProductsForCategoryPage = async (
-  category: string,
+  category: Category,
   filters: any,
-  page = 0,
+  page = 1,
   take = 24,
 ) => {
   const { size, color, gender, material, sort, search } = filters;
@@ -2093,7 +2105,7 @@ export const getProductsForCategoryPage = async (
               : sort === "price_desc"
                 ? [{ hasStock: "desc" }, { minEffectivePrice: "desc" }]
                 : [{ hasStock: "desc" }],
-      skip: page * take,
+      skip: (page - 1) * take,
       take,
     }),
     db.product.count({ where }),
@@ -2101,6 +2113,124 @@ export const getProductsForCategoryPage = async (
   return {
     products,
     filteredCount,
-    hasMore: (page + 1) * take < filteredCount,
+    hasMore: page * take < filteredCount,
   };
+};
+export async function parseCategory(
+  value: string | undefined,
+): Promise<Category | null> {
+  if (!value) return null;
+
+  const upper = value.toUpperCase();
+
+  if (Object.values(Category).includes(upper as Category)) {
+    return upper as Category;
+  }
+
+  return null;
+}
+export const getProductsForGenderPage = async (
+  gender: Gender,
+  filters: any,
+  page = 1,
+  take = 24,
+) => {
+  const { size, color, category, material, sort, search } = filters;
+
+  const where = {
+    category: category || undefined,
+    gender: gender,
+    material: material || undefined,
+    ...(search && {
+      OR: [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+        { seoTitle: { contains: search, mode: "insensitive" } },
+        { seoDescription: { contains: search, mode: "insensitive" } },
+        { seoTags: { has: search } },
+        {
+          variants: {
+            some: { colorName: { contains: search, mode: "insensitive" } },
+          },
+        },
+      ],
+    }),
+    ...(size || color
+      ? {
+          variants: {
+            some: {
+              ...(size && { sizes: { has: size } }),
+              ...(color && { colorName: color }),
+            },
+          },
+        }
+      : {}),
+  };
+
+  const [products, filteredCount] = await Promise.all([
+    db.product.findMany({
+      where,
+      include: { variants: true },
+      orderBy:
+        sort === "bestselling"
+          ? [{ hasStock: "desc" }, { sold: "desc" }]
+          : sort === "newest"
+            ? [{ hasStock: "desc" }, { createdAt: "desc" }]
+            : sort === "price_asc"
+              ? [{ hasStock: "desc" }, { minEffectivePrice: "asc" }]
+              : sort === "price_desc"
+                ? [{ hasStock: "desc" }, { minEffectivePrice: "desc" }]
+                : [{ hasStock: "desc" }],
+      skip: (page - 1) * take,
+      take,
+    }),
+    db.product.count({ where }),
+  ]);
+
+  return {
+    products,
+    filteredCount,
+    hasMore: page * take < filteredCount,
+  };
+};
+export async function parseGender(
+  value: string | undefined,
+): Promise<Gender | null> {
+  if (!value) return null;
+
+  const upper = value.toUpperCase();
+
+  if (Object.values(Gender).includes(upper as Gender)) {
+    return upper as Gender;
+  }
+
+  return null;
+}
+export const getProductsForNewInPage = async (filters: any) => {
+  const { size, color, gender, category, material } = filters;
+
+  const where = {
+    category: category || undefined,
+    gender: gender || undefined,
+    material: material || undefined,
+
+    ...(size || color
+      ? {
+          variants: {
+            some: {
+              ...(size && { sizes: { has: size } }),
+              ...(color && { colorName: color }),
+            },
+          },
+        }
+      : {}),
+  };
+
+  const products = await db.product.findMany({
+    where,
+    include: { variants: true },
+    orderBy: [{ hasStock: "desc" }, { createdAt: "desc" }],
+    take: 24,
+  });
+  return products;
 };

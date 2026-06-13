@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { ProductWithVariants } from "./ProductDetailsSmallScreen";
+import { formatCategory } from "../../utils/format-categoryName";
 
 function SmallScreenLastDetails({
   productDetails,
@@ -17,8 +19,11 @@ function SmallScreenLastDetails({
       <div className="grid grid-cols-3 mt-5 w-full">
         <div className="flex justify-start flex-col">
           <p className="text-xs text-neutral-600">Category: </p>
-          <span className="text-black text-xs">
-            {[formatStatus(productDetails.category)]}
+          <span className="text-black text-xs underline">
+            <Link
+              href={`/collections/category/${productDetails.category.toLowerCase()}`}>
+              {[formatCategory(productDetails.category)]}
+            </Link>
           </span>
         </div>
         <div className="flex justify-start flex-col">
@@ -29,8 +34,11 @@ function SmallScreenLastDetails({
         </div>
         <div className="flex justify-start flex-col">
           <p className="text-xs text-neutral-600">Gender: </p>
-          <span className="text-black text-xs">
-            {[formatStatus(productDetails.gender)]}
+          <span className="text-black text-xs underline">
+            <Link
+              href={`/collections/gender/${productDetails.gender.toLowerCase()}`}>
+              {[formatStatus(productDetails.gender)]}
+            </Link>{" "}
           </span>
         </div>
       </div>

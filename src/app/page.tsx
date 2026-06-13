@@ -10,6 +10,12 @@ import ScrollVelocityComponent from "../../components/home/ScrollVelocityCompone
 import CarouselWrappers from "../../components/home/CarouselWrappers";
 import CarouselSkeleton from "../../components/home/CarouselSkeleton";
 import CustomPieceSkeleton from "../../components/home/CustomPieceSkeleton";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { FiArrowUpRight } from "react-icons/fi";
+import HomeCollectionsCategory from "../../components/home/HomeCollectionsCategory";
+import BestSellingPage from "./collections/best-selling/page";
+import BestSellers from "../../components/home/BestSellers";
 
 export default function Home() {
   return (
@@ -29,11 +35,39 @@ export default function Home() {
           <Suspense fallback={<LoadingContainer />}>
             <NewIn />
           </Suspense>
+          <div className="w-full flex justify-end mt-10">
+            <Link
+              href="/collections/new-in"
+              className="flex item-end text-sm sm:text-base underline">
+              Explore our latest products <FiArrowUpRight />
+            </Link>
+          </div>
         </div>
       </Containers>
       <Suspense fallback={<CustomPieceSkeleton />}>
         <CustomPiece />
       </Suspense>
+      <Containers className="py-5 flex justify-center items-center align-middle w-full">
+        <div className="my-5 sm:pb-5 w-full">
+          <h2 className="text-2xl sm:text-4xl text-center text-neutral-700">
+            Best Sellers
+          </h2>
+          <h6 className="text-xs sm:text-sm text-center text-neutral-400">
+            Explore our best selling pieces
+          </h6>
+          <Suspense fallback={<LoadingContainer />}>
+            <BestSellers />
+          </Suspense>
+          <div className="w-full flex justify-end mt-10">
+            <Link
+              href="/collections/best-selling"
+              className="flex item-end text-sm sm:text-base underline">
+              Explore our best sellers <FiArrowUpRight />
+            </Link>
+          </div>
+        </div>
+      </Containers>
+      <HomeCollectionsCategory />
       <Containers className="py-5 flex justify-center items-center align-middle w-full">
         <div className="my-5 sm:pb-5 w-full">
           <h2 className="text-2xl sm:text-4xl text-center text-neutral-700">

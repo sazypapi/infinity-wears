@@ -73,7 +73,7 @@ function EditBottomRowInputFieldsVariantCard({
           min={0}
           placeholder="Price in naira"
           required
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm text-[16px] sm:text-sm"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] text-[16px]"
           value={price ?? ""}
         />
       </div>
@@ -88,7 +88,7 @@ function EditBottomRowInputFieldsVariantCard({
           id="discount"
           name="discount"
           type="number"
-          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm text-[16px] sm:text-sm"
+          className="shadow-gray-300 shadow-sm/30 border-2 border-gray-300 placeholder:text-[16px] text-[16px]"
           placeholder="Discount(%)"
           onChange={(e) => onChange(index, "discount", Number(e.target.value))}
           value={discount ?? ""}

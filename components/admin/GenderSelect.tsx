@@ -14,7 +14,7 @@ function GenderSelect({ value }: { value?: string }) {
         Gender
       </Label>
       <Select required name="gender" defaultValue={value || ""}>
-        <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-[16px] sm:placeholder:text-sm text-[16px] sm:text-sm">
+        <SelectTrigger className="border-2 w-full border-gray-300 placeholder:text-[16px] text-[16px]">
           <SelectValue placeholder="select a gender" />
         </SelectTrigger>
         <SelectContent>

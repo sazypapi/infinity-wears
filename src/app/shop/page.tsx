@@ -24,7 +24,7 @@ async function Shop({
   searchParams: Promise<ShopPageProps["searchParams"]>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const currentPage = Number(resolvedSearchParams.page) || 0;
+  const currentPage = Number(resolvedSearchParams.page) || 1;
 
   const { products, filteredCount, hasMore } = await getAllProductsForShop(
     resolvedSearchParams,
@@ -40,9 +40,11 @@ async function Shop({
   );
   const allSizes = Array.from(
     new Set(
-      products.flatMap((product) =>
-        product.variants.flatMap((variant) => variant.sizes),
-      ),
+      products
+        .flatMap((product) =>
+          product.variants.flatMap((variant) => variant.sizes),
+        )
+        .filter((size) => size !== "One Size"),
     ),
   );
   const allGenders = Array.from(

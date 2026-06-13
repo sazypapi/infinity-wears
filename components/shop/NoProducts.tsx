@@ -26,7 +26,7 @@ function NoProducts({
           ? where === "shop"
             ? "No products match your filters."
             : "No products match your search"
-          : "We're stocking up, check back soon."}
+          : "This page has no products yet."}
       </h1>
       <div className="flex align-middle gap-5 items-center justify-between w-[80%] sm:w-[20%]">
         <Button className="bg-white text-black border-2 border-black hover:text-white hover:bg-black transition duration-500">
@@ -34,8 +34,7 @@ function NoProducts({
         </Button>
         <Button
           onClick={where === "shop" ? clearAllFilters : clearAllSearch}
-          className="bg-white text-black border-2 border-black hover:text-white hover:bg-black transition duration-500"
-        >
+          className="bg-white text-black border-2 border-black hover:text-white hover:bg-black transition duration-500">
           {where === "shop" ? "Clear Filters" : "Clear Search"}
         </Button>
       </div>

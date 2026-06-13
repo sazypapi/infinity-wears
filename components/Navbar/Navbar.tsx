@@ -13,12 +13,20 @@ type collectionLinks = Prisma.CollectionLinkGetPayload<{
     collection: true;
   };
 }>;
+type product = Prisma.ProductGetPayload<{
+  include: {
+    collection: true;
+    variants: true;
+  };
+}>;
 function Navbar({
   collectionLinks,
   isAdmin,
+  products,
 }: {
   collectionLinks: collectionLinks[];
   isAdmin: boolean;
+  products: product[];
 }) {
   return (
     <>
@@ -41,7 +49,7 @@ function Navbar({
           </div>
 
           <div className="flex px-5 gap-5 items-center basis-3/7">
-            <Links collectionLinks={collectionLinks} />
+            <Links collectionLinks={collectionLinks} products={products} />
           </div>
 
           <div className="flex gap-15 justify-end items-center basis-2/7">

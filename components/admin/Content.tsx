@@ -38,9 +38,8 @@ async function Content() {
           )}
 
           <Link
-            className="text-xs truncate text-left underline"
-            href="/admin/edit-carousel-items"
-          >
+            className="text-xs sm:text-sm truncate text-left underline"
+            href="/admin/edit-carousel-items">
             Edit Carousels
           </Link>
         </div>
@@ -65,9 +64,8 @@ async function Content() {
           )}
 
           <Link
-            className="text-xs truncate text-left underline"
-            href="/admin/edit-collection-links"
-          >
+            className="text-xs sm:text-sm truncate text-left underline"
+            href="/admin/edit-collection-links">
             Edit Collection Links
           </Link>
         </div>
@@ -81,9 +79,8 @@ async function Content() {
           </h6>
 
           <Link
-            className="text-xs truncate text-left underline"
-            href="/admin/edit-custompiece-background"
-          >
+            className="text-xs sm:text-sm truncate text-left underline"
+            href="/admin/edit-custompiece-background">
             Edit Custom Order BG
           </Link>
         </div>

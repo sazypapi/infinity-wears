@@ -20,13 +20,15 @@ type ProductWithVariants = Prisma.ProductGetPayload<{
 interface SkeletonCarouselProps {
   items: ProductWithVariants[];
   autoplayDelay?: number;
-  children: React.ReactNode[]; // ← buttons passed in from server
+  children: React.ReactNode[];
+  link: string;
 }
 
 export function FeaturedProducts({
   items,
   autoplayDelay = 2000,
   children,
+  link,
 }: SkeletonCarouselProps) {
   const [api, setApi] = useState<EmblaCarouselType | undefined>(undefined);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -54,7 +56,7 @@ export function FeaturedProducts({
             const firstVariant = product.variants[0];
             return (
               <article className="group relative" key={product.id}>
-                <Link href={`/products/${product.slug}`}>
+                <Link href={`${link}/${product.slug}`}>
                   <CarouselItem className="basis-1/3 justify-center w-fit flex flex-col items-center">
                     <div className="w-36 h-48 md:w-44 md:h-60 lg:w-52 lg:h-72 rounded-lg relative overflow-hidden">
                       <Image

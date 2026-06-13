@@ -43,9 +43,11 @@ async function CollectionName({
   );
   const allSizes = Array.from(
     new Set(
-      products.flatMap((product) =>
-        product.variants.flatMap((variant) => variant.sizes),
-      ),
+      products
+        .flatMap((product) =>
+          product.variants.flatMap((variant) => variant.sizes),
+        )
+        .filter((size) => size !== "One Size"),
     ),
   );
   const allGenders = Array.from(

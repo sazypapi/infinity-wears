@@ -12,7 +12,7 @@ function Header({ categoryName }: { categoryName: string }) {
 
       <div className="relative z-10 flex items-center justify-center h-full">
         <div className="flex flex-col items-center">
-          <h1 className="sm:text-4xl text-xl font-extrabold text-white">
+          <h1 className="sm:text-4xl text-center px-3 sm:px-0 text-xl font-extrabold text-white">
             {formatCategory(categoryName)}
           </h1>
         </div>

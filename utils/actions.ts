@@ -13,6 +13,7 @@ import {
   customPieceSchema,
   editProductDetailsSchema,
   editVariantsSchema,
+  sendContactSchema,
   updateCustomOrderRequestSchema,
 } from "./schemas";
 import z, { ZodError } from "zod";
@@ -2233,4 +2234,32 @@ export const getProductsForNewInPage = async (filters: any) => {
     take: 24,
   });
   return products;
+};
+export const sendContactForm = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  let id;
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = sendContactSchema.parse(rawData);
+    const newMessage = await db.contact.create({
+      data: {
+        ...validatedFields,
+      },
+    });
+    id = newMessage.id;
+    // return { message: "" };
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect(`/form-submitted/${id}`);
+};
+export const isContactExists = async (id: string) => {
+  const isContact = await db.contact.findUnique({
+    where: {
+      id,
+    },
+  });
+  return isContact;
 };

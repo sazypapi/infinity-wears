@@ -390,3 +390,15 @@ export const createOrUpdateAdminNoteSchema = z.object({
     },
   ),
 });
+export const sendContactSchema = z.object({
+  email: z.string().email(),
+  phoneNumber: z
+    .string()
+    .min(11, "Phone number must be at least 11 digits")
+    .regex(/^0\d{10,}$/, "Phone number must start with 0"),
+  message: z.string().refine((val) => {
+    const words = val.trim().split(/\s+/).filter(Boolean).length;
+    return words >= 5 && words <= 100;
+  }, "Message must be between 5 and 100 words"),
+  name: z.string().min(4, "Name must be at least 4 characters"),
+});

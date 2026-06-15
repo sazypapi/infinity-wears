@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import { useEffect, useState } from "react";
 import { Mail, Phone } from "lucide-react";
@@ -22,8 +23,7 @@ function Footer({ collectionLinks }: { collectionLinks: collectionLinks[] }) {
   return (
     <Containers
       className="relative flex flex-col p-10 items-center justify-between xl:max-w-full
-             bg-[url('/images/footerBg.jpg')] bg-cover bg-center bg-no-repeat pb-20"
-    >
+             bg-[url('/images/footerBg.jpg')] bg-cover bg-center bg-no-repeat pb-20">
       {/* Blur + dark overlay */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm pointer-events-none" />
 

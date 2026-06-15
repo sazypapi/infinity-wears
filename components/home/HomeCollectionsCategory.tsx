@@ -68,7 +68,7 @@ function HomeCollectionsCategory() {
           className="w-full">
           <CarouselContent>
             {links.map((link) => (
-              <CarouselItem key={link.image} className="basis-1/2">
+              <CarouselItem key={link.image} className="basis-3/4">
                 <div
                   className="relative h-[70vh] w-full bg-cover bg-center"
                   style={{ backgroundImage: `url(${link.image})` }}>

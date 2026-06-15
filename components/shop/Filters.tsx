@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import {
   DropdownMenu,
@@ -15,8 +16,10 @@ import {
 } from "@/components/ui/sheet";
 import { SlidersHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { useDebouncedCallback } from "use-debounce";
+
 function Filters({
   allColors,
   allSizes,
@@ -32,11 +35,17 @@ function Filters({
 }) {
   const formatAllCaps = (status: string) =>
     status.charAt(0) + status.slice(1).toLowerCase();
+
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set(key, value);
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
     params.delete("page");
     router.push(`/shop?${params.toString()}`);
   };
@@ -45,6 +54,8 @@ function Filters({
     router.push("/shop");
   };
 
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+
   const handleSearch = useDebouncedCallback((value: string) => {
     const params = new URLSearchParams(searchParams);
     if (value) {
@@ -52,20 +63,27 @@ function Filters({
     } else {
       params.delete("search");
     }
+    params.delete("page");
     router.replace(`/shop?${params.toString()}`);
   }, 500);
-  const search = searchParams.get("search") ?? "";
+
+  const searchValue = searchParams.get("search");
+
+  useEffect(() => {
+    if (!searchValue) {
+      setSearch("");
+    }
+  }, [searchValue]);
 
   return (
     <>
       <div className="hidden lg:flex justify-between align-middle items-center sm:px-10">
         <div className="flex justify-between align-middle items-center gap-5">
-          {/* {size} */}
+          {/* SIZE */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-sm px-2 bg-white border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                Size
-                <IoIosArrowDown />
+                Size <IoIosArrowDown />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">
@@ -73,25 +91,22 @@ function Filters({
                 <DropdownMenuLabel className="text-xs text-neutral-400">
                   All Sizes
                 </DropdownMenuLabel>
-                {allSizes.map((size) => {
-                  return (
-                    <DropdownMenuItem
-                      key={size}
-                      className="capitalize text-black"
-                      onClick={() => updateFilter("size", size)}>
-                      {size}
-                    </DropdownMenuItem>
-                  );
-                })}
+                {allSizes.map((size) => (
+                  <DropdownMenuItem
+                    key={size}
+                    className="capitalize text-black"
+                    onClick={() => updateFilter("size", size)}>
+                    {size}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          {/* {gender} */}
+          {/* GENDER */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-sm px-2 bg-white border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                Gender
-                <IoIosArrowDown />
+                Gender <IoIosArrowDown />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">
@@ -99,25 +114,22 @@ function Filters({
                 <DropdownMenuLabel className="text-xs text-neutral-400">
                   All Genders
                 </DropdownMenuLabel>
-                {allGenders.map((gender) => {
-                  return (
-                    <DropdownMenuItem
-                      key={gender}
-                      className="capitalize text-black"
-                      onClick={() => updateFilter("gender", gender)}>
-                      {formatAllCaps(gender)}
-                    </DropdownMenuItem>
-                  );
-                })}
+                {allGenders.map((gender) => (
+                  <DropdownMenuItem
+                    key={gender}
+                    className="capitalize text-black"
+                    onClick={() => updateFilter("gender", gender)}>
+                    {formatAllCaps(gender)}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          {/* {color} */}
+          {/* COLOR */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-sm px-2 bg-white border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                Color
-                <IoIosArrowDown />
+                Color <IoIosArrowDown />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">
@@ -125,25 +137,22 @@ function Filters({
                 <DropdownMenuLabel className="text-xs text-neutral-400">
                   All Colors
                 </DropdownMenuLabel>
-                {allColors.map((color) => {
-                  return (
-                    <DropdownMenuItem
-                      key={color}
-                      className="capitalize text-black"
-                      onClick={() => updateFilter("color", color)}>
-                      {color}
-                    </DropdownMenuItem>
-                  );
-                })}
+                {allColors.map((color) => (
+                  <DropdownMenuItem
+                    key={color}
+                    className="capitalize text-black"
+                    onClick={() => updateFilter("color", color)}>
+                    {color}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          {/* {category} */}
+          {/* CATEGORY */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-sm px-2 bg-white border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                Category
-                <IoIosArrowDown />
+                Category <IoIosArrowDown />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">
@@ -151,25 +160,22 @@ function Filters({
                 <DropdownMenuLabel className="text-xs text-neutral-400">
                   All Categories
                 </DropdownMenuLabel>
-                {allCategories.map((category) => {
-                  return (
-                    <DropdownMenuItem
-                      key={category}
-                      className="capitalize text-black"
-                      onClick={() => updateFilter("category", category)}>
-                      {formatAllCaps(category)}
-                    </DropdownMenuItem>
-                  );
-                })}
+                {allCategories.map((category) => (
+                  <DropdownMenuItem
+                    key={category}
+                    className="capitalize text-black"
+                    onClick={() => updateFilter("category", category)}>
+                    {formatAllCaps(category)}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          {/* {material} */}
+          {/* MATERIAL */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-sm px-2 bg-white border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                Material
-                <IoIosArrowDown />
+                Material <IoIosArrowDown />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">
@@ -177,27 +183,24 @@ function Filters({
                 <DropdownMenuLabel className="text-xs text-neutral-400">
                   All Materials
                 </DropdownMenuLabel>
-                {allMaterials.map((material) => {
-                  return (
-                    <DropdownMenuItem
-                      key={material}
-                      className="capitalize text-black"
-                      onClick={() => updateFilter("material", material)}>
-                      {material}
-                    </DropdownMenuItem>
-                  );
-                })}
+                {allMaterials.map((material) => (
+                  <DropdownMenuItem
+                    key={material}
+                    className="capitalize text-black"
+                    onClick={() => updateFilter("material", material)}>
+                    {material}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {/* {sort} */}
+        {/* SORT */}
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-sm px-2 bg-white border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700">
-                Sort
-                <IoIosArrowDown />
+                Sort <IoIosArrowDown />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -219,7 +222,7 @@ function Filters({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {/* {clear} */}
+        {/* CLEAR */}
         <div>
           <button
             className="text-sm px-2 bg-white border-2 border-neutral-500 hover:bg-neutral-700 rounded-2xl text-neutral-500 hover:text-white transition duration-300 flex justify-center align-middle items-center hover:border-neutral-700"
@@ -228,12 +231,14 @@ function Filters({
           </button>
         </div>
       </div>
-      {/* {MOBILE} */}
+
+      {/* MOBILE */}
       <div className="lg:hidden grid grid-cols-3 px-2 items-center gap-2 mb-4">
         <input
           placeholder="search products..."
           value={search}
           onChange={(e) => {
+            setSearch(e.target.value);
             handleSearch(e.target.value);
           }}
           className="focus:outline-none focus:ring-0 border-2 col-span-2 rounded-2xl px-2 py-1 text-[16px] border-neutral-500 text-black flex-1"

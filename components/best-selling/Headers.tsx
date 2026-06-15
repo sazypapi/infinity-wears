@@ -13,7 +13,7 @@ function Header({ link }: { link?: string }) {
               ? "Our latest Products"
               : "Our Best Selling Products"}
           </h1>
-          <h3 className="sm:text-lg text-xs text-white">
+          <h3 className="sm:text-lg text-center px-3 sm:px-0 text-xs text-white">
             {link === "new-in"
               ? "Discover our newest arrivals and be the first to experience the latest trends."
               : "Shop our most popular items that customers love and keep coming back for."}

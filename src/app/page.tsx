@@ -10,11 +10,9 @@ import ScrollVelocityComponent from "../../components/home/ScrollVelocityCompone
 import CarouselWrappers from "../../components/home/CarouselWrappers";
 import CarouselSkeleton from "../../components/home/CarouselSkeleton";
 import CustomPieceSkeleton from "../../components/home/CustomPieceSkeleton";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
 import HomeCollectionsCategory from "../../components/home/HomeCollectionsCategory";
-import BestSellingPage from "./collections/best-selling/page";
 import BestSellers from "../../components/home/BestSellers";
 
 export default function Home() {

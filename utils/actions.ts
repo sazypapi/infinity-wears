@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import {
@@ -11,6 +12,7 @@ import {
   createProductSchema,
   createReviewSchema,
   customPieceSchema,
+  editMessageStatusSchema,
   editProductDetailsSchema,
   editVariantsSchema,
   sendContactSchema,
@@ -2262,4 +2264,45 @@ export const isContactExists = async (id: string) => {
     },
   });
   return isContact;
+};
+export const getAllMessages = async () => {
+  const allMessages = await db.contact.findMany({});
+  return allMessages;
+};
+export const getSingleMessage = async (id: string) => {
+  const message = await db.contact.findUnique({
+    where: { id },
+  });
+  return message;
+};
+export const editMessageStatus = async (
+  prevState: any,
+  formData: FormData,
+): Promise<{ message: string }> => {
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = editMessageStatusSchema.parse(rawData);
+    const messageId = typeof rawData.id === "string" ? rawData.id : "";
+    const isMessageExist = await db.contact.findUnique({
+      where: {
+        id: messageId,
+      },
+    });
+    if (!isMessageExist) {
+      return { message: "There was an error, try again" };
+    }
+
+    await db.contact.update({
+      where: {
+        id: isMessageExist.id,
+      },
+      data: {
+        ...validatedFields,
+      },
+    });
+    revalidatePath(`/admin/view-messages/${isMessageExist.id}`);
+    return { message: "Status updated successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
 };

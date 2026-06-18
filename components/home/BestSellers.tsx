@@ -20,7 +20,7 @@ async function BestSellers() {
             className={`group relative ${
               i >= 9 ? "hidden" : i >= 8 ? "hidden md:block lg:hidden" : "block"
             }`}>
-            <Link href={`/products/${product.slug}`}>
+            <Link href={`/collections/best-selling/products/${product.slug}`}>
               <div className="justify-center w-fit flex flex-col group items-center">
                 <div className="w-40 h-56 md:w-44 md:h-60 lg:w-52 lg:h-72 rounded-lg relative overflow-hidden">
                   <HoverSwapImage

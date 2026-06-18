@@ -51,13 +51,15 @@ export function FeaturedProducts({
         plugins={[Autoplay({ delay: autoplayDelay })]}
         setApi={setApi}
         className="w-full">
-        <CarouselContent>
+        <CarouselContent className="px-2">
           {items.map((product, index) => {
             const firstVariant = product.variants[0];
             return (
-              <article className="group relative" key={product.id}>
-                <Link href={`${link}/${product.slug}`}>
-                  <CarouselItem className="basis-1/2 justify-center w-fit flex flex-col items-center">
+              <CarouselItem
+                key={product.id}
+                className="basis-1/2 md:basis-1/2 lg:basis-1/3 flex justify-center">
+                <article className="group relative w-fit flex flex-col items-center">
+                  <Link href={`${link}/${product.slug}`}>
                     <div className="w-36 h-48 md:w-44 md:h-60 lg:w-52 lg:h-72 rounded-lg relative overflow-hidden">
                       <Image
                         src={firstVariant.coverImage}
@@ -74,13 +76,13 @@ export function FeaturedProducts({
                         {formatCurrency(firstVariant.price)}
                       </p>
                     </div>
-                  </CarouselItem>
-                </Link>
-                {/* button passed in from server by index */}
-                <div className="absolute top-0 left-4 z-20">
-                  {children[index]}
-                </div>
-              </article>
+                  </Link>
+                  {/* button passed in from server by index */}
+                  <div className="absolute top-0 left-4 z-20">
+                    {children[index]}
+                  </div>
+                </article>
+              </CarouselItem>
             );
           })}
         </CarouselContent>

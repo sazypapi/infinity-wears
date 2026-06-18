@@ -90,7 +90,7 @@ function SmallScreenRatings({
             There are no reviews for this product
           </h1>
           <div className="flex flex-col justify-center align-middle items-center gap-1">
-            <p className="text-sm">Be the first to leave a review</p>
+            <p className="text-xs">Be the first to leave a review</p>
             <div className="flex justify-between align-middle items-center">
               <LeaveReview productId={productDetails.id} />
             </div>

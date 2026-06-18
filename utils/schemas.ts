@@ -402,3 +402,9 @@ export const sendContactSchema = z.object({
   }, "Message must be between 5 and 100 words"),
   name: z.string().min(4, "Name must be at least 4 characters"),
 });
+export const editMessageStatusSchema = z.object({
+  attendedTo: z
+    .string()
+    .optional()
+    .transform((val) => val === "true" || val === "on"),
+});

@@ -1,8 +1,5 @@
 "use client";
-import { Prisma } from "@/generated/prisma";
-import Link from "next/link";
-import { useState } from "react";
-import { formatCurrency, formatDateMonthAndYear } from "../../utils/format";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +8,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IoIosArrowDown } from "react-icons/io";
 import {
   Empty,
   EmptyContent,
@@ -20,66 +16,55 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { RxValueNone } from "react-icons/rx";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Contact } from "@/generated/prisma";
 import { SlidersHorizontal } from "lucide-react";
-type Order = Prisma.OrderGetPayload<{
-  include: {
-    orderItems: true;
-  };
-}> & {
-  user: {
-    firstName: string | null;
-    lastName: string | null;
-  };
-};
-
+import { useState } from "react";
+import { IoIosArrowDown } from "react-icons/io";
+import { RxValueNone } from "react-icons/rx";
+import FilteredMessages from "./FilteredMessages";
 const getDaysAgo = (days: number) => {
   const d = new Date();
   d.setDate(d.getDate() - days);
   return d;
 };
-
-function AllOrderClient({ orders }: { orders: Order[] }) {
+function AllMessages({ messages }: { messages: Contact[] }) {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState<boolean | undefined>();
   const [dateFilter, setDateFilter] = useState("");
-  const shortText = (text: string) => text.slice(0, 10).toUpperCase();
-
-  const filtered = orders.filter((order) => {
-    const fullName =
-      `${order.user?.firstName} ${order.user?.lastName}`.toLowerCase();
+  const filtered = messages.filter((message) => {
+    const fullName = message.name.trim().toLowerCase().replace(/\s+/g, "");
+    const searchToLowerCase = search.toLowerCase();
     const matchesSearch =
       !search ||
-      fullName.includes(search.toLowerCase()) ||
-      order.id.includes(search);
+      fullName.includes(searchToLowerCase) ||
+      message.email.toLowerCase().includes(searchToLowerCase) ||
+      message.email.toLowerCase().includes(searchToLowerCase) ||
+      message.phoneNumber.toString().includes(search);
+    const matchesStatus =
+      statusFilter === undefined || message.attendedTo === statusFilter;
+    const messageDate = new Date(message.createdAt);
 
-    const orderDate = new Date(order.createdAt);
     const matchesDate =
       !dateFilter ||
-      (dateFilter === "7days" && orderDate >= getDaysAgo(7)) ||
-      (dateFilter === "30days" && orderDate >= getDaysAgo(30)) ||
-      (dateFilter === "90days" && orderDate >= getDaysAgo(90)) ||
+      (dateFilter === "7days" && messageDate >= getDaysAgo(7)) ||
+      (dateFilter === "30days" && messageDate >= getDaysAgo(30)) ||
+      (dateFilter === "90days" && messageDate >= getDaysAgo(90)) ||
       (dateFilter === "thisYear" &&
-        orderDate.getFullYear() === new Date().getFullYear());
-
-    const matchesStatus = !statusFilter || order.status === statusFilter;
-
+        messageDate.getFullYear() === new Date().getFullYear());
     return matchesSearch && matchesStatus && matchesDate;
   });
-
   return (
     <div className="w-full">
       {/* {DESKTOP FILTER} */}
       <div className="hidden sm:flex gap-2 mb-4">
         <input
-          placeholder="search name or order ID..."
+          placeholder="Search by name, message, phone, ID, or email"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="border-2 rounded-2xl px-2 py-1 text-xs border-neutral-500 text-black"
@@ -99,18 +84,18 @@ function AllOrderClient({ orders }: { orders: Order[] }) {
               </DropdownMenuLabel>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setStatusFilter("")}>
+                onClick={() => setStatusFilter(undefined)}>
                 All Status
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setStatusFilter("pending")}>
-                Pending
+                onClick={() => setStatusFilter(true)}>
+                Attended To
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="capitalize text-black"
-                onClick={() => setStatusFilter("completed")}>
-                Completed
+                onClick={() => setStatusFilter(false)}>
+                Pending
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
@@ -161,7 +146,7 @@ function AllOrderClient({ orders }: { orders: Order[] }) {
           onClick={() => {
             setDateFilter("");
             setSearch("");
-            setStatusFilter("");
+            setStatusFilter(undefined);
           }}>
           Clear Filters
         </button>
@@ -169,7 +154,7 @@ function AllOrderClient({ orders }: { orders: Order[] }) {
       {/* {MOBILE FILTER} */}
       <div className="sm:hidden grid grid-cols-3 px-2 items-center gap-2 mb-4">
         <input
-          placeholder="search name or order ID..."
+          placeholder="Search by name, message, phone, ID, or email"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="focus:outline-none focus:ring-0 border-2 col-span-2 rounded-2xl px-2 py-1 text-[16px] border-neutral-500 text-black flex-1"
@@ -202,18 +187,18 @@ function AllOrderClient({ orders }: { orders: Order[] }) {
                       </DropdownMenuLabel>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setStatusFilter("")}>
+                        onClick={() => setStatusFilter(undefined)}>
                         All Status
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setStatusFilter("pending")}>
-                        Pending
+                        onClick={() => setStatusFilter(true)}>
+                        Attended To
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="capitalize text-black active:bg-neutral-100 transition duration-150"
-                        onClick={() => setStatusFilter("completed")}>
-                        Completed
+                        onClick={() => setStatusFilter(false)}>
+                        Pending
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
@@ -264,7 +249,7 @@ function AllOrderClient({ orders }: { orders: Order[] }) {
                   onClick={() => {
                     setDateFilter("");
                     setSearch("");
-                    setStatusFilter("");
+                    setStatusFilter(undefined);
                   }}>
                   Clear Filters
                 </button>
@@ -273,7 +258,6 @@ function AllOrderClient({ orders }: { orders: Order[] }) {
           </Sheet>
         </div>
       </div>
-
       {filtered.length === 0 ? (
         <Empty>
           <EmptyHeader>
@@ -289,7 +273,7 @@ function AllOrderClient({ orders }: { orders: Order[] }) {
                 className="bg-transparent text-black border-2 border-black hover:text-white hover:bg-black transition duration-500"
                 onClick={() => {
                   setSearch("");
-                  setStatusFilter("");
+                  setStatusFilter(undefined);
                   setDateFilter("");
                 }}>
                 Clear Filters
@@ -299,48 +283,11 @@ function AllOrderClient({ orders }: { orders: Order[] }) {
         </Empty>
       ) : (
         <>
-          {/* Header row */}
-          <div className="grid sm:grid-cols-6 grid-cols-4 justify-between items-center sm:py-3 p-2 gap-2 sm:px-2 rounded-2xl mb-3">
-            <h6 className="text-xs text-neutral-700">Order Id</h6>
-            <h6 className="text-xs text-neutral-700">Name</h6>
-            <h6 className="text-xs text-neutral-700 hidden sm:inline">Date</h6>
-            <h6 className="text-xs text-neutral-700">Price</h6>
-            <h6 className="text-xs text-neutral-700 hidden sm:inline">
-              No Items
-            </h6>
-            <h6 className="text-xs text-neutral-700">Order Status</h6>
-          </div>
-
-          {/* Orders list */}
-          {filtered.map((order) => (
-            <Link href={`/admin/order-details/${order.id}`} key={order.id}>
-              <div className="grid sm:grid-cols-6 grid-cols-4 justify-between items-center bg-neutral-300 sm:py-3 p-2 sm:px-2 rounded-2xl mb-3 gap-2">
-                <h6 className="truncate text-black text-xs sm:text-sm">
-                  {shortText(order.id)}
-                </h6>
-                <h6 className="text-black text-xs sm:text-sm truncate">
-                  {order.user?.firstName} {order.user?.lastName}
-                </h6>
-                <h6 className="hidden sm:inline text-black text-sm">
-                  {formatDateMonthAndYear(order.createdAt)}
-                </h6>
-                <h6 className="text-black text-xs sm:text-sm truncate">
-                  {formatCurrency(order.totalAmount)}
-                </h6>
-                <h6 className="text-black text-sm hidden sm:inline">
-                  {order.orderItems.length}{" "}
-                  {order.orderItems.length === 1 ? "item" : "items"}
-                </h6>
-                <h6 className="text-xs truncate text-black sm:text-sm">
-                  {order.status}
-                </h6>
-              </div>
-            </Link>
-          ))}
+          <FilteredMessages messages={filtered} />
         </>
       )}
     </div>
   );
 }
 
-export default AllOrderClient;
+export default AllMessages;

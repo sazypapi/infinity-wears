@@ -18,7 +18,7 @@ async function ConfirmContactPage({
   return (
     <div className="relative h-[90vh] bg-[url('https://files.edgestore.dev/ij70l6t4xyeuequ7/publicFiles/_public/a7b972de-d64f-407f-b15f-bf8e58f18996.jpg')] bg-cover bg-center bg-no-repeat">
       {/* Blur + dark overlay */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-xs pointer-events-none" />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-xs pointer-events-none" />
 
       {/* Content */}
       <div className="relative z-10 flex text-white flex-col items-center justify-center h-full gap-4">
@@ -43,12 +43,12 @@ async function ConfirmContactPage({
             as possible!
           </h3>
           <div className="flex align-middle items-center gap-3">
-            <Link href="/">
+            <Link href="/" className="hover:cursor-pointer">
               <Button className="bg-transparent text-white border-2 border-white hover:bg-white hover:text-black transition duration-500">
                 Go Home
               </Button>
             </Link>
-            <Link href="/shop">
+            <Link href="/shop" className="hover:cursor-pointer">
               <Button className="bg-transparent text-white border-2 border-white hover:bg-white hover:text-black transition duration-500">
                 Shop
               </Button>

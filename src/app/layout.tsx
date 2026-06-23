@@ -14,6 +14,7 @@ import NavbarSkeleton from "../../components/Navbar/NavSkeleton";
 import FooterWrapper from "../../components/footer/FooterWrapper";
 import { auth } from "@clerk/nextjs/server";
 import { ScrollToTop } from "./ScrollToTop";
+import { is } from "zod/v4/locales";
 const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-montserrat",
@@ -49,7 +50,7 @@ export default async function RootLayout({
             <main className=" bg-white text-black">{children}</main>
             <FooterWrapper />
             <div className="lg:hidden fixed bottom-2 left-0 right-0 z-999 flex justify-center pointer-events-none">
-              <BottomNavWrapper isAdmin />
+              <BottomNavWrapper isAdmin={isAdmin} />
             </div>
             <Toaster />
           </Providers>

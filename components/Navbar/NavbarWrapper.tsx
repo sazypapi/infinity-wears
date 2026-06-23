@@ -25,5 +25,11 @@ export default async function NavbarWrapper() {
     console.error("Failed to load nav collections:", err);
   }
 
-  return <Navbar collectionLinks={collections} isAdmin products={products} />;
+  return (
+    <Navbar
+      collectionLinks={collections}
+      isAdmin={isAdmin}
+      products={products}
+    />
+  );
 }

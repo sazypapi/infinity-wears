@@ -53,7 +53,7 @@ function Navbar({
           </div>
 
           <div className="flex gap-15 justify-end items-center basis-2/7">
-            <UserIcon isAdmin />
+            <UserIcon isAdmin={isAdmin} />
 
             <Suspense>
               <NavSearch />

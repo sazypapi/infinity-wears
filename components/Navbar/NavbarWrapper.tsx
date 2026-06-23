@@ -24,6 +24,7 @@ export default async function NavbarWrapper() {
   } catch (err) {
     console.error("Failed to load nav collections:", err);
   }
+  console.log(sessionClaims?.metadata.role);
 
   return (
     <Navbar

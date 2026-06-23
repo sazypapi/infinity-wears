@@ -95,14 +95,18 @@ function UserIcon({ isAdmin }: { isAdmin: boolean }) {
       <DropdownMenuContent align="end" side="top" className="z-[9999]">
         <SignedOut>
           <DropdownMenuItem className="active:bg-neutral-100 transition duration-150">
-            <Link href="/" prefetch={false} className="w-full">
-              <SignInButton mode="modal">Login</SignInButton>
-            </Link>
+            <SignInButton mode="modal">
+              <Link href="/" prefetch={false} className="w-full">
+                Login
+              </Link>
+            </SignInButton>
           </DropdownMenuItem>
           <DropdownMenuItem className="active:bg-neutral-100 transition duration-150">
-            <Link href="/" prefetch={false} className="w-full">
-              <SignUpButton mode="modal">Register</SignUpButton>
-            </Link>
+            <SignUpButton mode="modal">
+              <Link href="/" prefetch={false} className="w-full">
+                Register
+              </Link>
+            </SignUpButton>
           </DropdownMenuItem>
         </SignedOut>
       </DropdownMenuContent>
